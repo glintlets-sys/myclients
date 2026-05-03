@@ -21,6 +21,12 @@ export class HomeComponent implements AfterViewInit, OnInit {
 
   blogs: any[] = [
       {
+        "tag": "liquidDetergent",
+        "title": "Liquid Detergent Manufacturers in India: A Complete Guide for Businesses",
+        "image": "assets/image/CommercialLaundries.jpg",
+        "content": "Liquid detergents have become an essential part of modern cleaning across industries such as hospitality, healthcare, manufacturing, and commercial laundry. Their superior cleaning ability, easy application, and adaptability make them a preferred choice over traditional powders. For businesses, partnering with the right liquid detergent manufacturer in India is not just about sourcing a product—it’s about ensuring quality, reliability, and operational efficiency."
+      },
+      {
         "tag": "cleanKitchen",
         "title": "Clean Kitchen, Safe Kitchen: Essential Tips for a Healthy Cooking Spaces",
         "image": "assets/image/clean-kitchen.jpg",

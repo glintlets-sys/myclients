@@ -45,8 +45,8 @@
               "public/assets/css/style.css",
               "public/assets/css/newcss.css",
               "node_modules/swiper/swiper-bundle.css",
-               "node_modules/ngx-toastr/toastr.css"
-      
+              "node_modules/ngx-toastr/toastr.css",
+              "public/assets/css/modern.css"
             ],
             "scripts": [
               "public/assets/scripts/bootstrap.bundle.js",
