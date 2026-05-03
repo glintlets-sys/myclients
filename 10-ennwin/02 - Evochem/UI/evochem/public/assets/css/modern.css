@@ -637,26 +637,69 @@ body div.faq-section {
   border-radius: var(--evo-r-md);
   overflow: hidden;
   height: 100%;
+  position: relative;
+  isolation: isolate;
 }
+
+/* Soft dark gradient on the image so light text always reads
+   regardless of image content. Subtle — the image still dominates. */
+.industry-card-link .main-wrapp-img {
+  position: relative;
+}
+.industry-card-link .main-wrapp-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 25, 20, 0.05) 0%,
+    rgba(15, 25, 20, 0.20) 45%,
+    rgba(15, 25, 20, 0.55) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: background var(--evo-mid) var(--evo-ease);
+}
+.industry-card-link:hover .main-wrapp-img::after {
+  background: linear-gradient(
+    180deg,
+    rgba(15, 25, 20, 0.10) 0%,
+    rgba(15, 25, 20, 0.30) 45%,
+    rgba(15, 25, 20, 0.65) 100%
+  );
+}
+
+/* Title — translucent white with soft text shadow so the image
+   "blends through" but the words stay readable. */
 .industry-card-link h3 {
   font-size: var(--evo-fs-lg);
   font-weight: 600;
   letter-spacing: -0.01em;
-  color: var(--evo-ink);
-  margin: 0 0 0.5rem;
+  color: rgba(255, 255, 255, 0.94);
+  margin: 0 0 0.4rem;
+  text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
 }
+
+/* "Explore solutions →" link — same treatment, slightly more
+   translucent so the title remains the focal point. */
 .industry-card-link .btn-color-primary {
   font-size: var(--evo-fs-sm);
-  color: var(--evo-brand);
+  color: rgba(255, 255, 255, 0.82);
   font-weight: 600;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
+  transition: color var(--evo-fast) var(--evo-ease);
 }
+
 @media (hover: hover) and (pointer: fine) {
   .industry-card-link:hover {
     transform: translateY(-3px);
     box-shadow: var(--evo-shadow-3);
   }
   .industry-card-link:hover .btn-color-primary {
-    color: var(--evo-brand-deep);
+    color: #ffffff;
+  }
+  .industry-card-link:hover h3 {
+    color: #ffffff;
   }
 }
 
