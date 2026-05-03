@@ -3,6 +3,12 @@ import { ActivatedRoute } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
 interface Faq { q: string; a: string; }
+interface BlogMeta {
+  title: string;
+  date: string;            // ISO date for <time datetime="...">
+  dateFormatted: string;   // Human-readable
+  readTime: number;        // minutes
+}
 
 @Component({
   selector: 'app-blogs',
@@ -12,6 +18,14 @@ interface Faq { q: string; a: string; }
 export class BlogsComponent implements OnInit, OnDestroy {
 
   blogType: string = "healthCare";
+
+  blogMeta: { [key: string]: BlogMeta } = {
+    liquidDetergent: { title: 'Liquid Detergent Manufacturers in India: A Complete Guide for Businesses', date: '2026-05-03', dateFormatted: 'May 3, 2026',  readTime: 9 },
+    healthCare:      { title: 'Excellence in Healthcare: The Indispensable Role of Cleaning Protocols',     date: '2024-11-14', dateFormatted: 'Nov 14, 2024', readTime: 6 },
+    deepcleaning:    { title: 'Deep Cleaning Reset Protocols for Commercial Establishments',                date: '2024-10-22', dateFormatted: 'Oct 22, 2024', readTime: 7 },
+    cleanBrand:      { title: 'How Cleanliness Influences Brand Image and Customer Trust',                  date: '2024-09-18', dateFormatted: 'Sep 18, 2024', readTime: 5 },
+    cleanKitchen:    { title: 'Clean Kitchen, Safe Kitchen: Essential Tips for a Healthy Cooking Spaces',   date: '2024-08-05', dateFormatted: 'Aug 5, 2024',  readTime: 6 },
+  };
 
   faqData: { [key: string]: Faq[] } = {
     liquidDetergent: [
@@ -63,6 +77,35 @@ export class BlogsComponent implements OnInit, OnDestroy {
 
   get currentFaqs(): Faq[] {
     return this.faqData[this.blogType] || [];
+  }
+
+  get currentBlogMeta(): BlogMeta | undefined {
+    return this.blogMeta[this.blogType];
+  }
+
+  /** Two related posts: prev + next in the editorial order. */
+  get relatedPosts(): { tag: string; title: string }[] {
+    const order = ['liquidDetergent', 'healthCare', 'deepcleaning', 'cleanBrand', 'cleanKitchen'];
+    const idx = order.indexOf(this.blogType);
+    if (idx === -1) return [];
+    const picks: string[] = [];
+    if (order[idx + 1]) picks.push(order[idx + 1]);
+    if (order[idx - 1]) picks.push(order[idx - 1]);
+    if (picks.length < 2) {
+      // fall back to the next available so we always show 2 cards
+      for (const t of order) {
+        if (t !== this.blogType && !picks.includes(t) && picks.length < 2) picks.push(t);
+      }
+    }
+    return picks.map(t => ({ tag: t, title: this.blogMeta[t]?.title || t }));
+  }
+
+  get canonicalURL(): string {
+    return encodeURIComponent(`https://evochem.co.in/blogs/${this.blogType}`);
+  }
+
+  get encodedTitle(): string {
+    return encodeURIComponent(this.currentBlogMeta?.title || '');
   }
 
   ngOnInit(): void {

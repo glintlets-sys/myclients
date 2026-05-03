@@ -4,68 +4,97 @@
             <div class="row">
                 <div class="col-lg-5 col-md-6">
                     <div class="main-image">
-                        <div class="image">  
-                            <img [src]="selectedProduct.picture ? selectedProduct.picture : 'assets/image/productcate1.png'" alt="">
+                        <div class="image">
+                            <img [src]="selectedProduct.picture ? selectedProduct.picture : 'assets/image/productcate1.png'" [alt]="(selectedProduct?.title || 'Product') + ' product image'" loading="lazy">
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-7 col-md-6">
                     <div class="singleprocontent">
-                        <div class="bradcmS">
-                            <a [routerLink]="['/']" class="breadcrumb-link se1">Home</a>
-                            <a *ngIf="selectedIndustry" [routerLink]="['/categories/' + selectedIndustry.id]" class="breadcrumb-link se1">{{selectedIndustry?.title}}</a>
-                            <a *ngIf="selectedSolutionType" [routerLink]="['/solutions/' + selectedSolutionType.id]" class="breadcrumb-link se1">{{selectedSolutionType?.title}}</a>
-                            <a href=" " class="breadcrumb-link breadcrumb-link-last"> {{selectedProduct?.title}}</a>
+                        <nav class="bradcmS" aria-label="Breadcrumb">
+                            <ol class="breadcrumb-list">
+                                <li><a [routerLink]="['/']" class="breadcrumb-link se1">Home</a></li>
+                                <li *ngIf="selectedIndustry"><a [routerLink]="['/categories/' + selectedIndustry.id]" class="breadcrumb-link se1">{{selectedIndustry?.title}}</a></li>
+                                <li *ngIf="selectedSolutionType"><a [routerLink]="['/solutions/' + selectedSolutionType.id]" class="breadcrumb-link se1">{{selectedSolutionType?.title}}</a></li>
+                                <li><span class="breadcrumb-link breadcrumb-link-last" aria-current="page">{{selectedProduct?.title}}</span></li>
+                            </ol>
+                        </nav>
+
+                        <p class="product-code-eyebrow">{{selectedProduct?.code}}</p>
+                        <h1 class="product_title">{{selectedProduct?.title}}</h1>
+
+                        <div class="product-details__short-description">
+                            <p>{{selectedProduct?.details?.description}}</p>
                         </div>
 
-                        <h2 class="product_title">
-                            <strong>{{selectedProduct?.code}}</strong>
-                        </h2>
-                        <h1 class="product_title">
-                           {{selectedProduct?.title}}
-                        </h1>
-                        <p>Dilution: {{selectedProduct?.details?.dilution}}</p>
-                        <div class=" product-details__short-description">
-                            <p>{{selectedProduct?.details?.description}}</p>
-                            
-                        </div>
-                        <a id="whatsappButton" [href]="whatsappURL" target="_blank">
-                            <div class="btn-size-default">
-                                Buy Now
+                        <!-- Spec table -->
+                        <dl class="product-spec" aria-label="Product specifications">
+                            <div class="product-spec__row">
+                                <dt>Product code</dt>
+                                <dd>{{selectedProduct?.code}}</dd>
                             </div>
-                        </a>
+                            <div class="product-spec__row" *ngIf="selectedProduct?.details?.dilution">
+                                <dt>Dilution</dt>
+                                <dd>{{selectedProduct?.details?.dilution}}</dd>
+                            </div>
+                            <div class="product-spec__row">
+                                <dt>Packaging</dt>
+                                <dd>5 L · 20 L · 50 L · 200 L drum (others on request)</dd>
+                            </div>
+                            <div class="product-spec__row">
+                                <dt>MOQ</dt>
+                                <dd>Available on enquiry</dd>
+                            </div>
+                            <div class="product-spec__row">
+                                <dt>Compliance</dt>
+                                <dd>ISO certified · MSDS available</dd>
+                            </div>
+                        </dl>
+
+                        <!-- 3 CTAs -->
+                        <div class="product-cta-row" role="group" aria-label="Contact options">
+                            <a [href]="whatsappURL" target="_blank" rel="noopener" class="product-cta product-cta--primary">
+                                <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
+                                <span>WhatsApp enquiry</span>
+                            </a>
+                            <a [href]="emailURL" class="product-cta product-cta--secondary">
+                                <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+                                <span>Email a quote</span>
+                            </a>
+                            <a [href]="telURL" class="product-cta product-cta--secondary">
+                                <i class="fa-solid fa-phone" aria-hidden="true"></i>
+                                <span>Call us</span>
+                            </a>
+                        </div>
+
+                        <p class="product-msds-line">
+                            <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
+                            Need the MSDS / Safety Data Sheet?
+                            <a [href]="msdsURL" class="product-msds-link">Request the document →</a>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
         <div class="related-products">
-            <div class="slider-Tittle">Related products</div>
+            <h2 class="slider-Tittle">Related products</h2>
             <div class="relatedmain-slider">
                 <div class="swiper relatedswiper">
-                    <!-- Additional required wrapper -->
                     <div class="swiper-wrapper">
-                        <!-- Slides -->
                         <div class="swiper-slide" *ngFor="let product of relatedproducts">
-                            <a [routerLink]="['/product' , formatCode(product.code)]">
+                            <a [routerLink]="['/product' , formatCode(product.code)]" class="related-product-link">
                                 <div class="same-proDuct">
                                     <div class="image">
-                                        <img [src]="product.thumbnail ? product.thumbnail : 'assets/image/productcate1.png'" alt="">
-                                        <a >
-                                            <h4>{{product?.title}}</h4>
-                                        </a>
-                                       
+                                        <img [src]="product.thumbnail ? product.thumbnail : 'assets/image/productcate1.png'" [alt]="product?.title + ' product thumbnail'" loading="lazy">
+                                        <h4>{{product?.title}}</h4>
                                     </div>
                                 </div>
                             </a>
                         </div>
-                       
-
                     </div>
-                    <!-- If we need navigation buttons -->
-                    <!-- <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>  -->
                 </div>
             </div>
         </div>
 
     </div>
+</div>

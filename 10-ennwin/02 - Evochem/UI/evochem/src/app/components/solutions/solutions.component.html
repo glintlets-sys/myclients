@@ -32,11 +32,16 @@
                     <div class="col-lg-3">
     
                         <div class="leftside-linkw">
-                            <ul class="ul_list">
-                                <li *ngFor="let solution of selectedSolutionType?.solutions; let i = index" class="li_lst" (click)="selectSolution(solution)"> 
-                                    <p tabindex="0" [ngClass]="{'selected': selectedSolutionType.solutions[i].title === selectedSolution?.title}">{{i+1}}. {{ solution?.title }}</p>
+                            <ul class="ul_list" role="list">
+                                <li *ngFor="let solution of selectedSolutionType?.solutions; let i = index" class="li_lst">
+                                    <button type="button" class="solution-list-btn"
+                                            [class.selected]="selectedSolutionType.solutions[i].title === selectedSolution?.title"
+                                            [attr.aria-current]="selectedSolutionType.solutions[i].title === selectedSolution?.title ? 'true' : null"
+                                            (click)="selectSolution(solution)">
+                                        <span class="solution-list-num">{{i+1}}</span>
+                                        <span class="solution-list-text">{{ solution?.title }}</span>
+                                    </button>
                                 </li>
-                                
                             </ul>
                             <div class="phone-view-tabs">
                                 <select class="form-select" (change)="onSelectChange($event)">
@@ -52,13 +57,16 @@
                     <div class="col-lg-9">
                         <div *ngIf="selectedSolutionType?.solutionType === 'Bathroom Cleaning'" class="bathroom-cleaning pointer_section mt-0">
                             <div class="div-sectiond m-0 p-0">
-                                <p style="color:orange">Select a number to learn how to best clean that area</p>
+                                <p class="info-hint" role="note">
+                                    <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+                                    Select a number on the diagram to learn how to best clean that area.
+                                </p>
                             </div>
                             <div id="prodList">
                                 <div class="bannerSection  ">
                                     <span style=" display: inline-block;    position: relative; ">
                                         <span>
-                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                            <img src="assets/image/solutions/downloadbg.svg" alt="" loading="lazy" style="max-width: 100%; ">
                                         </span>
                                         <img src="assets/image/solutions/area.webp" class="bannerImage  ">
                                     </span>
@@ -79,7 +87,7 @@
                                 <div class="bannerSection  ">
                                     <span style=" display: inline-block;    position: relative; ">
                                         <span>
-                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                            <img src="assets/image/solutions/downloadbg.svg" alt="" loading="lazy" style="max-width: 100%; ">
                                         </span>
                                         <img src="assets/image/solutions/11-focus-area-for-a-clean-and-Sanitary-kitchen_2x.webp"
                                             class="bannerImage  ">
@@ -101,7 +109,7 @@
                                 <div class="bannerSection  ">
                                     <span style=" display: inline-block;    position: relative; ">
                                         <span>
-                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                            <img src="assets/image/solutions/downloadbg.svg" alt="" loading="lazy" style="max-width: 100%; ">
                                         </span>
                                         <img src="assets/image/solutions/Desktop-Laundry-and-Linen-filter_2x.webp"
                                             class="bannerImage  ">
@@ -123,7 +131,7 @@
                                 <div class="bannerSection  ">
                                     <span style=" display: inline-block;    position: relative; ">
                                         <span>
-                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                            <img src="assets/image/solutions/downloadbg.svg" alt="" loading="lazy" style="max-width: 100%; ">
                                         </span>
                                         <img src="assets/image/solutions/Desktop-Surface-and-Air-filter_2x.webp"
                                             class="bannerImage  ">
@@ -148,15 +156,15 @@
                                     </div>
                                     
                                     <div class="col-lg-4 col-md-4 col-sm-6 col-12 p-0 m-1 product-card" *ngFor="let product of selectedSolution.products">
-                                            <div class="contentpro-sub" (click)="goToProductPage(getProduct(product))">
-                                                <div class="image">
-                                                    <img [src]="getProduct(product)?.thumbnail" alt="">
-                                                </div>
-                                                <div class="div-content"> 
-                                                    <h4>{{getProduct(product)?.title}}</h4>
-                                                    <p>{{getProduct(product)?.details?.description}}</p>
-                                                </div>
+                                        <button type="button" class="contentpro-sub contentpro-sub--btn" (click)="goToProductPage(getProduct(product))" [attr.aria-label]="'View product ' + getProduct(product)?.title">
+                                            <div class="image">
+                                                <img [src]="getProduct(product)?.thumbnail" [alt]="getProduct(product)?.title || 'Product'" loading="lazy">
                                             </div>
+                                            <div class="div-content">
+                                                <h4>{{getProduct(product)?.title}}</h4>
+                                                <p>{{getProduct(product)?.details?.description}}</p>
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
                            

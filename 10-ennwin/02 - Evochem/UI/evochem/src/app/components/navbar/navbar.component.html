@@ -1,34 +1,34 @@
 <div class="phoneview_menu">
-        
+
     <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
-      <div class="offcanvas-header"> 
-          <div class="logo-imgphone" [routerLink]="['/']">
-              <img src="assets/image/logo.png" alt="" style="width: 150px;">
-          </div>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <div class="offcanvas-header">
+          <a [routerLink]="['/']" class="logo-imgphone" aria-label="Evochem home" data-bs-dismiss="offcanvas">
+              <img src="assets/image/logo.png" alt="Evochem" style="width: 150px;">
+          </a>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close menu"></button>
       </div>
       <div class="offcanvas-body">
          <div class="div-menulink-phone">
           <ul>
               <li><a [routerLink]="['/']" fragment="aboutus" data-bs-dismiss="offcanvas">About us</a></li>
               <li><a [routerLink]="['/']" fragment="cleaningTips" data-bs-dismiss="offcanvas">Cleaning Tips & Insights</a></li>
-              <li><a routerLink="/contactus" data-bs-dismiss="offcanvas">Contact us</a></li>
-              <li><a>Industries</a>
+              <li><a routerLink="/contactus" routerLinkActive="is-active" data-bs-dismiss="offcanvas">Contact us</a></li>
+              <li><span class="mobile-section-label">Industries</span>
                 <div class="div-ulsec" *ngFor="let industry of industries">
-                    <div (click)="navigateToCatgory(industry)" class="systumm-hai caret" data-bs-dismiss="offcanvas">
-                        <div class="div-name"> 
-                            <p>{{industry?.title}}</p>
-                        </div>
-                    </div> 
+                    <button type="button" (click)="navigateToCatgory(industry)" class="systumm-hai caret mobile-nav-btn" data-bs-dismiss="offcanvas">
+                        <span class="div-name">
+                            <span>{{industry?.title}}</span>
+                        </span>
+                    </button>
                 </div>
             </li>
-            <li><a>Solutions</a>
+            <li><span class="mobile-section-label">Solutions</span>
                 <div class="div-ulsec" *ngFor="let cleaningType of cleaningAreas">
-                    <div (click)="navigateToSolutions(cleaningType.code)" class="systumm-hai caret" data-bs-dismiss="offcanvas">
-                        <div class="div-name"> 
-                            <p>{{cleaningType.area}}</p>
-                        </div>
-                    </div> 
+                    <button type="button" (click)="navigateToSolutions(cleaningType.code)" class="systumm-hai caret mobile-nav-btn" data-bs-dismiss="offcanvas">
+                        <span class="div-name">
+                            <span>{{cleaningType.area}}</span>
+                        </span>
+                    </button>
                 </div>
             </li>
           </ul>
@@ -40,14 +40,14 @@
 <div class="main-sectionapp container">
     <div class="main-header">
         <div class="sectionfixed">
-            <div class="imagelogo" [routerLink]="['/']">
-                <img src="assets/image/logo.png" alt="">
-            </div>
+            <a [routerLink]="['/']" class="imagelogo" aria-label="Evochem home">
+                <img src="assets/image/logo.png" alt="Evochem">
+            </a>
             <div class="diVlink">
                 <ul>
-                   
+
                         <li class="navWrapper" (click)="toggleActive()">
-                          <a class="menuItem">Find a Solution</a>
+                          <button type="button" class="menuItem" aria-haspopup="true" [attr.aria-expanded]="isActive">Find a Solution</button>
                           <div *ngIf="isActive" class="slotWrap menuDropdownLg_animate">
                             <div class="CatWrapper">
                               <p class="plainText">By Industry</p>
@@ -71,12 +71,12 @@
                       
                     <li><a [routerLink]="['/']" fragment="aboutus">About us</a></li>
                     <li><a [routerLink]="['/']" fragment="cleaningTips">Cleaning Tips & Insights</a></li>
-                    <li><a routerLink="/contactus">Contact us</a></li>
+                    <li><a routerLink="/contactus" routerLinkActive="is-active" class="nav-cta">Contact us</a></li>
                 </ul>
             </div>
-            <div class="menuba-r" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
-                <i class="fa-solid fa-bars"></i>
-            </div>
+            <button type="button" class="menuba-r" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample" aria-label="Open menu">
+                <i class="fa-solid fa-bars" aria-hidden="true"></i>
+            </button>
         </div>
     </div>
 </div>

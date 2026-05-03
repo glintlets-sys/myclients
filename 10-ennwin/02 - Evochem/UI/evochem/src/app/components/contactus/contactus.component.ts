@@ -29,7 +29,16 @@ export class ContactusComponent {
     });
   }
 
+  /** Returns true when a control is invalid AND the user has interacted with it OR the form has been submitted. */
+  isInvalid(controlName: string): boolean {
+    const c = this.contactForm.get(controlName);
+    return !!c && c.invalid && (c.touched || c.dirty || this.submitAttempted);
+  }
+
+  submitAttempted = false;
+
   onSubmit() {
+    this.submitAttempted = true;
     if (this.contactForm.valid) {
       const formData: FormData = this.contactForm.value;
       console.log('Form Data: ', formData);

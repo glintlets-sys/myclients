@@ -1,27 +1,74 @@
-<div class="container">
-    <div class="footer-section container" >
-        <div class="footer-content">
-            <div class="di-footer">
-                <div class="image">
-                    <img style="height: 100px; width: auto;" src="assets/image/ennwin-s.jpeg" alt="">
-                </div>
-    
-                <p class="footer-text">Manufactured and Marketed by:</p>
-                <h4 class="footer-header">ENNWIN INDUSTRIES PRIVATE LIMITED</h4>
-                <h4 class="footer-header">M/s. Sannuthi Shubharam Estate</h4>
-                <p class="footer-text">
-                    #170/1, Marsur Gate, Anekal, Bengaluru - 562106.<br />
-                    Mobile : 7483837722, 9663538037 I E-mail: info&#64;ennwin.in
+<footer class="site-footer" role="contentinfo">
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <!-- Brand column -->
+            <div class="footer-col footer-col--brand">
+                <img class="footer-logo" src="assets/image/ennwin-s.jpeg" alt="Evochem" loading="lazy">
+                <p class="footer-eyebrow">A brand of Ennwin Industries</p>
+                <p class="footer-address">
+                    M/s. Sannuthi Shubharam Estate<br/>
+                    #170/1, Marsur Gate, Anekal,<br/>
+                    Bengaluru&nbsp;– 562106, India
+                </p>
+                <p class="footer-contact-line">
+                    <a href="tel:+917483837722" class="footer-link">+91 74838 37722</a>
+                    <span aria-hidden="true">·</span>
+                    <a href="tel:+919663538037" class="footer-link">+91 96635 38037</a>
+                </p>
+                <p class="footer-contact-line">
+                    <a href="mailto:info&#64;ennwin.in" class="footer-link">info&#64;ennwin.in</a>
                 </p>
             </div>
-        </div>
-    
-        <!-- Section for Certificates -->
-        <div class="certificate-section">
-            <img class="certificate-img" src="assets/image/iso.png" alt="Certificate 1">
-            <img class="certificate-img" src="assets/image/iaf.webp" alt="Certificate 2">
-        </div>
-    </div>
 
-    
-</div>
+            <!-- Explore column -->
+            <nav class="footer-col" aria-label="Explore">
+                <h2 class="footer-heading">Explore</h2>
+                <ul class="footer-links">
+                    <li><a routerLink="/" fragment="aboutus" class="footer-link">About us</a></li>
+                    <li><a routerLink="/" fragment="cleaningTips" class="footer-link">Cleaning tips & insights</a></li>
+                    <li><a routerLink="/blogs/liquidDetergent" class="footer-link">Liquid detergent guide</a></li>
+                    <li><a routerLink="/contactus" class="footer-link">Contact us</a></li>
+                </ul>
+            </nav>
+
+            <!-- Industries column -->
+            <nav class="footer-col" aria-label="Industries">
+                <h2 class="footer-heading">Industries</h2>
+                <ul class="footer-links">
+                    <li><a routerLink="/categories/1" class="footer-link">Hospitality</a></li>
+                    <li><a routerLink="/categories/2" class="footer-link">Healthcare</a></li>
+                    <li><a routerLink="/categories/3" class="footer-link">Manufacturing</a></li>
+                    <li><a routerLink="/categories/4" class="footer-link">Commercial laundry</a></li>
+                </ul>
+            </nav>
+
+            <!-- Solutions + Trust column -->
+            <div class="footer-col">
+                <h2 class="footer-heading">Solutions</h2>
+                <ul class="footer-links">
+                    <li><a routerLink="/solutions/Bathroom Cleaning" class="footer-link">Bathroom cleaning</a></li>
+                    <li><a routerLink="/solutions/Commercial Kitchen Cleaning" class="footer-link">Kitchen cleaning</a></li>
+                    <li><a routerLink="/solutions/Laundry Cleaning" class="footer-link">Laundry cleaning</a></li>
+                    <li><a routerLink="/solutions/Surface & Air Clean" class="footer-link">Surface & air clean</a></li>
+                </ul>
+
+                <div class="footer-certificates" aria-label="Certifications">
+                    <img class="certificate-img" src="assets/image/iso.png" alt="ISO certified" loading="lazy">
+                    <img class="certificate-img" src="assets/image/iaf.webp" alt="IAF accredited" loading="lazy">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copyright">© {{ currentYear }} Ennwin Industries Private Limited. All rights reserved.</p>
+            <ul class="footer-legal">
+                <li><a routerLink="/" fragment="privacy" class="footer-link">Privacy</a></li>
+                <li><a routerLink="/" fragment="terms" class="footer-link">Terms</a></li>
+            </ul>
+        </div>
+
+    </div>
+</footer>

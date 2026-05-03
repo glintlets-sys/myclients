@@ -36,13 +36,9 @@
                             </path>
                         </svg>
                     </div>
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Power of better
-                            living through
-                            advanced chemistry</h5>
-                        <p>Evochem is a pioneer in the cleaning industry, offering
-                            a comprehensive range of high-quality products that
-                            cater to a variety of needs across numerous industries.</p>
+                    <div class="carousel-caption">
+                        <h1 class="hero-headline">Power of better living through advanced chemistry</h1>
+                        <p>Evochem is a pioneer in the cleaning industry, offering a comprehensive range of high-quality products that cater to a variety of needs across numerous industries.</p>
                     </div>
                 </div>
                 <div class="carousel-item active">
@@ -78,12 +74,9 @@
                             </path>
                         </svg>
                     </div>
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Innovative Solutions for a Cleaner, Healthier Tomorrow</h5>
-                        <p>With an unwavering commitment to excellence and
-                            innovation, Trust Evochem to meet all your cleaning
-                            needs, where performance, safety, and sustainability
-                            are always top priorities.</p>
+                    <div class="carousel-caption">
+                        <h2 class="hero-headline">Innovative solutions for a cleaner, healthier tomorrow</h2>
+                        <p>With an unwavering commitment to excellence and innovation, trust Evochem to meet all your cleaning needs — where performance, safety, and sustainability are always top priorities.</p>
                     </div>
                 </div>
                 <div class="carousel-item">
@@ -119,12 +112,9 @@
                             </path>
                         </svg>
                     </div>
-                    <div class="carousel-caption  d-md-block">
-                        <h5>Next-Generation Chemicals for a Cleaner, Greener Future</h5>
-                        <p> With an unwavering commitment to excellence and
-                            innovation, Trust Evochem to meet all your cleaning
-                            needs, where performance, safety, and sustainability
-                            are always top priorities.</p>
+                    <div class="carousel-caption">
+                        <h2 class="hero-headline">Next-generation chemicals for a cleaner, greener future</h2>
+                        <p>ISO-certified formulations, MSDS-backed compliance, and food-safe chemistries — engineered for industrial-scale cleaning without compromise.</p>
                     </div>
                 </div>
             </div>
@@ -153,26 +143,25 @@
         </div>
         <div class="row" style="margin-top: 30px;">
             <div class="col-lg-4 col-md-6 col-sm-6 col-12" *ngFor="let slide of industries">
-                <div class="banner-btn-size-small">
-                    <div class="main-wrapp-img" >
-                        <div class="banner-image wd-bg-position-center" >
-                            <img class="promo-banner-image" [src]="slide.image" [alt]="slide.alt" [title]="slide.titleText" width="200" height="200" />
+                <a [routerLink]="['/categories', slide.id]" class="banner-btn-size-small industry-card-link" [attr.aria-label]="'Explore ' + slide.title + ' cleaning solutions'">
+                    <div class="main-wrapp-img">
+                        <div class="banner-image wd-bg-position-center">
+                            <img class="promo-banner-image" [src]="slide.image" [alt]="slide.alt || slide.title + ' industry cleaning'" [title]="slide.titleText" width="200" height="200" loading="lazy" />
                         </div>
                     </div>
-                    <div class="wrapper-content-banner " [routerLink]="['/categories', slide.id]">
-                        <div class="content-banner  ">
+                    <div class="wrapper-content-banner">
+                        <div class="content-banner">
                             <div class="wd-fontsize-xs">
-                                <h2>{{ slide.title }}</h2>
+                                <h3>{{ slide.title }}</h3>
                             </div>
                             <div class="banner-btn-wrapper">
-                                <div class="  wd-button-wrapper ">
-                                    <a [routerLink]="['/categories', slide.id]" class="  btn-color-primary   btn-size-small">Read
-                                        More</a>
+                                <div class="wd-button-wrapper">
+                                    <span class="btn-color-primary btn-size-small">Explore solutions →</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
            
         </div>
@@ -191,19 +180,17 @@
                         <div class="contmap">
                             <p>Driving positive impact across every sector</p>
                         </div>
-                        <img src="assets/image/aboutmap2.jpeg" alt="" />
+                        <img src="assets/image/aboutmap2.jpeg" alt="Evochem service coverage across India" loading="lazy" />
 
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="contentWeb">
-                        <div class="woodmart-text-block"> Pioneering Clean with </div>
-                        <div class="woodmart-text1">
-                            Advanced Chemistry <br> and Expert Support
-                        </div>
-                        <p> At Evochem, we are at the forefront of the cleaning industry, specializing in the manufacture of high-quality cleaning chemicals tailored for a diverse range of industries. Our products embody the pinnacle of performance, sustainability, and affordability, ensuring a seamless and effective cleaning experience for our clients.</p>
+                        <p class="woodmart-text-block eyebrow">Pioneering Clean with</p>
+                        <h3 class="woodmart-text1">Advanced Chemistry <br> and Expert Support</h3>
+                        <p>At Evochem, we are at the forefront of the cleaning industry, specializing in the manufacture of high-quality cleaning chemicals tailored for a diverse range of industries. Our products embody the pinnacle of performance, sustainability, and affordability, ensuring a seamless and effective cleaning experience for our clients.</p>
 
-                        <div class="woodmart-text-block">  Our Strategic Advantage </div>
+                        <h4 class="woodmart-text-block eyebrow">Our Strategic Advantage</h4>
                       
                         <p>Our commitment to excellence extends beyond just providing superior cleaning solutions. We prioritize Hygiene and
                             Safety Compliance Awareness by offering products and support services that ensure you meet and exceed industry
@@ -214,7 +201,7 @@
 
                     </div>
                     <div class="Rightsideimgpart">
-                        <img src="assets/image/easycleaning.png" style="width:100%" alt="" />
+                        <img src="assets/image/easycleaning.png" style="width:100%" alt="Easy cleaning workflow illustration" loading="lazy" />
                     </div>
                 </div>
 
@@ -226,15 +213,15 @@
               
                 <div class="col-lg-6">
                     <div class="contentWeb">
-                        <div class="woodmart-text-block"> Hygiene and Safety Compliance Awareness </div>
+                        <h3 class="woodmart-text-block">Hygiene and Safety Compliance Awareness</h3>
                         <p>
                         Wallcharts and accompanying signage offer a comprehensive visual reference
                         for the cleaning requirements of equipment and surfaces. Additionally,
                         providing all pertinent Material Safety Data Sheets (MSDS) ensures that your
                         business remains compliant with contemporary safety standards and maintains
-                        a secure operational environment
+                        a secure operational environment.
                     </p>
-                        <div class="woodmart-text-block">Our Services </div>
+                        <h3 class="woodmart-text-block">Our Services</h3>
                         <p>Evochem’s suite of support services enhances the value we bring to your business. Our chemical dilution and application equipment are engineered for user-friendliness and efficiency, ensuring precise and consistent operation for reliable outcomes. We provide comprehensive resources, including wallcharts and signage, to visually guide your cleaning practices. Additionally, our Material Safety Data Sheets (MSDS) help maintain your compliance with current safety standards, creating a secure operational environment.
 
                             Our dedicated support team, consisting of Technical Experts and Customer Support Advisors, is here to offer consultative guidance on all aspects of cleaning and hygiene. We assist with: </p>
@@ -253,7 +240,7 @@
                 </div>
                 <div class="col-lg-6">
                     <div class="Rightsideimg">
-                        <img src="assets/image/aboutus.png" alt="" />
+                        <img src="assets/image/aboutus.png" alt="Evochem product range and support services" loading="lazy" />
                     </div>
                 </div>
 

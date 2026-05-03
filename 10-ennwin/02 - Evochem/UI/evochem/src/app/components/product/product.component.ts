@@ -207,15 +207,28 @@ export class ProductComponent implements OnInit, AfterViewInit {
   }
 
 
-  phoneNumber: string = '917483837722'; // Replace with actual phone number
+  phoneNumber: string = '917483837722';
+  emailAddress: string = 'info@ennwin.in';
   whatsappURL: string = '';
-
+  emailURL: string = '';
+  telURL: string = '';
 
   buildWhatsAppLink(): void {
-    const baseMessage = `Hello, I'm interested in your ${this.selectedProduct?.code}. Can you provide more details?`;
+    const baseMessage = `Hello, I'm interested in your ${this.selectedProduct?.code} (${this.selectedProduct?.title}). Can you provide more details?`;
     const encodedMessage = encodeURIComponent(baseMessage);
     this.whatsappURL = `https://wa.me/${this.phoneNumber}?text=${encodedMessage}`;
+
+    const subject = encodeURIComponent(`Enquiry: ${this.selectedProduct?.code} - ${this.selectedProduct?.title}`);
+    const body = encodeURIComponent(
+      `Hello Evochem team,\n\nI'd like more information about ${this.selectedProduct?.code} (${this.selectedProduct?.title}).\n\nDetails I'd like to know:\n- Pricing and MOQ\n- Available packaging sizes\n- Lead time for delivery\n- MSDS / SDS document\n\nThank you.`
+    );
+    this.emailURL = `mailto:${this.emailAddress}?subject=${subject}&body=${body}`;
+    this.telURL = `tel:+${this.phoneNumber}`;
   }
 
+  /** MSDS / SDS download URL — placeholder route, swap to real PDF when available */
+  get msdsURL(): string {
+    return this.emailURL; // Until real MSDS PDFs are hosted, route the request through email.
+  }
 
 }
