@@ -680,14 +680,31 @@ body div.faq-section {
   text-shadow: 0 1px 12px rgba(0, 0, 0, 0.45);
 }
 
-/* "Explore solutions →" link — same treatment, slightly more
-   translucent so the title remains the focal point. */
+/* "Explore solutions" — ghost pill with subtle white border so it
+   reads as an interactive control instead of fading text. Fills
+   on hover for clear feedback. */
 .industry-card-link .btn-color-primary {
-  font-size: var(--evo-fs-sm);
-  color: rgba(255, 255, 255, 0.82);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.95rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.4);
-  transition: color var(--evo-fast) var(--evo-ease);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+  transition:
+    background var(--evo-fast) var(--evo-ease),
+    border-color var(--evo-fast) var(--evo-ease),
+    color var(--evo-fast) var(--evo-ease),
+    transform var(--evo-fast) var(--evo-ease);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -696,7 +713,11 @@ body div.faq-section {
     box-shadow: var(--evo-shadow-3);
   }
   .industry-card-link:hover .btn-color-primary {
-    color: #ffffff;
+    background: #ffffff;
+    border-color: #ffffff;
+    color: var(--evo-brand-deep);
+    text-shadow: none;
+    transform: translateX(2px);
   }
   .industry-card-link:hover h3 {
     color: #ffffff;
