@@ -1415,4 +1415,117 @@ body div.faq-section {
   .post-share { justify-content: flex-start; }
 }
 
+/* ================================================================
+   PHASE 5 — Navbar refinements (hamburger, button reset, CTA color)
+   ================================================================ */
+
+/* "Find a Solution" — reset native <button> chrome so it matches
+   the surrounding anchor links. Was inheriting browser default
+   border + grey background. */
+.main-header .sectionfixed .diVlink ul li button.menuItem {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  color: #133c6b;
+  cursor: pointer;
+  letter-spacing: inherit;
+  line-height: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  position: relative;
+}
+.main-header .sectionfixed .diVlink ul li button.menuItem::after {
+  content: '\25BE';                 /* small down chevron */
+  font-size: 0.7em;
+  margin-left: 0.15rem;
+  color: #133c6b;
+  opacity: 0.55;
+  transition: transform var(--evo-fast) var(--evo-ease), opacity var(--evo-fast) var(--evo-ease);
+}
+.main-header .sectionfixed .diVlink ul li.navWrapper.active button.menuItem::after,
+.main-header .sectionfixed .diVlink ul li button.menuItem[aria-expanded="true"]::after {
+  transform: rotate(-180deg);
+  opacity: 1;
+}
+.main-header .sectionfixed .diVlink ul li button.menuItem:hover {
+  color: var(--evo-brand);
+}
+.main-header .sectionfixed .diVlink ul li button.menuItem:hover::after {
+  color: var(--evo-brand);
+}
+
+/* Contact us CTA — switch from brand-green pill to navy outlined pill.
+   Navy (#133c6b) matches the rest of the navbar text and the legacy
+   primary; outline style keeps it understated next to plain links. */
+.main-header .sectionfixed .diVlink ul li a.nav-cta {
+  background: transparent;
+  color: #133c6b;
+  border: 1.5px solid #133c6b;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition:
+    background var(--evo-fast) var(--evo-ease),
+    color var(--evo-fast) var(--evo-ease),
+    border-color var(--evo-fast) var(--evo-ease),
+    transform var(--evo-fast) var(--evo-ease),
+    box-shadow var(--evo-mid) var(--evo-ease);
+}
+.main-header .sectionfixed .diVlink ul li a.nav-cta:hover {
+  background: #133c6b;
+  color: #fff;
+  border-color: #133c6b;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(19, 60, 107, 0.22);
+}
+.main-header .sectionfixed .diVlink ul li a.nav-cta.is-active {
+  background: #133c6b;
+  color: #fff;
+  border-color: #133c6b;
+}
+/* Drop the underline indicator on the CTA — pill shape is the indicator */
+.main-header .sectionfixed .diVlink ul li a.nav-cta.is-active::after {
+  display: none;
+}
+
+/* Hamburger — modern, slim, no border, brand-colored on hover */
+.main-header .sectionfixed button.menuba-r {
+  display: none;                     /* hidden on desktop, legacy rules show on mobile */
+  background: transparent;
+  border: 0;
+  padding: 8px;
+  margin: 0;
+  border-radius: var(--evo-r-sm);
+  cursor: pointer;
+  line-height: 0;
+  color: #133c6b;
+  transition: background var(--evo-fast) var(--evo-ease), color var(--evo-fast) var(--evo-ease);
+}
+.main-header .sectionfixed button.menuba-r i {
+  font-size: 18px;                   /* down from 25px */
+  line-height: 1;
+}
+.main-header .sectionfixed button.menuba-r:hover,
+.main-header .sectionfixed button.menuba-r:focus-visible {
+  background: var(--evo-brand-soft);
+  color: var(--evo-brand-deep);
+}
+.main-header .sectionfixed button.menuba-r:active {
+  background: var(--evo-brand-mid);
+}
+@media (max-width: 991px) {
+  .main-header .sectionfixed button.menuba-r {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 
