@@ -1,0 +1,69 @@
+.footer-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: nowrap; /* Ensures items don't wrap */
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.di-footer {
+    text-align: center;
+}
+
+.certificate-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    position: absolute;
+    right: 0; /* Position the certificate section on the right */
+    padding-right: 20px; /* Add some spacing from the right edge */
+}
+
+.certificate-img {
+    height: 100px;
+    width: auto;
+    margin-left: 20px;
+}
+
+
+.footer-section {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center; /* Center content */
+    padding: 20px; /* Add some padding */
+    background-color: #f8f8f8; /* Optional: background color */
+    justify-content: flex-end;
+}
+
+.footer-content {
+    margin-bottom: 50px; /* Space between footer content and certificate section */
+    text-align: center; /* Center text for better aesthetics */
+}
+
+.certificate-section {
+    display: flex; /* Use flexbox for the certificate section */
+    justify-content: center; /* Center the certificates horizontally */
+    flex-wrap: wrap; /* Allow certificates to wrap in smaller screens */
+    gap: 10px; /* Space between certificate images */
+}
+
+.certificate-img {
+    height: 100px; /* Set a consistent height */
+    width: auto; /* Maintain aspect ratio */
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+
+    .certificate-img {
+        height: 60px; /* Adjust certificate size for smaller screens */
+    }
+}

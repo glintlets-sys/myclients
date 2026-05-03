@@ -1,0 +1,64 @@
+.h2-heading {
+    font-size: 20px;
+}
+
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.3); /* Adjust opacity here */
+}
+
+.text-banner {
+    position: relative;
+    text-align: center; /* Center the text */
+    z-index: 1;
+}
+
+.p2-text {
+    font-size: 14px;
+}
+
+.page-title-default{
+   background-size: cover;
+   position: relative !important;
+   height: 500px;
+}
+
+.blog-container {
+    margin: 20px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 8px;
+   
+}
+.entry-title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+.section-title {
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+ 
+}
+
+.container-heading {
+    position: relative;
+    text-align: center;
+    padding: 20px;
+}
+
+.container-heading::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with 50% opacity */
+    z-index: 1; /* Ensures the background is behind the text */
+}

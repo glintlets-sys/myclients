@@ -1,0 +1,83 @@
+<div class="phoneview_menu">
+        
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+      <div class="offcanvas-header"> 
+          <div class="logo-imgphone" [routerLink]="['/']">
+              <img src="assets/image/logo.png" alt="" style="width: 150px;">
+          </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+         <div class="div-menulink-phone">
+          <ul>
+              <li><a [routerLink]="['/']" fragment="aboutus" data-bs-dismiss="offcanvas">About us</a></li>
+              <li><a [routerLink]="['/']" fragment="cleaningTips" data-bs-dismiss="offcanvas">Cleaning Tips & Insights</a></li>
+              <li><a routerLink="/contactus" data-bs-dismiss="offcanvas">Contact us</a></li>
+              <li><a>Industries</a>
+                <div class="div-ulsec" *ngFor="let industry of industries">
+                    <div (click)="navigateToCatgory(industry)" class="systumm-hai caret" data-bs-dismiss="offcanvas">
+                        <div class="div-name"> 
+                            <p>{{industry?.title}}</p>
+                        </div>
+                    </div> 
+                </div>
+            </li>
+            <li><a>Solutions</a>
+                <div class="div-ulsec" *ngFor="let cleaningType of cleaningAreas">
+                    <div (click)="navigateToSolutions(cleaningType.code)" class="systumm-hai caret" data-bs-dismiss="offcanvas">
+                        <div class="div-name"> 
+                            <p>{{cleaningType.area}}</p>
+                        </div>
+                    </div> 
+                </div>
+            </li>
+          </ul>
+         </div>
+      </div>
+    </div>
+</div>
+
+<div class="main-sectionapp container">
+    <div class="main-header">
+        <div class="sectionfixed">
+            <div class="imagelogo" [routerLink]="['/']">
+                <img src="assets/image/logo.png" alt="">
+            </div>
+            <div class="diVlink">
+                <ul>
+                   
+                        <li class="navWrapper" (click)="toggleActive()">
+                          <a class="menuItem">Find a Solution</a>
+                          <div *ngIf="isActive" class="slotWrap menuDropdownLg_animate">
+                            <div class="CatWrapper">
+                              <p class="plainText">By Industry</p>
+                              <div class="wrapper-sub1" *ngFor="let industry of industries">
+                                <a (click)="navigateToCatgory(industry)" class="subMenuItem" data-bs-dismiss="offcanvas">
+                                  <p class="subText-plainText">{{ industry.title }}</p>
+                                </a>
+                              </div>
+                            </div>
+                            <div class="CatWrapper">
+                              <p class="plainText">By Cleaning Area</p>
+                              <div class="wrapper-sub1" *ngFor="let cleaningType of cleaningAreas">
+                                <a (click)="navigateToSolutions(cleaningType.code)" class="subMenuItem" data-bs-dismiss="offcanvas">
+                                  <p class="subText-plainText">{{ cleaningType.area }}</p>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                     
+                      
+                    <li><a [routerLink]="['/']" fragment="aboutus">About us</a></li>
+                    <li><a [routerLink]="['/']" fragment="cleaningTips">Cleaning Tips & Insights</a></li>
+                    <li><a routerLink="/contactus">Contact us</a></li>
+                </ul>
+            </div>
+            <div class="menuba-r" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </div>
+</div>
+    

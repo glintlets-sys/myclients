@@ -1,0 +1,78 @@
+.link-section .accordion-body {
+    background: #ffffff;
+    padding-left: 10px  !important;
+}
+
+p {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding-left: 10px !important;
+}
+
+.accordion-header {
+    margin-bottom: 0;
+    margin-top: 1px !important;
+}
+
+.h4div {
+    color:blue;
+    font-weight: 400;
+    
+}
+
+.selected-bold {
+    font-weight: bolder;
+    color: #1767a6 !important;
+    
+}
+
+
+
+.submenu {
+    display: none; /* Hidden by default */
+    list-style: none;
+    padding-left: 20px;
+  }
+  
+  .submenu.show-submenu {
+    display: block; /* Show when the class is added */
+  }
+  
+  .menu-item {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .menu-item > a {
+    text-decoration: none;
+    color: black;
+  }
+  
+  .menu-item:hover > a {
+    color: blue; /* Change color on hover */
+  }
+  
+  .submenu li {
+    margin-top: 5px;
+  }
+  
+  .submenu li a {
+    color: black;
+    text-decoration: none;
+  }
+  
+  .submenu li a:hover {
+    color: blue;
+  }
+  
+  .accordion-button::after {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-left: auto;
+    content: "";
+    background-image: none; 
+    background-repeat: no-repeat;
+    background-size: 1.25rem;
+    transition: transform .2s ease-in-out;
+  }

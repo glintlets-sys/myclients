@@ -1,0 +1,171 @@
+
+
+<div class="page-title-default" [ngStyle]="{'background-image': 'url(' + 'assets/image/solutions/desktop-Jobs-to-be-done-banner_2x.webp' + ')'}">
+    <div class="container">
+        <h1 class="entry-title title">{{selectedSolutionType?.solutionType}}</h1>
+
+    </div>
+</div>
+<div class="container">
+
+    
+    <div class="bathroom-cleaning  ">
+        <div class="container-fluid">
+            <div class="div-containher">
+               
+                <div class="div-sectiond">
+                    <p class="focusare">{{selectedSolutionType?.title}}</p>
+                  
+                </div>
+                <p class="jobsTobeDoneBlwBannerText">{{selectedSolutionType?.description}}</p>
+                <!--<div class="downloadpdf">
+                    <div class="div-button">
+                        <img src="assets/image/solutions/pdf-icon.svg" alt="">
+                        <p>Download Restroom Cleaning Procedures</p>
+                    </div>
+                </div>-->
+                
+            </div>
+            <div id="sidenav">
+                <div class="row">
+                   
+                    <div class="col-lg-3">
+    
+                        <div class="leftside-linkw">
+                            <ul class="ul_list">
+                                <li *ngFor="let solution of selectedSolutionType?.solutions; let i = index" class="li_lst" (click)="selectSolution(solution)"> 
+                                    <p tabindex="0" [ngClass]="{'selected': selectedSolutionType.solutions[i].title === selectedSolution?.title}">{{i+1}}. {{ solution?.title }}</p>
+                                </li>
+                                
+                            </ul>
+                            <div class="phone-view-tabs">
+                                <select class="form-select" (change)="onSelectChange($event)">
+                                    <option *ngFor="let solution of selectedSolutionType?.solutions; let i = index" 
+                                            [value]="solution?.title" 
+                                            [ngClass]="{'selected': solution?.title === selectedSolution?.title}">
+                                      {{i+1}}. {{ solution?.title }}
+                                    </option>
+                                  </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <div *ngIf="selectedSolutionType?.solutionType === 'Bathroom Cleaning'" class="bathroom-cleaning pointer_section mt-0">
+                            <div class="div-sectiond m-0 p-0">
+                                <p style="color:orange">Select a number to learn how to best clean that area</p>
+                            </div>
+                            <div id="prodList">
+                                <div class="bannerSection  ">
+                                    <span style=" display: inline-block;    position: relative; ">
+                                        <span>
+                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                        </span>
+                                        <img src="assets/image/solutions/area.webp" class="bannerImage  ">
+                                    </span>
+                                    <div>
+                                        <button *ngFor="let solution of selectedSolutionType.solutions; let i = index"
+                                                [ngClass]="{'active': i === indexof(selectedSolution)}"
+                                                class="bannerButton-{{i}} bannerButtons"
+                                                type="button"
+                                                (click)="selectSolutionFromIndex(i)">
+                                          {{ i+1 }}
+                                        </button>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="selectedSolutionType?.solutionType == 'Commercial Kitchen Cleaning'" class="kitchen-cleaning pointer_section mt-0">
+                            <div id="prodList">
+                                <div class="bannerSection  ">
+                                    <span style=" display: inline-block;    position: relative; ">
+                                        <span>
+                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                        </span>
+                                        <img src="assets/image/solutions/11-focus-area-for-a-clean-and-Sanitary-kitchen_2x.webp"
+                                            class="bannerImage  ">
+                                    </span>
+                                    <div>
+                                        <button *ngFor="let num of selectedSolutionType.solutions; let i = index"
+                                                [ngClass]="{'active': i === indexof(selectedSolution)}"
+                                                class="bannerButton-{{i}} bannerButtons"
+                                                type="button"
+                                                (click)="selectSolutionFromIndex(i)">
+                                          {{ i+1 }}
+                                        </button>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="selectedSolutionType?.solutionType == 'Laundry Cleaning'" class="laundry-cleaning pointer_section mt-0">
+                            <div id="prodList">
+                                <div class="bannerSection  ">
+                                    <span style=" display: inline-block;    position: relative; ">
+                                        <span>
+                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                        </span>
+                                        <img src="assets/image/solutions/Desktop-Laundry-and-Linen-filter_2x.webp"
+                                            class="bannerImage  ">
+                                    </span>
+                                    <div>
+                                        <button *ngFor="let num of selectedSolutionType.solutions; let i = index"
+                                                [ngClass]="{'active': i === indexof(selectedSolution)}"
+                                                class="bannerButton-{{i}} bannerButtons"
+                                                type="button"
+                                                (click)="selectSolutionFromIndex(i)">
+                                          {{ i+1 }}
+                                        </button>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="selectedSolutionType?.solutionType == 'Surface & Air Clean'" class="surface-and-air-clean pointer_section mt-0">
+                            <div id="prodList">
+                                <div class="bannerSection  ">
+                                    <span style=" display: inline-block;    position: relative; ">
+                                        <span>
+                                            <img src="assets/image/solutions/downloadbg.svg" style="max-width: 100%; ">
+                                        </span>
+                                        <img src="assets/image/solutions/Desktop-Surface-and-Air-filter_2x.webp"
+                                            class="bannerImage  ">
+                                    </span>
+                                    <div>
+                                        <button *ngFor="let num of selectedSolutionType.solutions; let i = index"
+                                                [ngClass]="{'active': i === indexof(selectedSolution)}"
+                                                class="bannerButton-{{i}} bannerButtons"
+                                                type="button"
+                                                (click)="selectSolutionFromIndex(i)">
+                                          {{ i+1 }}
+                                        </button>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="">
+                           
+                                <div class="row p-0">
+                                    <div class="col-lg-10 col-12">
+                                        <p>{{selectedSolution?.description}}</p>
+                                    </div>
+                                    
+                                    <div class="col-lg-4 col-md-4 col-sm-6 col-12 p-0 m-1 product-card" *ngFor="let product of selectedSolution.products">
+                                            <div class="contentpro-sub" (click)="goToProductPage(getProduct(product))">
+                                                <div class="image">
+                                                    <img [src]="getProduct(product)?.thumbnail" alt="">
+                                                </div>
+                                                <div class="div-content"> 
+                                                    <h4>{{getProduct(product)?.title}}</h4>
+                                                    <p>{{getProduct(product)?.details?.description}}</p>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                           
+                         
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      
+    </div>
+</div>

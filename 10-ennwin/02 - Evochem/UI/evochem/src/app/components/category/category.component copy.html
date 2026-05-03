@@ -1,0 +1,147 @@
+<div class="page-title-default" [ngStyle]="{'background-image': 'url(' + selectedIndustry?.image + ')'}">
+    <div class="container">
+        <h1 class="entry-title title">{{selectedIndustry?.title}}</h1>
+    </div>
+</div>
+<div class="container">
+    <div class="diV-Mainproduct">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="leftslidebaR">
+                    <div class="link-section">
+                        <li class="li-drop" *ngFor="let industry of industries; let j = index">
+                            <div class="accordion accordion-flush" [id]="'accordionFlushExample' + j">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" [id]="'heading' + j">
+                                        <button class="accordion-button"
+                                            [ngClass]="{'collapsed': !isIndustrySelected(industry.id)}"
+                                            type="button" [attr.data-bs-toggle]="'collapse'"
+                                            [attr.data-bs-target]="'#flush-collapseone' + j"
+                                            aria-expanded="isIndustrySelected(industry.id)"
+                                            [attr.aria-controls]="'flush-collapseone' + j"
+                                            (click)="setSelectedIndustry(industry)">
+                                            <h3>{{industry?.title}}</h3>
+                                        </button>
+                                    </h2>
+                                    <div [id]="'flush-collapseone' + j" class="accordion-collapse collapse"
+                                        [ngClass]="{'show': isIndustrySelected(industry.id)}"
+                                        [attr.aria-labelledby]="'heading' + j">
+                                        <div class="accordion-body">
+                                            <div class="accordion accordion-flush" [id]="'nestedAccordion' + j">
+                                                <div class="accordion-item"
+                                                    *ngFor="let category of industry.categories; let i = index">
+                                                    <h2 class="accordion-header" [id]="'nestedHeading' + j + '-' + i">
+                                                        <button class="accordion-button"
+                                                            [ngClass]="{'collapsed': !isCategorySelected(category.id)}"
+                                                            type="button" [attr.data-bs-toggle]="'collapse'"
+                                                            [attr.data-bs-target]="'#nestedCollapse' + j + '-' + i"
+                                                            aria-expanded="isCategorySelected(category.id)"
+                                                            [attr.aria-controls]="'nestedCollapse' + j + '-' + i"
+                                                            (click)="selectCategory(category)">
+                                                            {{category.title}}
+                                                        </button>
+                                                    </h2>
+                                                    <div [id]="'nestedCollapse' + j + '-' + i"
+                                                        class="accordion-collapse collapse"
+                                                        [ngClass]="{'show': isCategorySelected(category.id)}"
+                                                        [attr.aria-labelledby]="'nestedHeading' + j + '-' + i">
+                                                        <div class="accordion-body">
+                                                            <div class="nested ml-4"
+                                                                *ngFor="let solution of category.solutions">
+                                                                <a href="" (click)="selectSolution(solution)" style="color: black;">
+                                                                    <p class="pr-4 pl-4">{{solution.name}}</p>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="RightslidebaR">
+                    <div class="content-Div">
+                        <h3 class="h3div">{{selectedIndustry?.title}}</h3>
+                        <p class="p-div">{{selectedIndustry?.description}}</p>
+
+                        <div class="new-release-tabsection">
+                            <div class="scrool-delevry">
+                                <ul class="nav nav-nav nav-tabs">
+                                    <li class="nav-item" *ngFor="let category of selectedIndustry?.categories">
+                                        <a (click)="selectCategory(category)"
+                                            [ngClass]="{'active': isCategorySelected(category.id)}"
+                                            class="nav-link" data-bs-toggle="tab">
+                                            {{category.title}}
+                                        </a>
+                                    </li>
+                                    <p class="p-div">{{selectedCategory?.description}}</p>
+                                </ul>
+                            </div>
+                        </div>
+                        <h4 class="h3div">Choose From Our Solutions</h4>
+                        <div class="new-release-tabsection">
+                            <div class="scrool-delevry">
+                                <ul class="nav nav-nav nav-tabs">
+                                    <li class="nav-item" *ngFor="let solution of selectedSolutions">
+                                        <a (click)="selectSolution(solution)"
+                                            [ngClass]="{'active': isSolutionSelected(solution.id)}"
+                                            class="nav-link" data-bs-toggle="tab">
+                                            {{solution.name}}
+                                        </a>
+                                    </li>
+                                    <p class="p-div">{{selectedSolution?.description}}</p>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="tab-content">
+                            <div *ngIf="selectedSolution === undefined" class="tab-pane show active"
+                                id="SurfaceCleaningSolutions">
+                                <div class="produt-mianshow">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-6 col-12"
+                                            *ngFor="let solution of selectedSolutions">
+                                            <div class="contentpro" (click)="selectSolution(solution)">
+                                                <div class="image">
+                                                    <img src="{{solution.picture}}" alt="">
+                                                </div>
+                                                <div class="div-content">
+                                                    <h4>{{solution.title}}</h4>
+                                                    <p>{{solution.description}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div *ngIf="selectedSolution !== undefined" class="tab-pane show active"
+                                id="SurfaceCleaningSolutions">
+                                <div class="produt-mianshow">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-4 col-sm-4 col-12"
+                                            *ngFor="let product of selectedSolution.products">
+                                            <div class="contentpro">
+                                                <div class="image">
+                                                    <img src="{{product.picture}}" alt="">
+                                                </div>
+                                                <div class="div-content">
+                                                    <h4>{{product.title}}</h4>
+                                                    <p>{{product?.details?.description}}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

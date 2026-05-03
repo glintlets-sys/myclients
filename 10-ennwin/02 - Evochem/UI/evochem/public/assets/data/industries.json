@@ -1,0 +1,265 @@
+[
+    {
+      "id": 1,
+      "title": "Commercial Building",
+      "image": "assets/image/CommercialBuildings.jpg",
+      "alt": "Commercial-Buildings1",
+      "titleText": "Commercial-Buildings1",
+      "description": "Our commercial building solutions offer a comprehensive range of services to maintain the highest standards of cleanliness, safety, and functionality. Whether it's office complexes, retail spaces, or corporate headquarters, our solutions are designed to create a clean and professional environment that enhances the overall experience for both employees and visitors.",
+      "solutions": [
+        {
+          "title": "Evo Housekeeping Solutions",
+          "picture":"assets/image/cateback1.webp",
+          "products": ["EVO 4", "EVO 1", "EVO 2", "EVO 3", "EVO 5", "EVO 6", "EVO 9", "EVO 7", "EVO 101", "EVO SP", "EVO 103", "EVO ZAP"]
+        },
+        {
+          "title": "Lush Personal Care",
+          "picture":"assets/image/cateback3.webp",
+          "products": ["Lush Foamy", "Lush Fresh", "Lush Pearl", "Lush Care Gel", "Lush Care Rub"]
+        }
+      ],
+      "categories": [
+        {
+            "title": "Office Spaces",
+            "picture":"",
+            "description": "Our tailored cleaning and maintenance services are designed to meet the unique needs of Office Spaces & Commercial buildings. From routine cleaning to specialized services, we ensure that your building remains in top condition, providing a safe and welcoming atmosphere for everyone." 
+        },
+        {
+            "title": "Education",
+            "picture":"",
+            "description": "Maintaining a clean and healthy educational environment is crucial for the well-being and productivity of students and staff. Our solutions for educational institutions are designed to create safe and sanitary spaces that foster learning and growth."
+        },
+        {
+            "title": "Place of Worship",
+            "picture":"",
+            "description": "Places of worship require special care and attention to maintain their sanctity and cleanliness. Our services are designed to uphold the sacred atmosphere of these spaces, ensuring they remain welcoming and serene for all who visit."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Food And Beverages Processing",
+      "image": "assets/image/FoodProcessing.jpg",
+      "alt": "FoodProcessing",
+      "titleText": "FoodProcessing",
+      "description": "In the food and beverage industry, cleanliness and hygiene are non-negotiable. Our specialized solutions help maintain the highest standards of safety and sanitation, ensuring that your products are processed in a clean and compliant environment.",
+      "solutions":[
+        {
+          "title": "Open Plant Cleaning",
+          "picture":"assets/image/cateback1.webp",
+          "products": ["Neutrox Foam", "Alkalox Foam", "Acidox Foam", "Clastox Foam", "Chlorox Foam", "Clastox Plus", "Sanix Duo"]
+        },
+        {
+          "title": "Lush Personal Care",
+         "picture":"assets/image/cateback3.webp",
+          "products": ["Lush Care", "Lush Care Plus", "Lush Care Rub", "Lush Care Gel"]
+        },
+        {
+          "title": "Clean in Place (CIP)",
+          "picture":"assets/image/dairy.jpg",
+          "products": ["Clastox 50"]
+        },
+        {
+          "title": "Sanitization",
+          "picture":"assets/image/wipe.jpg",
+          "products": ["Sanix Quat", "Sanixol", "Sanix Peraxy"]
+        },
+        {
+          "title": "Bottle Cleaning",
+          "picture":"assets/image/bottles.jpg",
+          "products": ["Clastox 50"]
+        }
+      ],
+      "categories": [
+        {
+            "title": "Brewery & Distilleries",
+            "picture":"",
+            "description": "Our services for breweries and distilleries focus on maintaining the cleanliness and hygiene of production areas, ensuring that your products are crafted in a pristine environment that meets industry standards."
+            
+        },
+        {
+            "title": "Beverage Processing",
+            "picture":"",
+            "description": "Beverage processing facilities require meticulous attention to cleanliness and safety. Our solutions are designed to uphold these standards, helping you deliver high-quality products to your customers."
+           
+        },
+        {
+            "title": "Dairy Processing",
+            "picture":"",
+            "description": "Dairy processing demands strict hygiene practices to ensure the safety and quality of products. Our services ensure that your dairy processing environment is clean, compliant, and efficient."
+           
+        },
+        {
+            "title": "Meat and Sea food Processing",
+            "picture":"",
+            "description": "The meat and seafood processing industry requires rigorous cleanliness and sanitation standards. Our solutions help you maintain these standards, ensuring that your products are processed in a safe and hygienic environment."
+           
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Manufacturing and Warehousing",
+      "image": "assets/image/Manufacturing&Warehouse.jpg",
+      "alt": "Manufacturing&Warehouse",
+      "titleText": "Manufacturing&Warehouse",
+      "description": "Efficiency and cleanliness are key in manufacturing and warehousing. Our services help you maintain a safe, clean, and organized workspace that maximizes productivity and ensures compliance with industry standards.",
+      
+        "solutions": [
+          {
+            "title": "Evo Housekeeping Solutions",
+            "picture":"assets/image/cateback1.webp",
+            "products": ["EVO 4", "EVO 1", "EVO 2", "EVO 3", "EVO 5", "EVO 6", "EVO 9", "EVO 7", "EVO 101", "EVO SP", "EVO 103", "EVO ZAP"]
+          },
+          {
+            "title": "Lush Personal Care",
+           "picture":"assets/image/cateback3.webp",
+            "products": ["Lush Foamy", "Lush Fresh", "Lush Pearl", "Lush Care Gel", "Lush Care Rub"]
+          }
+        ],
+    
+      
+      "categories": [
+        {
+            "title": "Factories",
+            "picture":"",
+            "description": "Factories need to operate smoothly and safely. Our cleaning and maintenance services are tailored to keep your factory clean, safe, and running efficiently, minimizing downtime and maximizing output."
+            
+        },
+        {
+            "title": "Cold Storage",
+            "picture":"",
+            "description": "Maintaining the cleanliness and temperature of cold storage facilities is critical to preserving the quality of perishable goods. Our solutions ensure your cold storage is kept in optimal condition, protecting your inventory and ensuring compliance."
+            
+        },
+        {
+            "title": "Warehouses",
+            "picture":"",
+            "description": "A clean and well-organized warehouse is essential for efficient operations. Our services help you maintain a safe and productive warehouse environment, ensuring that your goods are stored and handled with care."
+            
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Hospitality And Food Service",
+      "image": "assets/image/Hospitality&FoodService.png",
+      "alt": "Hospitality&FoodService",
+      "titleText": "Hospitality&FoodService",
+      "description": "In the hospitality and food service industry, first impressions are everything. Our comprehensive cleaning solutions ensure that your establishment is spotless, creating a welcoming environment that leaves a lasting impression on your guests.",
+      "solutions": [
+          {
+            "title": "Evo Housekeeping Solutions",
+            "picture":"assets/image/cateback1.webp",
+            "products": ["EVO 4", "EVO 1", "EVO 2", "EVO 3", "EVO 5", "EVO 6", "EVO 9", "EVO 7", "EVO 101", "EVO SP", "EVO 103", "EVO ZAP"]
+          },
+          {
+            "title": "Lush Personal Care",
+            "picture":"assets/image/cateback3.webp",
+            "products": ["Lush Foamy", "Lush Fresh", "Lush Pearl", "Lush Care Gel", "Lush Care Rub"]
+          },
+          {
+            "title": "Blaze Kitchen Care",
+            "picture":"assets/image/kitchen.jpg",
+            "products": ["Blaze Multi", "Blaze Kitchen Care", "Blaze Auto", "Blaze Rinse", "Blaze Dish", "Blaze Drain", "Blaze Tab", "Blaze Grill", "Blaze Dip"]
+          },
+          {
+            "title": "Flox Laundry Care Products",
+            "picture":"assets/image/cateback4.webp",
+            "products": ["Flox", "Flox Star", "Flox Build", "Flox", "Star Powder", "Flox Sour", "Flox Soft Care", "Flox Rinse"]
+          }
+        ],      
+      "categories": [
+        {
+            "title": "Hotels",
+            "picture":"",
+            "description": "Hotels require meticulous cleaning to ensure guest satisfaction and repeat business. Our solutions cover everything from guest rooms to common areas, ensuring a pristine environment throughout your property."
+            
+        },
+        {
+            "title": "Lodging",
+            "picture":"",
+            "description": "For lodging facilities, cleanliness is key to providing a comfortable stay for guests. Our services help you maintain high standards of hygiene, ensuring your guests feel welcome and safe."
+            
+        },
+        {
+            "title": "Quick Service Restaurants",
+            "picture":"",
+            "description": "Quick service restaurants need to maintain high levels of cleanliness and efficiency. Our tailored cleaning services help you keep your establishment clean, compliant, and ready to serve customers quickly and safely."
+            
+        },
+        {
+            "title": "Cloud Kitchens",
+            "picture":"",
+            "description": "Cloud kitchens require strict cleanliness to operate efficiently and safely. Our solutions are designed to keep your kitchen clean, organized, and ready for service, ensuring food safety and quality."
+            
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Health Care Facility",
+      "image": "assets/image/HealthCareFacility.jpg",
+      "alt": "HealthCareFacility",
+      "titleText": "HealthCareFacility",
+      "description": "Health care facilities demand the highest standards of cleanliness and sanitation to ensure the safety of patients and staff. Our specialized cleaning solutions help maintain a sterile and safe environment, crucial for preventing infections and promoting healing.",
+      "solutions": [
+          {
+            "title": "Evo Housekeeping Solutions",
+            "picture":"assets/image/cateback1.webp",
+            "products": ["EVO 4", "EVO 1", "EVO 2", "EVO 3", "EVO 5", "EVO 6", "EVO 9", "EVO 7", "EVO 101", "EVO SP", "EVO 103", "EVO ZAP"]
+          },
+          {
+            "title": "Lush Personal Care",
+           "picture":"assets/image/cateback3.webp",
+            "products": ["Lush Foamy", "Lush Fresh", "Lush Pearl", "Lush Care Gel", "Lush Care Rub"]
+          },
+          {
+            "title": "Blaze Kitchen Care",
+            "picture":"assets/image/kitchen.jpg",
+            "products": ["Blaze Multi", "Blaze Kitchen Care", "Blaze Auto", "Blaze Rinse", "Blaze Dish", "Blaze Drain", "Blaze Tab", "Blaze Grill", "Blaze Dip"]
+          },
+          {
+            "title": "Flox Laundry Care Products",
+            "picture":"assets/image/cateback4.webp",
+            "products": ["Flox", "Flox Star", "Flox Build", "Flox", "Star Powder", "Flox Sour", "Flox Soft Care", "Flox Rinse"]
+          },
+          {
+            "title": "Sanitization",
+            "picture":"assets/image/wipe.jpg",
+            "products": ["Sanix Quat", "Sanixol"]
+          }
+        ],      
+      "categories": [
+        {
+            "title": "Health Care Facility",
+            "picture":"",
+            "description": "In health care, maintaining a sterile environment is critical. Our cleaning services are designed to meet the stringent hygiene standards required in health care facilities, ensuring a safe and clean space for patient care."
+            
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Commercial Laundries",
+      "image": "assets/image/CommercialLaundries.jpg",
+      "alt": "CommercialLaundries",
+      "titleText": "CommercialLaundries",
+      "description": "Commercial laundries require efficient and reliable cleaning processes to handle large volumes of laundry. Our solutions are tailored to keep your laundry operations running smoothly, ensuring clean and fresh results every time.",
+      "solutions": [
+        {
+          "title":"Flox Laundry Care Products",
+          "picture":"assets/image/cateback4.webp",
+          "products":["Flox", "Flox Star", "Flox Build", "Flox", "Star Powder", "Flox Sour", "Flox Soft Care", "Flox Rinse"]
+        }
+      ],
+      "categories": [
+        {
+            "title": "Commercial Laundries",
+            "picture":"",
+            "description": "Our services for commercial laundries are designed to ensure the cleanliness and efficiency of your operations. From maintaining equipment to optimizing cleaning processes, we help you deliver consistently high-quality results."
+            
+        }
+      ]
+    }
+]

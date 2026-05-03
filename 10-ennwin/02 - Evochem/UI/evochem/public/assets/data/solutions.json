@@ -1,0 +1,536 @@
+[{
+    "Novel Industrial Hygiene Products": [
+      {
+        "id": 1,
+        "code": "Novel HD",
+        "title": "Heavy Duty Floor Cleaner",
+        "details": {
+          "description": "Potent heavy-duty cleaner designed to tackle the most stubborn soils, greasy oil, and mineral deposits. Its advanced formulation is effective on heavily soiled floors, breaking down and removing tough stains such as tar, grease, and carbon. The cleaner is formulated for maximum effectiveness at lower concentrations, minimizing product waste and maximizing cleaning efficiency. Whether you're dealing with industrial spills, stubborn grease stains, or heavy traffic, Novel HD delivers powerful cleaning results.",
+          "dilution": "2% to 5% (20 ml to 50 ml in 1 liter of water) depending on soil."
+        }
+      },
+      {
+        "id": 2,
+        "code": "Novel OGR",
+        "title": "Oil Grease Remover",
+        "details": {
+          "description": "Floor cleaner that excels at removing grease, oil, and water-soluble dirt, thanks to its low-foam formulation. This powerful cleaning solution provides rapid, high-emulsifying action, breaking down stubborn stains and spills quickly and effectively. Its efficient cleaning properties make Novel OGR an ideal choice for busy commercial environments such as restaurants, workshops, and factories, where a low-foam solution is desired for safety and ease of use.",
+          "dilution": "2% to 5% (20 ml to 50 ml in 1 liter of water) depending on soil."
+        }
+      },
+      {
+        "id": 3,
+        "code": "Lush Power",
+        "title": "Heavy Duty Handwash",
+        "details": {
+          "description": "Powerful hand wash that removes stubborn oils, soils, and greases while being gentle on skin. It retains natural moisture and is suitable for sensitive skin or those seeking an antibacterial-free solution. Ideal for mechanics, handymen, or anyone who needs to wash away heavy-duty dirt regularly.",
+          "dilution": "Ready to use"
+        }
+      }
+    ]
+  },
+  
+    {
+        "Flox Laundry Care Products": [
+          {
+            "id": 1,
+            "code": "Flox",
+            "title": "Pre-Wash Detergent",
+            "details": {
+              "description": "Blend of surfactants that effectively emulsifies and lifts oils, fat, and grease from fabrics. It can be used as a pre-wash detergent or in combination with other detergents for enhanced cleaning power.",
+              "dilution": "2 to 4 ml/kg of dry cloths"
+            }
+          },
+          {
+            "id": 2,
+            "code": "Flox Star",
+            "title": "Main Wash Detergent",
+            "details": {
+              "description": "Highly concentrated synthetic detergent that contains a powerful blend of surface-active agents and anti-redeposition agents. It effectively releases even the toughest stains and heavy soils from fabrics, leaving them fresh, bright, and thoroughly clean. Safe to use on all water-washable fabrics in hot and cold water temperatures.",
+              "dilution": "5 to 15 ml/kg of dry cloth"
+            }
+          },
+          {
+            "id": 3,
+            "code": "Flox Build",
+            "title": "Liquid Heavy Duty Detergent",
+            "details": {
+              "description": "Powerful alkaline laundry builder featuring biodegradable surfactants. It works by increasing the pH of the wash water, effectively loosening and emulsifying stubborn greasy, oily, and fatty stains. Can be used as a standalone detergent or combined with Flox Star for enhanced stain removal.",
+              "dilution": "5 to 15 ml/kg of dry cloths"
+            }
+          },
+          {
+            "id": 4,
+            "code": "Flox",
+            "title": "Laundry Chlorine Destainer",
+            "details": {
+              "description": "Powerful chlorine-based destainer specifically designed for industrial laundry machines. Its potent formula effectively removes stains from white linen without damaging the fabric.",
+              "dilution": "3 to 15 ml/kg of dry cloth"
+            }
+          },
+          {
+            "id": 5,
+            "code": "Star Powder",
+            "title": "Laundry Detergent Powder",
+            "details": {
+              "description": "Designed to provide deep cleaning of fabrics. Its unique blend of surfactants and builders, combined with cutting-edge technology, allows Star Powder to quickly and efficiently suspend oily particulates, prevent their redeposition, and deliver exceptional cleaning results. Effective in removing tough stains and maintaining fabric quality.",
+              "dilution": "5 to 15 g/kg of dry cloths"
+            }
+          },
+          {
+            "id": 6,
+            "code": "Flox Sour",
+            "title": "Laundry Neutralizing Agent",
+            "details": {
+              "description": "Liquid laundry neutralizer that adjusts pH levels to prevent fabric yellowing. Added to the final rinse, it neutralizes alkalinity and bleach residue. Keeps fabrics vibrant, soft, and fresh, protecting clothes from damage.",
+              "dilution": "5 to 15 ml/kg of dry cloth"
+            }
+          },
+          {
+            "id": 7,
+            "code": "Flox Soft Care",
+            "title": "Concentrated Fabric Softener",
+            "details": {
+              "description": "Specialized fabric softener formulated to soften laundered fabrics and reduce static cling. Ensures clothes are comfortable, fresh, and reduces rigidity, aiding in the ironing process. Leaves fabric soft and fresh.",
+              "dilution": "2 ml/kg of dry cloths"
+            }
+          },
+          {
+            "id": 8,
+            "code": "Flox Rinse",
+            "title": "Laundry Neutralizing Agent",
+            "details": {
+              "description": "Mildly acidic powder designed to neutralize the pH level of the final wash cycle and reduce alkalinity in fabrics. Prevents unwanted yellowing of fabrics and ensures clothes are soft, fresh, and protected from damage.",
+              "dilution": "5 to 15 g/kg of dry clothes"
+            }
+          }
+        ],
+        "Food and Beverages Processing Products": [
+          {
+            "id": 9,
+            "code": "Neutrox Foam",
+            "title": "Multipurpose Detergent",
+            "details": {
+              "description": "Versatile, colorless, odorless, and multi-purpose detergent that effectively cleans various surfaces in food processing industries, dairies, poultry, and more. Its alkali-free formulation provides a convenient solution for many general cleaning applications like floors, walls, utensils, and equipment.",
+              "dilution": "2% to 5% (20 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 10,
+            "code": "Alkalox Foam",
+            "title": "High Foaming Alkaline Detergent",
+            "details": {
+              "description": "High-foaming alkaline detergent engineered with advanced surfactant blends to create a high foam that clings to surfaces. Ideal for use in the food industry, including dairies, meat processing plants, and preserved food facilities. Tackles tough, industry-specific soils.",
+              "dilution": "2% to 5% (20 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 11,
+            "code": "Acidox Foam",
+            "title": "High Foaming Acidic Detergent",
+            "details": {
+              "description": "Powerful, high-foaming acidic detergent specifically formulated to meet the stringent cleaning requirements of the food and beverage industry. Effectively removes scales, particulate matter, and inorganic soils.",
+              "dilution": "2% to 5% (20 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 12,
+            "code": "Chlorox Foam",
+            "title": "Chlorinated Alkaline Cleaner",
+            "details": {
+              "description": "Chlorinated alkaline cleaner with high chlorine concentration, ideal for daily cleaning in the food industry. Its exceptional foaming ability effectively removes various soils in food processing, meat, dairy, and vegetable processing. Functions as a 2-in-1 cleaner and sanitizer.",
+              "dilution": "1% to 5% (10 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 13,
+            "code": "Clastox Foam",
+            "title": "High Foaming Alkaline Detergent",
+            "details": {
+              "description": "High-foaming alkaline detergent with advanced surfactants for high foam production. Excels at removing food industry soils like dairy, meat, and preserved foods due to its excellent wetting, chelating, and degreasing properties.",
+              "dilution": "2% to 5% (20-50 ml per 1 liter of water) depending on soil level."
+            }
+          },
+          {
+            "id": 14,
+            "code": "Sanix Duo",
+            "title": "High Performance Cleaner cum Sanitizer",
+            "details": {
+              "description": "Versatile detergent cum sanitizer for food, beverage, and dairy industries. Combines quaternary ammonium biocides, surfactants, and sequestering agents for exceptional cleaning and antibacterial efficacy, even in hard water. Removes tough soils and kills a broad spectrum of bacteria.",
+              "dilution": "2% to 5% (20 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 15,
+            "code": "Sanix Peraxy",
+            "title": "Paracetic Acid Based Sanitizer",
+            "details": {
+              "description": "Clear liquid oxidizing sanitizer for the food industry, formulated with peracetic acid, hydrogen peroxide, and acetic acid. Eliminates a broad spectrum of microorganisms, including bacteria, spores, and viruses, ensuring high-level sanitation for pre-cleaned surfaces.",
+              "dilution": "0.1% to 3% v/v depending on the volume."
+            }
+          },
+          {
+            "id": 16,
+            "code": "Clastox Plus",
+            "title": "Low Foaming Heavy Duty Alkaline Detergent",
+            "details": {
+              "description": "Powerful, concentrated alkaline liquid detergent tailored for heavy-duty cleaning operations, particularly CIP, bottlewashing, and smoke chamber cleaning. Its robust formula breaks down high fat and stubborn soils while withstanding hard water conditions.",
+              "dilution": "0.5% to 5% (5 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 17,
+            "code": "Clastox 50",
+            "title": "High Performance Alkaline Detergent",
+            "details": {
+              "description": "Potent alkaline liquid detergent specially engineered for heavy-duty cleaning. Provides exceptional scale prevention and hard water resistance while effectively penetrating into stubborn soils, animal fats, and milk residues.",
+              "dilution": "0.5% to 5% (5 ml to 50 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 18,
+            "code": "Sanix Quat",
+            "title": "Broad Spectrum Sanitizer",
+            "details": {
+              "description": "Concentrated, non-foaming sanitizer designed for industrial and food processing use. Contains a blend of quaternary ammonium compounds, providing broad-spectrum antibacterial and antiviral activity to ensure effective sanitation.",
+              "dilution": "0.1% to 0.5% (1 ml to 5 ml in 1 liter of water) depending on soil."
+            }
+          },
+          {
+            "id": 19,
+            "code": "Sanixol",
+            "title": "Alcohol-Based Sanitizer",
+            "details": {
+              "description": "Alcohol-based sanitizer formulated in combination with Quaternary Ammonium Compound (QAC) for fast-acting, residue-free sanitization of food processing surfaces. Its unique formulation provides rapid sanitization, essential for food safety and hygiene, with broad-spectrum activity against both gram-positive and gram-negative bacteria, eliminating microorganisms without the need for rinsing.",
+              "dilution": "Ready to Use"
+            }
+          }
+        ]
+      },      
+    {
+        "Lush Personal Care Products": [
+          {
+            "id": 1,
+            "code": "Lush Foamy",
+            "title": "Foaming Hand Wash",
+            "details": {
+              "description": "Mild yet effective hand wash that is suitable for frequent hand washing in various settings. Its formulation ensures that even with repeated use, your skin is feeling clean, refreshed, and hydrated, thanks to its blend of cleansing agents and gentle moisturizers. Whether you're at home, work, or on-the-go, Lush Foamy is an ideal choice.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 2,
+            "code": "Lush Fresh",
+            "title": "General Hand Wash",
+            "details": {
+              "description": "High-end hand wash for refined tastes. Delightful fragrance and gentle formula remove dirt and germs while maintaining skin's natural moisture, leaving hands smooth and soft. Ideal for frequent hand washing, elevating hygiene to a luxurious experience.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 3,
+            "code": "Lush Power",
+            "title": "Heavy Duty Hand Wash",
+            "details": {
+              "description": "Powerful hand wash designed for tough cleaning jobs. Its robust formulation ensures effective removal of heavy soils and contaminants, making it ideal for environments where hand cleanliness is paramount.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 4,
+            "code": "Lush Care",
+            "title": "General Hand Wash",
+            "details": {
+              "description": "High-end hand wash for refined tastes. Delightful fragrance and gentle formula remove dirt and germs while maintaining skin's natural moisture, leaving hands smooth and soft. Ideal for frequent hand washing, elevating hygiene to a luxurious experience.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 5,
+            "code": "Lush Pearl",
+            "title": "Pearl Luxury Hand Wash",
+            "details": {
+              "description": "Luxurious hand wash designed to offer a premium experience. Its sophisticated formulation provides a rich lather and a delightful fragrance while ensuring that hands remain clean, soft, and hydrated.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 6,
+            "code": "Lush Care Plus",
+            "title": "Antibacterial Hand Wash",
+            "details": {
+              "description": "Antibacterial hand wash, tailored specifically for personnel working in food processing plants, pharmaceutical facilities, and food service industries. It contains no added colors or perfumes, ensuring effective hygiene without any additional additives.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 7,
+            "code": "Lush Care Gel",
+            "title": "Gel-Based Hand Sanitizer",
+            "details": {
+              "description": "Quick-drying, waterless hand sanitizer designed to rapidly eliminate common pathogens without the need for soap and water. Its unique, moisturizing formulation not only effectively kills germs but also nourishes and protects skin, preventing dryness and irritation often associated with alcohol-based hand sanitizers. Available in gel form.",
+              "dilution": "Ready to use"
+            }
+          },
+          {
+            "id": 8,
+            "code": "Care Rub",
+            "title": "Liquid Hand Sanitizer",
+            "details": {
+              "description": "Quick-drying, waterless hand sanitizer designed to rapidly eliminate common pathogens without the need for soap and water. Its unique, moisturizing formulation not only effectively kills germs but also nourishes and protects skin, preventing dryness and irritation often associated with alcohol-based hand sanitizers.",
+              "dilution": "Ready to use"
+            }
+          }
+        ]
+      },      
+    {
+        "Evo Housekeeping Solutions": [
+          {
+            "id": 1,
+            "code": "EVO 4",
+            "title": "Furniture Maintainer",
+            "details": {
+              "description": "Bring new life to your wooden furniture, cupboards, and fixtures with our protective spray, forming a defensive layer that restores a radiant shine. For use on non-food contact surfaces, this product keeps your wood surfaces looking their best while ensuring a safe and durable finish.",
+              "dilution": "Ready To Use"
+            }
+          },
+          {
+            "id": 2,
+            "code": "EVO 1",
+            "title": "Bathroom Cleaner",
+            "details": {
+              "description": "Powerful bathroom cleaner uses organic acid to cut through tough stains like dirt, soap scum, and lime deposits on porcelain, plastic, and stainless steel surfaces. It also removes hard water scale and lime buildup, making it ideal for frequently used restrooms.",
+              "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) depending on soil."
+            }
+          },
+          {
+            "id": 3,
+            "code": "EVO 2",
+            "title": "Hard Surface Cleaner",
+            "details" : {
+              "description": "Powerful and routine cleaning solution with our non-abrasive hard surface cleaner, carefully formulated to be slightly alkaline and safe for use on all types of hard surfaces, from floors and walls to countertops and fixtures, making it the perfect choice for maintaining a clean and pristine environment.",
+              "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) depending on soil."
+            }
+            
+          },
+          {
+            "id": 4,
+            "code": "EVO 3",
+            "title": "Glass Cleaner Concentrate",
+            "details": {
+              "description": "Get a crystal-clear shine on windows, mirrors, and glass surfaces with our potent and gentle cleaner, which effectively removes dirt, dust, fingerprints, and haze without leaving residue, making it perfect for delicate surfaces and everyday cleaning needs.",
+              "dilution": "2% to 10% (20ml to 100ml in 1ltr of water) Depending on soil."
+            }
+            
+          },
+          {
+            "id": 5,
+            "code": "EVO 5",
+            "title": "Air Freshener",
+            "details": {
+              "description": "Convenient air freshener designed to neutralize unpleasant odors in any room. The product's unique formula contains odor counteractants that eliminate unwanted smells while releasing a fresh, inviting fragrance into the air, providing a clean and pleasant atmosphere.",
+              "usage": "Ready To Use"
+            }
+            
+          },
+          {
+            "id": 6,
+            "code": "EVO 6",
+            "title": "Toilet Bowl Cleaner",
+            "details": {
+              "description": "Convenient thick toilet bowl cleaner designed to cling to the bowl's surface for maximum cleaning power. Its potent formula quickly dissolves tough stains and deposits, leaving your entire toilet bowl shining and deodorized in no time. The product's unique consistency allows for even application, ensuring efficient removal of stubborn stains and buildup.",
+              "usage": "Ready To Use"
+            }
+           
+          },
+          {
+            "id": 7,
+            "code": "EVO 9",
+            "title": "Heavy Duty Descaler",
+            "details": {
+               "description": "Potent descaling solution that is highly effective in dissolving and eliminating tough scale and scum buildup on tiles and ceramics. Evo 9 can be used as a deep cleaner once in a while and can be used daily with higher concentration.",
+               "dilution": "2% to 10% (20ml to 100ml in 1ltr of water) Depending on soil."
+            }
+           
+          },
+          {
+            "id": 8,
+            "code": "EVO 7",
+            "title": "Neutral Floor Cleaner",
+            "details": {
+                "description": "Versatile and effective cleaner suitable for both manual and machine-based cleaning methods. Our neutral pH formula effectively removes dirt and grime without leaving unwanted residues or marks. Suitable for daily maintenance.",
+                "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) Depending on soil."
+            }
+           
+          },
+          {
+            "id": 9,
+            "code": "EVO 101",
+            "title": "Carpet Shampoo",
+            "details": {
+                "description": "Effective and gentle carpet shampoo, offering a high foaming action for deep cleaning carpets and rugs. Can be used with dry shampoo machines and applicators and also be applied by brush or sponge to a variety of surfaces. To optimize results, vacuuming the carpet after drying is recommended.",
+                "dilution": "2% to 10% (20ml to 100ml in 1ltr of water) Depending on soil."
+            }
+            
+          },
+          {
+            "id": 10,
+            "code": "EVO SP",
+            "title": "Steel Polish",
+            "details": {
+                "description": "Bring back the brilliance of stainless steel with our polish, carefully crafted to resist fingerprints and corrosion. For non-food contact surfaces only, reveals a glossy finish, perfect for revitalizing stainless steel in your home or office.",
+                "usage": "Ready To Use"
+            }
+            
+          },
+          {
+            "id": 11,
+            "code": "EVO 103",
+            "title": "Prespotter",
+            "details": {
+                "description": "Powerful prespotter concentrated blend of surfactant, cleaners, and wetting agents, designed to quickly and effectively tackle stubborn stains on carpets and fabrics. This versatile product serves as an effective pre-treatment and spot remover for heavily soiled areas, preparing them for thorough extraction by machine cleaning.",
+                "usage": "Ready to Use"
+            }
+            
+          },
+          {
+            "id": 12,
+            "code": "EVO ZAP",
+            "title": "Multi Purpose Cream Cleaner",
+            "details": {
+                "description": "Powerful all-purpose cream cleaner, boasting a unique formula that effortlessly tackles even the toughest stains. Whether it's removing hard water scales, rust stains, soap scum, or heavy soil buildup, this versatile product can handle a variety of cleaning challenges on bathroom fittings, stainless steel, ceramic surfaces, and fiberglass, leaving behind a sparkling clean finish.",
+                "usage": "Ready to Use"
+            }
+            
+          }
+        ]
+      },
+      
+    {
+        "Kitchen Care Products": [
+          {
+            "id": 1,
+            "code": "Blaze Multi",
+            "title": "Multipurpose Detergent",
+            "details": {
+              "description": "Versatile, neutral pH cleaner, specifically designed for a variety of surfaces, including floors, walls, utensils, and more. With its balanced pH, the product is safe for use on different materials without damaging their surfaces, making it ideal for general cleaning. Whether you're cleaning by hand or using a machine, Blaze Multi is a perfect all-purpose solution for keeping your workspace looking its best.",
+              "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) depending on soil."
+            }
+          },
+          {
+            "id": 2,
+            "code": "Blaze Kitchen Care",
+            "title": "Dishwashing Detergent",
+            "details": {
+              "description": "Gentle and powerful dishwashing detergent, specifically formulated to cut through tough food and greasy soils. With its balanced pH, the product is safe for use on various types of dishware, cutlery, and cookware, while its advanced detergent system provides quick and effective cleaning performance. Blaze Dish is an ideal choice for sparkling clean results.",
+              "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) depending on soil."
+            }
+          },
+          {
+            "id": 3,
+            "code": "Blaze Auto",
+            "title": "Automatic Dish Wash",
+            "details": {
+              "description": "High-performance, low-foaming detergent specifically engineered for automatic dishwashers. With its unique formulation, Blaze Auto can effortlessly eliminate even the toughest stains with just a single wash cycle, making it the ideal solution for busy households and commercial kitchens. When used in conjunction with Blaze Rinse, this powerful duo ensures spotless results, although it is not recommended to use on soft metals such as aluminum.",
+              "dilution": "3 to 5ml in 1 ltr of water."
+            }
+          },
+          {
+            "id": 4,
+            "code": "Blaze Rinse",
+            "title": "Rinse",
+            "details": {
+              "description": "Maximize Blaze Auto's cleaning power with Blaze Rinse, a highly effective rinse additive for automatic dishwashing machines. Together, they deliver spotless, streak-free results and tackle tough stains. Blaze Rinse also neutralizes mineral deposits and removes residue, ensuring sparkling clean dishes even in low-temperature machines with hard water.",
+              "dilution": "0.2 to 0.5ml in 1 ltr of water at a temperature of 80 to 90°C."
+            }
+          },
+          {
+            "id": 5,
+            "code": "Blaze Dish",
+            "title": "Manual Dish Wash",
+            "details": {
+              "description": "Fast-acting chlorine-based tablet, designed to sanitize food contact surfaces, equipment, and vegetables with ease. Formulated with a unique, stabilized blend of active ingredients, Blaze Tab delivers powerful, broad-spectrum sanitization capabilities, regardless of water hardness. This effective, reliable product ensures that food preparation and storage areas remain clean, safe, and bacteria-free.",
+              "dilution": "General Sanitization - 1 Tablet in 5ltr of water. Vegetable Sanitization - 1 Tablet in 20ltr of water."
+            }
+          },
+          {
+            "id": 6,
+            "code": "Blaze Drain",
+            "title": "Liquid Drain Cleaner",
+            "details": {
+              "description": "Non-acidic drain cleaner and maintainer. This liquid formula effectively breaks down sludge build-up caused by grease, fats, paper, tobacco, soap scum, toothpaste, and more, thus preventing slow-flowing drains and clogs. Regular use of Blaze Drain ensures the optimal functioning of your drains without the harshness of corrosive acids.",
+              "dilution": "Ready To Use"
+            }
+          },
+          {
+            "id": 7,
+            "code": "Blaze Tab",
+            "title": "Chlorine Tablets",
+            "details": {
+              "description": "Fast-acting chlorine-based tablet, designed to sanitize food contact surfaces, equipment, and vegetables with ease. Formulated with a unique, stabilized blend of active ingredients, Blaze Tab delivers powerful, broad-spectrum sanitization capabilities, regardless of water hardness. This effective, reliable product ensures that food preparation and storage areas remain clean, safe, and bacteria-free.",
+              "dilution": "General Sanitization - 1 Tablet in 5ltr of water. Vegetable Sanitization - 1 Tablet in 20ltr of water."
+            }
+          },
+          {
+            "id": 8,
+            "code": "Blaze Grill",
+            "title": "Oven & Grill Cleaner",
+            "details": {
+              "description": "Highly effective cleaner designed to cut through tough grease, oil, and carbon deposits in the kitchen, including on electric burners, grills, frying pans, deep fat fryers, ovens, and range hoods. Its robust formula makes it ideal for heavy-duty cleaning tasks, ensuring your kitchen appliances and surfaces remain clean and hygienic.",
+              "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) depending on soil. For heavy deposits use directly."
+            }
+          },
+          {
+            "id": 9,
+            "code": "Blaze Dip",
+            "title": "Liquid Destainer",
+            "details": {
+              "description": "Powerful chlorine-based destainer, formulated to eliminate stains caused by water hardness, burnt food residues, and other persistent marks on cups, crockery, and kitchenware. Whether used manually by pre-soaking or with a dosing pump, this versatile product effectively dissolves tough stains, restoring the pristine appearance of even the most stubbornly soiled items.",
+              "dilution": "4% to 10% (40ml to 100ml in 1 ltr water) depending on soil."
+            }
+          },
+          {
+            "id": 10,
+            "code": "Blaze Multi Plus",
+            "title": "Concentrated Kitchen Care",
+            "details": {
+              "description": "Versatile, concentrated solution that cuts through tough grease, oil, fats, and food soils, effectively cleaning a wide range of kitchen surfaces including utensils, crockery, pans, floors, and walls.",
+              "dilution": "2% to 5% (20ml to 50ml in 1ltr of water) Depending on soil."
+            }
+          }
+        ]
+      },
+      
+    {
+        "id": 1,
+        "title": "Evo Housekeeping Solutions",
+        "description": "Whatever your cleaning needs and challenges, Evochem can help. We offer a complete housekeeping end-to-end solutions"
+    },
+    {
+        "id": 2,
+        "title": "Blaze Kitchen Care",
+        "description": "Evochem offers a comprehensive range of cleaning solutions to maintain your kitchen cleanliness and hygiene"
+    },
+    {
+        "id": 3,
+        "title": "Lush Personal Care",
+        "description": "Gentle, effective, and nourishing. Cleans and moisturizes your hands. Trust Evochem for personal care."
+    },
+    {
+        "id": 4,
+        "title": "Flox Laundry Care",
+        "description": "Brighten Your Whites with Evochem. Our powerful yet gentle products boost the brightness and whiteness of your laundry, delivering a spotless, sparkling clean with every wash."
+    },
+    {
+        "id": 5,
+        "title": "Food and Beverages Processing",
+        "description": "Discover the power of Evochem's cutting-edge cleaning and hygiene solutions expertly crafted to transform your plant into a beacon of productivity, safety, and sparkling cleanliness"
+    },
+    {
+        "id": 6,
+        "title": "Novel Industrial Hygiene",
+        "description": "We are specialists in tackling tough cleaning challenges, offering effective solutions for highly accumulated oil and greasy surfaces, so you can trust us to keep your facility clean, safe, and running smoothly."
+    }
+]
+
+

@@ -1,0 +1,664 @@
+ /* Default hidden dropdown */
+.slotWrap {
+	display: none;
+	opacity: 0;
+	transition: opacity 0.5s ease;
+}
+
+.navWrapper.active .slotWrap {
+	display: flex;
+	opacity: 1;
+}
+
+/* Existing styles */
+.menuDropdownLg_animate {
+	animation-duration: .5s;
+	animation-name: menuDropdownLg;
+	max-height: calc(100vh - 160px);
+	overflow-y: auto;
+	position: absolute;
+	margin-top: 8px;
+	background: white;
+	padding: 10px;
+	box-shadow: 0px 0px 20px #e3e3e3;
+}
+
+
+.CatWrapper {
+	min-width: 185px;
+}
+
+.CatWrapper .plainText {
+	margin-bottom: 6px;
+	color: rgb(2 65 130);
+	font-weight: 700;
+	font-size: 18px;
+}
+
+.CatWrapper .wrapper-sub1 .subText-plainText {
+	margin-bottom: 4px;
+	font-size: 15px;
+	color: black;
+}
+
+.CatWrapper .wrapper-sub1 .subText-plainText:hover {
+	color: rgb(2 65 130);
+}
+
+.div-background-image1 {
+	position: relative;
+	overflow: hidden;
+}
+
+.div-background-image1:before {
+	background-image: linear-gradient(transparent, rgba(0, 0, 0, .7));
+	content: "";
+	display: block;
+	height: 100%;
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+}
+
+.div-background-image1 .image {
+	width: 100%;
+	height: 300px;
+	position: relative;
+}
+
+.div-background-image1 .image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.div-background-image1 .image h2 {
+	position: absolute;
+	bottom: 15%;
+	left: 50%;
+	transform: translate(-50%, 15%);
+	z-index: 1;
+	color: white;
+	font-weight: 800;
+}
+
+
+#prodList {
+	display: flex;
+	margin-bottom: 10px;
+}
+
+.bannerSection {
+	position: relative;
+}
+
+.bannerSection .bannerImage {
+	position: absolute;
+	inset: 0px;
+	width: 100%;
+	height: 100%;
+	border-radius: 10px;
+	margin-bottom: 20px;
+}
+
+.bannerButtons {
+	display: none;
+}
+
+.bathroom-cleaning {
+	margin: 10px 0px 10px 0px;
+}
+
+.bathroom-cleaning .div-containher p {
+	font-size: 14px;
+	color: black;
+	margin-bottom: 6px;
+}
+
+.bathroom-cleaning .div-containher {
+	max-width: 700px;
+	margin: 0px auto 30px;
+	text-align: center;
+}
+
+.bathroom-cleaning .div-containher .downloadpdf .div-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #e7e7e7;
+	width: fit-content;
+	margin: 10px auto 10px;
+	padding: 10px 30px;
+	border-radius: 10px;
+	gap: 10px;
+	align-items: center;
+	cursor: pointer;
+}
+
+.bathroom-cleaning .div-containher .downloadpdf .div-button img {
+	width: 18px;
+}
+
+.bathroom-cleaning .div-containher .downloadpdf .div-button p {
+	font-size: 18px;
+	margin-bottom: 0px;
+}
+
+.bathroom-cleaning .div-containher .div-sectiond .focusare {
+	font-size: 22px;
+	color: #003e7d;
+}
+
+.leftside-linkw {
+	position: sticky;
+	top: 100px;
+	width: 100%;
+}
+
+.leftside-linkw .ul_list {
+	display: block;
+	margin-bottom: 0px;
+	padding-left: 15px;
+	list-style: none;
+}
+
+.leftside-linkw .ul_list .li_lst {
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+
+.leftside-linkw .ul_list .li_lst p {
+	margin-bottom: 0px;
+	font-size: 18px;
+	font-weight: 800;
+	color: black;
+	cursor: pointer;
+}
+ 
+  
+  .leftside-linkw .ul_list .li_lst p:hover, 
+  .leftside-linkw .ul_list .li_lst p:focus {
+	color: #004283; 
+	outline: none;  
+  }
+  
+  .leftside-linkw .ul_list .li_lst p:target {
+	color: #004283; 
+  }
+  .phone-view-tabs{
+	display: none;
+  } 
+ .phone-view-tabs .form-select:hover {
+	background-color: inherit;  
+	color: inherit;            
+	outline: none;             
+	box-shadow: none;   
+	border-color: inherit;
+  } 
+.div-second_section {
+	padding: 20px 0px;
+}
+
+.div-second_section p {
+	font-size: 16px;
+	color: black;
+}
+
+.div-second_section .productTiles {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 20px;
+}
+
+.div-second_section .productTiles .div-product-card {
+	border: 1px solid #004283;
+	border-radius: 8px;
+}
+
+.div-second_section .productTiles .div-product-card .image {
+	height: 150px;
+	margin: 15px 0px;
+	overflow: hidden;
+}
+
+.div-second_section .productTiles .div-product-card .image img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	transition: .6s;
+}
+
+.div-second_section .productTiles .div-product-card:hover .image img {
+	transform: scale(1.1);
+}
+
+.div-second_section .productTiles .div-product-card .div-containw {
+	padding: 10px 20px 20px 20px;
+	text-align: center;
+}
+
+.div-second_section .productTiles .div-product-card .div-containw h3 {
+	color: #004283;
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.div-second_section .productTiles .div-product-card .div-containw p {
+	font-size: 16px;
+	color: black;
+	margin-bottom: 0px;
+}
+
+.div-second_section .productTiles .div-product-card .div-containw .ratting {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	margin: 10px 0px 20px 0px;
+}
+
+.div-second_section .productTiles .div-product-card .div-containw .ratting i {
+	color: orange;
+	font-size: 18px;
+}
+
+.div-second_section .productTiles .div-product-card .div-containw .div-button-view {
+	background: #004283;
+	color: white;
+	padding: 7px 20px;
+	width: 100%;
+	margin: auto;
+	border-radius: 20px;
+}
+
+.div-second_section .productTiles .div-product-card .div-containw .div-button-view:hover {
+	background: transparent;
+	border: 1px solid #004283;
+	color: #004283;
+}
+
+.full_with-seectionw {
+	padding: 20px 0px 10px 0px;
+}
+
+.full_with-seectionw .jobs-professionalwrapper {
+	background: rgb(1 63 126);
+	padding: 30px 40px 40px 40px;
+	margin-bottom: 20px;
+}
+
+.full_with-seectionw .jobs-professionalwrapper h3 {
+	font-size: 25px;
+	color: white;
+	margin-bottom: 23px;
+	text-align: center;
+	font-weight: 700;
+}
+
+.full_with-seectionw .ProfessionalSubSection {
+	display: grid;
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+	gap: 20px;
+	max-width: 1172px;
+    margin: auto;
+}
+
+.full_with-seectionw .ProfessionalSubSection .ProfessionalJanCard {
+	text-align: center;
+	background: white;
+	padding: 30px 0px;
+	border-radius: 10px;
+}
+
+.full_with-seectionw .ProfessionalSubSection .ProfessionalJanCard img {
+	width: 60px;
+	height: 60px;
+	object-fit: contain;
+}
+
+.full_with-seectionw .ProfessionalSubSection .ProfessionalJanCard p {
+	margin-bottom: 0px;
+	color: rgb(1 62 124);
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.full_with-seectionw .ProfessionalSubSection .ProfessionalJanCard p:hover {
+	color: rgb(1 118 196);
+}
+
+.related-brand-footer {
+	padding: 30px 40px 10px 40px;
+}
+
+.related-brand-footer .headin_g {
+	position: relative;
+	text-align: center;
+	margin-bottom: 35px;
+}
+
+.related-brand-footer .headin_g:after {
+	transform: translateX(-50%);
+	transition: width 3s;
+	width: 80px;
+	background-color: rgb(255 215 2);
+	bottom: -10px;
+	content: "";
+	height: 5px;
+	left: 50%;
+	position: absolute;
+}
+
+.related-brand-footer .headin_g h2 {
+	font-size: 30px;
+    font-weight: 800;
+}
+
+.related-brand-footer .ProfessionalbrandSection {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 20px;
+	max-width: 1172px;
+    margin: auto;
+}
+
+.related-brand-footer .ProfessionalbrandSection .Professionalbrands {
+	text-align: center;
+	background: white;
+	padding: 0px 0px;
+	border-radius: 10px;
+	border: 1px solid #003f7e8d;
+	height: 120px;
+	overflow: hidden;
+
+}
+
+.related-brand-footer .ProfessionalbrandSection .Professionalbrands:hover img {
+	transform: scale(1.3);
+}
+
+.related-brand-footer .ProfessionalbrandSection .Professionalbrands img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	transition: .6s linear;
+}
+.helphul-section{
+	max-width: 1172px;
+	margin: 30px auto 40px;
+}
+.helphul-section .tittle-headings{
+	text-align: center;
+	color: rgb(0 64 130);
+    font-size: 30px;
+    font-weight: 800;
+	padding-bottom: 20px;
+}
+.helphul-section .swiper-wrapper{
+	margin-bottom: 10px;
+}
+.helphul-section .section-help-cont{
+	padding: 30px;
+}
+.helphul-section .section-help-cont .image{
+	text-align: center;
+}
+.helphul-section .section-help-cont .image .set-imgd{
+	max-width: 300px;
+    height: 100%;
+    margin: 0px auto 15px;
+}
+.helphul-section .section-help-cont .image img{
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+.helphul-section .section-help-cont .image h3{
+	color: rgb(0 64 130);
+    font-size: 20px;
+    font-weight: 800;
+}
+.helphul-section .section-help-cont .image p{
+	font-size: 17px;
+	color: black;
+}
+
+@media (min-width: 993px) {
+
+	.div-background-image1 .image {
+		height: 25vw;
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-0 {
+		bottom: 10%;
+		left: 0;
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-1 {
+		bottom: 55%;
+		left: 2%;
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-2 {
+		bottom: 30%;
+		left: 20%
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-3 {
+		bottom: 60%;
+		left: 25%
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-4 {
+		bottom: 10%;
+		left: 35%
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-5 {
+		bottom: 70%;
+		left: 35%
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-6 {
+		bottom: 70%;
+		left: 45%
+	}
+
+	.bathroom-cleaning .bannerSection .bannerButton-7 {
+		bottom: 40%;
+		left: 65%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-0 {
+		bottom: 42%;
+		left: 15%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-1 {
+		bottom: 50%;
+		left: 25%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-2 {
+		bottom: 27%;
+		left: 36%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-3 {
+		bottom: 61%;
+		left: 40%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-4 {
+		bottom: 80%;
+		left: 47%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-5 {
+		bottom: 38%;
+		left: 42%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-6 {
+		bottom: 33%;
+		left: 50%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-7 {
+		bottom: 68%;
+		left: 56%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-8 {
+		bottom: 70%;
+		left: 78%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-9 {
+		bottom: 39%;
+		left: 71%
+	}
+
+	.kitchen-cleaning .bannerSection .bannerButton-10 {
+		bottom: 23%;
+		left: 78%
+	}
+
+	.laundry-cleaning .bannerSection .bannerButton-0 {
+		bottom: 48%;
+		left: 5%
+	}
+
+	.laundry-cleaning .bannerSection .bannerButton-1 {
+		bottom: 60%;
+		left: 20%
+	}
+
+	.laundry-cleaning .bannerSection .bannerButton-2 {
+		bottom: 65%;
+		left: 30%
+	}
+
+	.laundry-cleaning .bannerSection .bannerButton-3 {
+		bottom: 70%;
+		left: 74%
+	}
+
+	.surface-and-air-clean .bannerSection .bannerButton-0 {
+		bottom: 20%;
+		left: 15%
+	}
+
+	.surface-and-air-clean .bannerSection .bannerButton-1 {
+		bottom: 78%;
+		left: 30%
+	}
+
+	.surface-and-air-clean .bannerSection .bannerButton-2 {
+		bottom: 42%;
+		left: 42%
+	}
+
+	.surface-and-air-clean .bannerSection .bannerButton-3 {
+		bottom: 2%;
+		left: 58%
+	}
+
+	.surface-and-air-clean .bannerSection .bannerButton-4 {
+		bottom: 18%;
+		left: 88%
+	}
+
+
+}
+
+@media (min-width: 1024px) {
+	#sidenav {
+		width: 100%;
+	}
+
+	.bannerButtons.active,
+	.bannerButtons:focus {
+		background: #006fba 0 0 no-repeat padding-box;
+	}
+
+	.bannerButtons {
+		display: block;
+		background: #003e7e 0 0 no-repeat padding-box;
+		border-radius: 9999px;
+		border-width: 1px;
+		color: rgba(255, 255, 255, 1);
+		height: 46px;
+		width: 46px;
+		position: absolute;
+	}
+}
+
+@media (min-width: 1400px) {
+
+	.div-background-image1 .image {
+		height: 32vw;
+	}
+}
+
+
+@media (max-width: 1024px) {
+	.full_with-seectionw .ProfessionalSubSection {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+
+	.related-brand-footer .ProfessionalbrandSection {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+	.pointer_section{
+		display: none;
+	}
+}
+ 
+
+@media (max-width: 767px) {
+	.phone-view-tabs{
+		display: block;
+	}
+	.leftside-linkw .ul_list {
+		display: none;
+	}
+	.bathroom-cleaning .div-containher .downloadpdf .div-button p {
+		font-size: 14px;
+	}
+
+	.bathroom-cleaning .div-containher {
+		width: 100%;
+	}
+
+	.div-second_section .productTiles {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.full_with-seectionw .ProfessionalSubSection {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.related-brand-footer .ProfessionalbrandSection {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.full_with-seectionw .jobs-professionalwrapper {
+		padding: 30px 10px 40px 10px;
+	}
+
+	.related-brand-footer {
+		padding: 30px 10px 10px 10px;
+	}
+
+	.full_with-seectionw .jobs-professionalwrapper h3 {
+		font-size: 25px;
+	}
+}
+@media (max-width: 500px) {
+	.div-second_section .productTiles {
+		grid-template-columns: repeat(1, minmax(0, 1fr));
+	}
+}

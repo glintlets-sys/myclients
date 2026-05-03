@@ -1,0 +1,124 @@
+<div class="page-title-default" style="background-image: url(assets/image/kitchen-clean.webp);">
+    <div class="overlay"></div> <!-- Dark overlay -->
+    <div class="container">
+        <h1 class="entry-title title">Contact Us</h1>
+        
+    </div>
+</div>
+
+<section class="small-section get-in-touch">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 ">
+                <div class="contact-img" style="text-align: center;">
+                <img src="assets/image/washing.webp" class="img-fluid" alt=""> </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="log-in">
+                    <div class="mb-4 text-start">
+                        <h2>Let's Get In Touch</h2>
+                    </div>
+                    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="row gx-3">
+                        <div class="form-group col-md-12">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="icon" width="1em" height="1em" viewBox="0 0 24 24" data-v-cf1ec82f="">
+                                            <path fill="currentColor" d="M9.775 12q-.9 0-1.5-.675T7.8 9.75l.325-2.45q.2-1.425 1.3-2.363T12 4q1.475 0 2.575.938t1.3 2.362l.325 2.45q.125.9-.475 1.575t-1.5.675h-4.45Zm0-2h4.45L13.9 7.6q-.1-.7-.637-1.15T12 6q-.725 0-1.263.45T10.1 7.6L9.775 10ZM12 10ZM4 20v-2.8q0-.85.438-1.563T5.6 14.55q1.55-.775 3.15-1.163T12 13q1.65 0 3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20H4Zm2-2h12v-.8q0-.275-.138-.5t-.362-.35q-1.35-.675-2.725-1.012T12 15q-1.4 0-2.775.338T6.5 16.35q-.225.125-.363.35T6 17.2v.8Zm6 0Z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <input formControlName="fullName" type="text" class="form-control" placeholder="Enter your name" required>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="icon" width="1em" height="1em" viewBox="0 0 256 256" data-v-cf1ec82f="">
+                                            <path fill="currentColor" d="m222.37 158.46l-47.11-21.11l-.13-.06a16 16 0 0 0-15.17 1.4a8.12 8.12 0 0 0-.75.56L134.87 160c-15.42-7.49-31.34-23.29-38.83-38.51l20.78-24.71c.2-.25.39-.5.57-.77a16 16 0 0 0 1.32-15.06v-.12L97.54 33.64a16 16 0 0 0-16.62-9.52A56.26 56.26 0 0 0 32 80c0 79.4 64.6 144 144 144a56.26 56.26 0 0 0 55.88-48.92a16 16 0 0 0-9.51-16.62ZM176 208A128.14 128.14 0 0 1 48 80a40.2 40.2 0 0 1 34.87-40a.61.61 0 0 0 0 .12l21 47l-20.67 24.74a6.13 6.13 0 0 0-.57.77a16 16 0 0 0-1 15.7c9.06 18.53 27.73 37.06 46.46 46.11a16 16 0 0 0 15.75-1.14a8.44 8.44 0 0 0 .74-.56L168.89 152l47 21.05h.11A40.21 40.21 0 0 1 176 208Z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <input formControlName="mobileNumber" placeholder="+91 7042246217" class="form-control" type="tel" maxlength="10" required>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group col-md-6">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" class="icon" width="1em" height="1em" viewBox="0 0 24 24" data-v-cf1ec82f="">
+                                            <path fill="currentColor" d="M4 20q-.825 0-1.413-.588T2 18V6q0-.825.588-1.413T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.588 1.413T20 20H4Zm8-7L4 8v10h16V8l-8 5Zm0-2l8-5H4l8 5ZM4 8V6v12V8Z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <input formControlName="email" type="email" class="form-control" placeholder="Email address" required>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group col-md-6">
+                            <input formControlName="businessName" type="text" class="form-control" placeholder="Business Name" required>
+                        </div>
+                    
+                        <div class="form-group col-md-6">
+                            <input formControlName="industry" type="text" class="form-control" placeholder="Industry" required>
+                        </div>
+                    
+                        <div class="form-group col-md-12">
+                            <div class="input-group">
+                                <textarea formControlName="message" class="form-control" cols="30" rows="5" placeholder="Message"></textarea>
+                            </div>
+                        </div>
+                    
+                        <div class="col-md-12 submit-btn">
+                            <button class="btn-gradient" style="padding: 8px 15px;" type="submit">Send Your Message</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div id="contacts">
+    <div class="container">
+        <div class="row" style="margin-bottom: 40px;">
+      
+            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="div-infocontact">
+                    <div class="div-ff">
+                        <div class="icon">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
+                        <div class="spacecont1">
+                            <div class="text">
+                                India
+                            </div>
+                            <div class="summery">
+                                ENNWIN INDUSTRIES PRIVATE LIMITED <br/>
+                                M/s. Sannuthi Shubharam Estate<br/>
+                                #170/1, Marsur Gate, Anekal, Bengaluru - 562106.<br/>
+                                Mobile : 7483837722, 9663538037 I E-mail: info"&#64;"ennwin.in
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+          
+        </div>
+        <div class="row" id="contactss"> 
+            <div class=" col-lg-12 col-md-12 form-contact-color text-left">
+            <div class="image-in-to-iid" style="text-align: center;">
+              <!-- <img src="./img/contactusimageone.png" alt="" class="vert-move" style="height: 380px;"> -->
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3891.1202861278366!2d77.69818641132991!3d12.77069958747445!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae6f42b33f7f7b%3A0xf772e38ff2255fb7!2sEnnwin%20Industries%20Private%20Limited!5e0!3m2!1sen!2sin!4v1725386124448!5m2!1sen!2sin" width="100%" frameborder="0" style="border:0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+              
+            </div>
+            </div>
+            </div>
+    </div>
+</div>

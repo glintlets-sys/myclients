@@ -1,0 +1,177 @@
+[
+     {
+      "id": 1,
+      "solutionType": "Bathroom Cleaning",
+      "code": "BathroomCleaning",
+      "description": "Bathrooms are among the most challenging and essential spaces to maintain. Regular cleaning is crucial to keep them fresh, hygienic, and odor-free. Evochem offers tailored solutions to ensure your bathrooms stay spotless.",
+      "title": "8 Key Areas to Focus on When Cleaning Bathrooms",
+      
+        "solutions": [
+          {
+            "title": "Countertop & Backsplash",
+            "description": "Clean countertops and backsplashes create a pristine and polished look for any kitchen or bathroom. Keep these high-traffic areas spotless with products designed to tackle grease, stains, and spills, ensuring a clean and inviting surface.",
+            "products": ["EVO 1"]
+          },
+          {
+            "title": "Glass & Mirrors",
+            "description": "Sparkling clean glass and mirrors are a reflection of your attention to great customer experiences. Keep these highly visible areas spot-free with glass cleaners or save money with multi-purpose products for mirrors and other surfaces.",
+            "products": ["EVO 3"]
+          },
+          {
+            "title": "Sinks & Faucets",
+            "description": "Shining sinks and faucets are essential for maintaining a hygienic and clean space. Tackle water stains, soap scum, and grime with products that leave these frequently used fixtures sparkling clean and sanitized.",
+            "products": ["EVO 1", "EVO SP"]
+          },
+          {
+            "title": "Hand Soap",
+            "description": "Hand hygiene is vital for a safe and healthy environment. Stock up on high-quality hand soaps that provide effective cleaning while being gentle on the skin, ensuring a pleasant and hygienic experience for users.",
+            "products": ["Lush Foamy", "Lush Fresh", "Lush Pearl"]
+          },
+          {
+            "title": "Floors",
+            "description": "Clean, shiny floors are the foundation of a well-maintained space. Whether it's tile, wood, or laminate, keep floors looking spotless and inviting with floor cleaners that remove dirt and stains effortlessly.",
+            "products": ["EVO 2", "EVO 7"]
+          },
+          
+          {
+            "title": "Door Stall",
+            "description": "Well-maintained door stalls reflect your commitment to cleanliness. Ensure these areas stay hygienic with the right products to clean and maintain touchpoints.",
+            "products": ["EVO SP","EVO 2", "EVO 7"]
+          },
+	  {
+            "title": "Dispensers",
+            "description": "Well-maintained dispensers reflect your commitment to cleanliness. Ensure these areas stay hygienic with the right products to clean and maintain touchpoints.",
+            "products": ["EVO SP", "EVO 2", "EVO 7"]
+          },
+          {
+            "title": "Toilets & Urinals",
+            "description": "A sparkling clean toilet and urinal create a hygienic and welcoming environment. Use effective cleaning products to tackle stains, odors, and bacteria, ensuring a fresh and sanitized space.",
+            "products": ["EVO 6"]
+          }
+        ]
+      },
+      
+    {
+      "id": 2,
+      "solutionType": "Commercial Kitchen Cleaning",
+      "code": "KitchenCleaning",
+      "description": "For optimal performance and hygiene, ovens should be cleaned weekly. Always ensure the oven is fully cooled before starting the process. Evochem provides efficient solutions for all your kitchen cleaning needs.",
+      "title": "10 Key Areas to Focus on for a Spotless Kitchen",
+      "solutions": [
+          {
+            "title": "Oven",
+            "description": "A clean oven ensures even cooking and better-tasting meals. Use specialized oven cleaners to remove baked-on grease and grime, making your cooking space ready for the next culinary adventure.",
+            "products": ["Blaze Grill"]
+          },
+          {
+            "title": "Degreasing",
+            "description": "Effective degreasing products are essential for tackling tough grease and grime in kitchens. Keep your cooking spaces pristine by using powerful degreasers designed to cut through stubborn residues.",
+            "products": ["Blaze Kitchen Care", "Blaze Multi", "Blaze Grill"]
+          },
+          {
+            "title": "Floor",
+            "description": "Sparkling clean floors create a welcoming environment. Whether it’s tile, wood, or laminate, keep floors looking spotless and inviting with the right cleaning solutions that remove dirt and stains effortlessly.",
+            "products": ["Blaze Multi"]
+          },
+          {
+            "title": "Cooler and Refrigerator",
+            "description": "Maintaining a clean cooler and refrigerator is vital for food safety. Regularly clean and sanitize these appliances to prevent odors and cross-contamination, ensuring your food stays fresh and safe.",
+            "products": ["Blaze Multi"]
+          },
+          {
+            "title": "Freezer",
+            "description": "A well-maintained freezer helps keep your food fresh for longer. Regular cleaning prevents ice buildup and odors, making your freezer efficient and ready for storage.",
+            "products": ["Blaze Multi"]
+          },
+          {
+            "title": "Cutting Boards",
+            "description": "Keeping cutting boards clean is crucial for food hygiene. Use appropriate cleaners to sanitize surfaces and remove any lingering odors, ensuring a safe food preparation area.",
+            "products": ["Blaze Tab"]
+          },
+          {
+            "title": "Countertops",
+            "description": "Clean countertops are essential for food preparation and aesthetics. Keep surfaces free of spills and stains with suitable cleaners designed for your countertop material.",
+            "products": ["Blaze Kitchen Care", "Blaze Multi"]
+          },
+          {
+            "title": "Deliming",
+            "description": "Deliming products are essential for removing mineral deposits from surfaces, ensuring efficient operation of appliances and fixtures. Regularly delime to maintain performance and hygiene.",
+            "products": ["EVO 9"]
+          },
+          {
+            "title": "Dish/Pot/Pan",
+            "description": "Sparkling dishes, pots, and pans reflect your commitment to cleanliness. Use effective dishwashing solutions to remove food residues and ensure everything is ready for your next meal.",
+            "products": ["Blaze Dish", "Blaze Auto", "Blaze Rinse", "Blaze Dip"]
+          },
+          {
+            "title": "Sinks",
+            "description": "Clean sinks are vital for a hygienic kitchen. Regular cleaning with suitable products helps eliminate stains and bacteria, creating a fresh and inviting space for food prep.",
+            "products": ["Blaze Multi", "Blaze Dish"]
+          }
+        ]
+    },
+    {
+      "id": 3,
+      "solutionType": "Laundry Cleaning",
+      "code": "LaundryCleaning",
+      "description": "The cleanliness, softness, and appearance of towels, linens, and bedding significantly impact guest satisfaction. Evochem ensures your laundry process delivers superior results in all areas.",
+      "title": "4 Key Aspects to Achieve Soft, Strong, and Bright Linens",
+      "solutions": [
+          {
+            "title": "Stain Removal",
+            "description": "Tackle tough stains with powerful stain removal products that penetrate deep into fabrics, lifting out dirt, grease, and other residues. Keep your fabrics looking fresh and clean.",
+            "products": ["Flox Star", "Flox Build"]
+          },
+          {
+            "title": "Fabric Strength",
+            "description": "Maintain the integrity of your fabrics by using products that enhance fabric strength. These solutions help prevent wear and tear, ensuring long-lasting durability for your textiles.",
+            "products": ["Flox Build", "Flox Star"]
+          },
+          {
+            "title": "Fabric Whiteness",
+            "description": "Restore and maintain the brightness of white fabrics with products designed to remove yellowing and dullness, leaving your whites looking crisp and vibrant.",
+            "products": ["Flox Bleach"]
+          },
+          {
+            "title": "Fabric Softness",
+            "description": "Enjoy luxurious, soft fabrics with conditioners and softeners that keep textiles feeling gentle to the touch. Enhance the comfort and texture of your fabrics with specialized softness solutions.",
+            "products": ["Flox Soft Care", "Flox Sour", "Flox Rinse"]
+          }
+        ]
+    },
+    {
+      "id": 4,
+      "solutionType": "Surface & Air Clean",
+      "code": "Surface&AirClean",
+      "description": "Clean surfaces and fresh air are key to leaving a lasting impression. With Evochem's advanced cleaning technology, you can maintain a spotless environment, setting your business apart. No matter the surface or air quality concern, Evochem has the right solution.",
+      "title": "5 Tips for Maintaining Clean and Fresh Surfaces and Air",
+      "solutions": [
+          {
+            "title": "Dust Control",
+            "description": "Keep dust at bay with effective dust control solutions that reduce airborne particles and keep surfaces cleaner for longer. These products ensure a dust-free and more comfortable environment.",
+            "products": ["EVO ZAP"]
+          },
+          {
+            "title": "Glass and Mirror",
+            "description": "Achieve streak-free shine on glass and mirrors with specialized cleaners. Keep highly visible areas spotless, enhancing the clarity and appearance of your reflective surfaces.",
+            "products": ["EVO 3"]
+          },
+          {
+            "title": "Walls and Floors",
+            "description": "Maintain clean and polished walls and floors with versatile cleaning solutions. Whether tackling stains or general grime, these products keep large surfaces looking their best.",
+            "products": ["EVO 2", "EVO 7", "EVO ZAP"]
+          },
+          {
+            "title": "Fight Odors",
+            "description": "Combat unpleasant odors with powerful odor-fighting products. These solutions neutralize smells, leaving your space fresh and inviting for a better overall atmosphere.",
+            "products": ["EVO 5"]
+          },
+          {
+            "title": "Cleaning & Disinfection",
+            "description": "Ensure a hygienic environment with cleaning and disinfection products that eliminate bacteria and viruses. These solutions keep surfaces sanitized, protecting health and safety.",
+            "products": ["Sanix Duo", "Sanix Peraxy", "Sanix Quat", "Sanixol"]
+          }
+        ]
+    }
+]
+  

@@ -1,0 +1,71 @@
+<div class="main-sectionapp mt-4">
+    <div class="container">
+        <div class="sngleproductsection">
+            <div class="row">
+                <div class="col-lg-5 col-md-6">
+                    <div class="main-image">
+                        <div class="image">  
+                            <img [src]="selectedProduct.picture ? selectedProduct.picture : 'assets/image/productcate1.png'" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-md-6">
+                    <div class="singleprocontent">
+                        <div class="bradcmS">
+                            <a [routerLink]="['/']" class="breadcrumb-link se1">Home</a>
+                            <a *ngIf="selectedIndustry" [routerLink]="['/categories/' + selectedIndustry.id]" class="breadcrumb-link se1">{{selectedIndustry?.title}}</a>
+                            <a *ngIf="selectedSolutionType" [routerLink]="['/solutions/' + selectedSolutionType.id]" class="breadcrumb-link se1">{{selectedSolutionType?.title}}</a>
+                            <a href=" " class="breadcrumb-link breadcrumb-link-last"> {{selectedProduct?.title}}</a>
+                        </div>
+
+                        <h2 class="product_title">
+                            <strong>{{selectedProduct?.code}}</strong>
+                        </h2>
+                        <h1 class="product_title">
+                           {{selectedProduct?.title}}
+                        </h1>
+                        <p>Dilution: {{selectedProduct?.details?.dilution}}</p>
+                        <div class=" product-details__short-description">
+                            <p>{{selectedProduct?.details?.description}}</p>
+                            
+                        </div>
+                        <a id="whatsappButton" [href]="whatsappURL" target="_blank">
+                            <div class="btn-size-default">
+                                Buy Now
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="related-products">
+            <div class="slider-Tittle">Related products</div>
+            <div class="relatedmain-slider">
+                <div class="swiper relatedswiper">
+                    <!-- Additional required wrapper -->
+                    <div class="swiper-wrapper">
+                        <!-- Slides -->
+                        <div class="swiper-slide" *ngFor="let product of relatedproducts">
+                            <a [routerLink]="['/product' , formatCode(product.code)]">
+                                <div class="same-proDuct">
+                                    <div class="image">
+                                        <img [src]="product.thumbnail ? product.thumbnail : 'assets/image/productcate1.png'" alt="">
+                                        <a >
+                                            <h4>{{product?.title}}</h4>
+                                        </a>
+                                       
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                       
+
+                    </div>
+                    <!-- If we need navigation buttons -->
+                    <!-- <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>  -->
+                </div>
+            </div>
+        </div>
+
+    </div>

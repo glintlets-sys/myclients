@@ -1,0 +1,24 @@
+
+
+#whatsappButton {
+    position: fixed;
+    bottom: 20px; /* Distance from the bottom of the page */
+    right: 20px;  /* Distance from the right side of the page */
+    background-color: #25d366;
+    color: white;
+    padding: 20px;
+    border-radius: 50%;
+    text-decoration: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; /* Ensure it appears on top of other elements */
+  }
+  
+  #whatsappButton i {
+    font-size: 24px; /* Adjust the icon size */
+  }
+  
+  @media (max-width: 768px) {
+    #whatsappButton {
+        padding: 10px; /* Smaller padding for mobile */
+    }
+}

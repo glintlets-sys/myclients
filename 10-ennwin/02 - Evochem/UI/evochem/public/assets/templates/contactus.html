@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Enquiry </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f9;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            max-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://evochem.co.in/assets/image/logo.png" alt="Logo">
+        </div>
+        <h2>Customer Product Enquiry</h2>
+        <table>
+            <tr>
+                <th>Field</th>
+                <th>Details</th>
+            </tr>
+            <tr>
+                <td>Full Name</td>
+                <td>{{fullName}}</td>
+            </tr>
+           
+            <tr>
+                <td>Email ID</td>
+                <td>{{email}}</td>
+            </tr>
+            <tr>
+                <td>Mobile Number</td>
+                <td>{{mobileNumber}}</td>
+            </tr>
+           
+            <tr>
+                <td>Business Name</td>
+                <td>{{businessName}}</td>
+            </tr>
+            <tr>
+                <td>Industry</td>
+                <td>{{industry}}</td>
+            </tr>
+           
+            <tr>
+                <td>Message </td>
+                <td>{{message}}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
