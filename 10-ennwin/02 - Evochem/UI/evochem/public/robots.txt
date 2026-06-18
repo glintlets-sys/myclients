@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://evochem.co.in/sitemap.xml
