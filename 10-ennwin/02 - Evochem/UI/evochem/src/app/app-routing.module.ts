@@ -8,8 +8,8 @@ import { SolutionsComponent } from './components/solutions/solutions.component';
 import { BlogsComponent } from './components/blogs/blogs.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent},
+  { path: '', component: HomeComponent, pathMatch: 'full' },
+  { path: 'home', redirectTo: '', pathMatch: 'full' },
   { path: 'categories', component: CategoryComponent },
   { path: 'categories/:id', component: CategoryComponent },
   { path: 'product/:productId', component: ProductComponent,   runGuardsAndResolvers: 'always' },
