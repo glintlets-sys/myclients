@@ -1,0 +1,163 @@
+/* EFCS site updates (Sep 2026 change list): header, banners, justified text,
+   services scroller, forms, project tabs, blog, contact, footer. Loaded after style.css. */
+:root{--efcs-green:#50735f;--efcs-dark:#102f1c;--efcs-tint:#eef3f0;--efcs-ink:#1d2a22;--efcs-muted:#5b6b62}
+
+/* ---------- 1. Header: top bar (social left, phone right) + logo & nav on one line ---------- */
+.efcs-header{position:sticky;top:-44px;z-index:1030;background:#fff;box-shadow:0 2px 10px rgba(16,47,28,.08)}
+.efcs-topbar{background:var(--efcs-dark);color:#fff;font-size:14px;height:44px}
+.efcs-topbar .container{display:flex;align-items:center;justify-content:space-between;height:100%;gap:12px}
+.efcs-topbar .efcs-follow{display:flex;align-items:center;gap:6px}
+.efcs-topbar .efcs-follow span{margin-right:6px;opacity:.9}
+.efcs-topbar a{color:#fff;text-decoration:none}
+.efcs-topbar .efcs-follow a{width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:15px;transition:background .2s}
+.efcs-topbar .efcs-follow a:hover{background:rgba(255,255,255,.15)}
+.efcs-topbar .efcs-call{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.efcs-topbar .efcs-call i{color:#9fd3b2}
+.efcs-mainbar .container{display:flex;align-items:center;justify-content:space-between;min-height:78px;gap:20px}
+.efcs-logo img{height:52px;width:auto;display:block}
+.efcs-nav{display:flex;align-items:center;gap:4px;list-style:none;margin:0;padding:0}
+.efcs-nav>li{position:relative}
+.efcs-nav>li>a{display:block;padding:26px 14px;color:var(--efcs-dark);font-weight:600;font-size:15px;text-transform:uppercase;text-decoration:none;letter-spacing:.2px;white-space:nowrap}
+.efcs-nav>li>a:hover,.efcs-nav>li.active>a{color:var(--efcs-green)}
+.efcs-nav>li.active>a{box-shadow:inset 0 -3px 0 var(--efcs-green)}
+.efcs-nav .efcs-caret{font-size:11px;margin-left:5px}
+.efcs-nav .efcs-sub{position:absolute;left:0;top:100%;min-width:300px;max-height:70vh;overflow:auto;background:#fff;list-style:none;margin:0;padding:6px 0;box-shadow:0 10px 30px rgba(0,0,0,.15);border-top:3px solid var(--efcs-green);opacity:0;visibility:hidden;transform:translateY(10px);transition:.2s}
+.efcs-nav li:hover>.efcs-sub,.efcs-nav li:focus-within>.efcs-sub{opacity:1;visibility:visible;transform:none}
+.efcs-nav .efcs-sub a{display:block;padding:9px 20px;color:#4b5b68;font-size:14px;text-decoration:none;border-bottom:1px solid #edeff1}
+.efcs-nav .efcs-sub a:hover{background:var(--efcs-tint);color:var(--efcs-green)}
+.efcs-enquiry{background:var(--efcs-green);color:#fff;border:0;border-radius:30px;padding:10px 20px;font-weight:600;font-size:15px;cursor:pointer;white-space:nowrap;margin-left:8px}
+.efcs-enquiry:hover{background:var(--efcs-dark)}
+.efcs-burger{display:none;background:none;border:1px solid #cfd8d3;border-radius:6px;font-size:20px;padding:6px 11px;color:var(--efcs-dark);cursor:pointer}
+@media (max-width:1199.98px){.efcs-nav>li>a{padding:26px 9px;font-size:14px}}
+@media (max-width:991.98px){
+  .efcs-nav{display:none}
+  .efcs-burger{display:inline-block}
+  .efcs-mainbar .container{min-height:66px}
+  .efcs-logo img{height:44px}
+  .efcs-actions{display:flex;align-items:center;gap:8px}
+  .efcs-enquiry{padding:8px 14px;font-size:14px}
+}
+@media (max-width:575.98px){
+  .efcs-topbar .efcs-follow span,.efcs-topbar .efcs-call .efcs-alt{display:none}
+  .efcs-topbar{font-size:13px}
+  .efcs-logo img{height:38px}
+}
+
+/* ---------- 13. Page banner with title on every inner page ---------- */
+.efcs-page-banner{position:relative;background:var(--efcs-dark) center/cover no-repeat;color:#fff;text-align:center;padding:90px 16px 80px}
+.efcs-page-banner::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,rgba(16,47,28,.88),rgba(80,115,95,.72))}
+.efcs-page-banner>*{position:relative}
+.efcs-page-banner .efcs-banner-title{font-size:clamp(28px,4vw,46px);font-weight:600;margin:0 0 12px;color:#fff;text-align:center}
+.efcs-page-banner .efcs-crumbs{font-size:15px;opacity:.9;text-align:center;margin:0}
+.efcs-page-banner .efcs-crumbs a{color:#fff;text-decoration:none}
+.efcs-page-banner .efcs-crumbs a:hover{text-decoration:underline}
+.efcs-page-banner .efcs-crumbs span{margin:0 8px;opacity:.7}
+
+/* ---------- 2. Justify paragraphs (desktop + mobile) ---------- */
+.main_section-website p,.service_sectionpage p,.blog_sectionpage p,.efcs-page p,.faqsection p,.contact-section p,.post-content p,.pbmit-post-para,.description,.description-p,.services-circle-item .description{text-align:justify;hyphens:auto;-webkit-hyphens:auto}
+.carousel-caption p,.newsletter-wrap p,.get-banner-text p,.cta-content p,.efcs-page-banner p,.footer-section p,.banner-fixed p,.efcs-contact-card p{text-align:center;hyphens:manual}
+.efcs-contact-card p{text-align:left}
+
+/* ---------- 3. "Comprehensive Polishing Care" services scroller ---------- */
+.Cleaning_service .main_tittle,.class-section>.main_tittle,.main_tittle{text-align:center}
+.efcs-services-swiper{position:relative;padding:10px 56px 50px}
+.efcs-services-swiper .swiper{padding:6px 6px 18px}
+.efcs-services-swiper .swiper-slide{height:auto}
+.efcs-service-card{background:#fff;border-radius:14px;box-shadow:0 6px 24px rgba(16,47,28,.1);overflow:hidden;height:100%;display:flex;flex-direction:column;text-align:center}
+.efcs-service-card .efcs-sc-img{display:block;aspect-ratio:4/3;overflow:hidden}
+.efcs-service-card .efcs-sc-img img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.efcs-service-card:hover .efcs-sc-img img{transform:scale(1.05)}
+.efcs-service-card .efcs-sc-body{padding:18px 18px 22px;display:flex;flex-direction:column;flex:1}
+.efcs-service-card h3{font-size:19px;font-weight:600;color:var(--efcs-dark);margin:0 0 10px;text-align:center}
+.efcs-service-card p{font-size:14px;color:var(--efcs-muted);margin:0 0 16px;flex:1}
+.efcs-service-card .btn-readmore{display:inline-block;margin:0 auto}
+.efcs-swiper-btn{position:absolute;top:42%;width:44px;height:44px;border-radius:50%;background:var(--efcs-green);color:#fff;border:0;display:flex;align-items:center;justify-content:center;z-index:5;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:background .2s}
+.efcs-swiper-btn:hover{background:var(--efcs-dark)}
+.efcs-swiper-btn.swiper-button-disabled{opacity:.4;cursor:default}
+.efcs-swiper-prev{left:4px}.efcs-swiper-next{right:4px}
+.efcs-services-swiper .swiper-pagination{bottom:10px}
+.efcs-services-swiper .swiper-pagination-bullet-active,.efcs-blog-pagination .swiper-pagination-bullet-active{background:var(--efcs-green)}
+@media (max-width:575.98px){.efcs-services-swiper{padding:10px 8px 50px}.efcs-swiper-btn{display:none}}
+
+/* ---------- 7. Blog section arrows ---------- */
+.div-contentblog{position:relative}
+.swiper-blog{padding:0 56px}
+.swiper-blog .swiper-button-next,.swiper-blog .swiper-button-prev{display:flex!important;width:44px;height:44px;border-radius:50%;background:var(--efcs-green);color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.2);top:40%}
+.swiper-blog .swiper-button-next:after,.swiper-blog .swiper-button-prev:after{font-size:18px;font-weight:700;background:none;box-shadow:none;width:auto;height:auto;color:#fff}
+.swiper-blog .swiper-button-next:hover,.swiper-blog .swiper-button-prev:hover{background:var(--efcs-dark)}
+.swiper-blog .swiper-button-prev{left:4px}.swiper-blog .swiper-button-next{right:4px}
+@media (max-width:575.98px){.swiper-blog{padding:0 44px}.swiper-blog .swiper-button-next,.swiper-blog .swiper-button-prev{width:36px;height:36px}}
+
+/* ---------- 6. Projects (and services) tabs: highlight the active tab ---------- */
+.gallery-section .scrool-delevry .nav-tabs{justify-content:center;gap:10px}
+.gallery-section .scrool-delevry .nav-tabs .nav-link{background:#fff;color:var(--efcs-green);border:2px solid var(--efcs-green)!important;border-radius:30px;padding:6px 26px}
+.gallery-section .scrool-delevry .nav-tabs .nav-link.active,.gallery-section .scrool-delevry .nav-tabs .nav-link:hover{background:var(--efcs-dark);color:#fff;border-color:var(--efcs-dark)!important;box-shadow:0 4px 14px rgba(16,47,28,.3)}
+.services .scrool-delevry .nav-tabs .nav-link.active{background:var(--efcs-green);color:#fff;font-weight:600}
+
+/* ---------- 4. Enquiry form ---------- */
+.modal-header .modal-title{flex:1;text-align:center;font-weight:600;color:var(--efcs-dark);padding-left:24px}
+.form-sectioncall .title-block__title,.contact-form-in .text-he{text-align:center}
+input:user-invalid,select:user-invalid{border-color:#c0392b!important;box-shadow:0 0 0 2px rgba(192,57,43,.12)}
+.efcs-field-hint{display:block;font-size:12px;color:#c0392b;margin-top:4px;min-height:0}
+
+/* ---------- 3b/5. Service pages: centred FAQ, single CTA ---------- */
+.service_sectionpage .faqsection{max-width:900px;margin-left:auto!important;margin-right:auto!important;float:none}
+.service_sectionpage .faqsection .main-tittlefaq,.service_sectionpage .faqsection .heading-tittle{text-align:center}
+.service_sectionpage .faqsection .link-section,.service_sectionpage .faqsection .div-listquestion{width:100%;max-width:900px;margin:0 auto}
+
+/* ---------- 8. Blog article: image as banner with the title on it + readable styles ---------- */
+.blog_sectionpage{padding:0 0 40px}
+.blog_sectionpage .div-blogsection{max-width:none;margin:0}
+.bog-detailpage .post-header{position:relative;margin:0 0 30px;min-height:380px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;background:var(--efcs-dark)}
+.bog-detailpage .post-header .featured{position:absolute;inset:0;margin:0}
+.bog-detailpage .post-header .featured img{width:100%!important;height:100%!important;object-fit:cover;max-height:none}
+.bog-detailpage .post-header::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,47,28,.25) 0%,rgba(16,47,28,.85) 100%)}
+.bog-detailpage .post-header .post-title{position:relative;z-index:1;color:#fff;text-align:center;max-width:1000px;margin:0 auto;padding:120px 20px 50px;font-size:clamp(26px,3.6vw,42px);line-height:1.25;font-weight:600}
+.bog-detailpage .post-container,.bog-detailpage>.post-meta,.bog-detailpage .post-content{max-width:880px;margin-left:auto;margin-right:auto;padding-left:20px;padding-right:20px}
+.bog-detailpage .post-content{font-size:17px;line-height:1.8;color:#2d3a33}
+.bog-detailpage .post-content h2{font-size:28px;margin:38px 0 14px;color:var(--efcs-dark);font-weight:600}
+.bog-detailpage .post-content h3{font-size:22px;margin:28px 0 10px;color:var(--efcs-dark);font-weight:600}
+.bog-detailpage .post-content ul,.bog-detailpage .post-content ol{padding-left:24px;margin:0 0 18px}
+.bog-detailpage .post-content li{margin-bottom:8px;list-style:disc}
+.bog-detailpage .post-content ol li{list-style:decimal}
+.bog-detailpage .post-content a{color:var(--efcs-green);font-weight:600}
+.bog-detailpage .post-content img{max-width:100%;height:auto;border-radius:10px;margin:14px 0}
+.bog-detailpage .post-content table{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}
+.bog-detailpage .post-content th,.bog-detailpage .post-content td{border:1px solid #d9e2dc;padding:10px}
+.bog-detailpage .post-content th{background:var(--efcs-tint)}
+.bog-detailpage .faq-item{background:var(--efcs-tint);border-radius:10px;padding:14px 18px;margin-bottom:12px}
+.bog-detailpage .faq-question{font-weight:600;color:var(--efcs-dark);margin-bottom:6px}
+@media (max-width:767.98px){.bog-detailpage .post-header{min-height:280px}.bog-detailpage .post-header .post-title{padding:90px 16px 30px}.bog-detailpage .post-content{font-size:16px}}
+
+/* ---------- 14. Contact page: highlighted details with icons + timings ---------- */
+.efcs-contact-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:10px 0 24px}
+.efcs-contact-card{display:flex;gap:14px;align-items:flex-start;background:#fff;border:1px solid #e1e8e4;border-radius:14px;padding:18px;box-shadow:0 4px 16px rgba(16,47,28,.06)}
+.efcs-contact-card .efcs-ci{flex:0 0 46px;height:46px;border-radius:50%;background:var(--efcs-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px}
+.efcs-contact-card h3{font-size:16px;font-weight:700;margin:0 0 4px;color:var(--efcs-dark)}
+.efcs-contact-card p{margin:0;font-size:15px;color:var(--efcs-muted);line-height:1.55}
+.efcs-contact-card a{color:var(--efcs-ink);text-decoration:none}
+.efcs-contact-card a:hover{color:var(--efcs-green)}
+.efcs-map iframe{width:100%;height:300px;border:0;border-radius:14px}
+.left-contavinfo .ot-social a i{width:38px;height:38px;border-radius:50%;background:var(--efcs-green);color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-right:6px}
+@media (max-width:767.98px){.efcs-contact-cards{grid-template-columns:1fr}}
+
+/* ---------- New About / FAQ / Projects pages ---------- */
+.efcs-page .faqsection{margin-top:40px}
+.efcs-page .gallery-section{padding-top:40px}
+
+/* ---------- 11 + 16. Footer colour + copyright bar ---------- */
+.footer-section{background:var(--efcs-dark);color:#dfe8e2;padding-bottom:0}
+.footer-section .span-footer h6,.footer-section .aboutus-footer-info .follo-ue{color:#fff}
+.footer-section .span-footer h6::after{background:#9fd3b2}
+.footer-section .span-footer .footerlist li,.footer-section .span-footer .footerlist li a,.footer-section .span-footer .footerlist a{color:#c9d6ce}
+.footer-section .span-footer .footerlist li:hover,.footer-section .span-footer .footerlist a:hover li{color:#fff}
+.footer-section .aboutus-footer-info .ot-social a i{color:#fff}
+.footer-section .aboutus-footer-info .ot-social a i:hover{color:#9fd3b2}
+.footer-section .footer-img img{background:#fff;border-radius:12px;padding:10px 14px}
+.efcs-copyright{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding:18px 16px;text-align:center;font-size:14px;color:#b9c9bf}
+.efcs-copyright a{color:#fff;text-decoration:none}
+.efcs-copyright a:hover{text-decoration:underline}
+.blog_sectionpage .div-blogsection>.row{margin-left:0;margin-right:0}
+.blog_sectionpage .div-blogsection>.row>.col-lg-12{padding-left:0;padding-right:0}
+.bog-detailpage .post-container .post-content{padding-left:0;padding-right:0}
+@media (max-width:575.98px){.bog-detailpage .post-container{padding-left:16px;padding-right:16px}}
