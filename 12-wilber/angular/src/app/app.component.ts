@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostBinding } from '@angular/core';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { ToasterComponent } from '@shared/ui/toaster.component';
@@ -15,6 +15,10 @@ import { AnalyticsService } from './core/analytics.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
+  /** Keeps the app hidden (see index.html) until the first route has rendered, so content never paints
+   *  before its component styles are injected (avoids the flash of unstyled content). */
+  @HostBinding('class.app-ready') appReady = false;
+
   constructor(private router: Router, private seo: SeoService, private analytics: AnalyticsService) {}
 
   ngOnInit() {
@@ -24,6 +28,8 @@ export class AppComponent implements OnInit {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe(() => {
+        // Reveal the app once the first routed view has rendered (its styles are now in the DOM).
+        if (!this.appReady) setTimeout(() => (this.appReady = true));
         this.scrollToTop();
       });
   }

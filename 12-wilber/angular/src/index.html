@@ -12,6 +12,11 @@
   <!-- Bootstrap + Font Awesome are bundled into the app's same-origin stylesheet (src/styles.scss),
        so the old third-party CDN <link>s were removed — they added slow render-blocking requests that
        caused a flash of unstyled text before the styles applied. -->
+  <!-- Page layout lives in component styles (injected by JS when Angular renders), so keep the app hidden
+       until the first route has rendered — otherwise content paints before its styles (flash of unstyled
+       content). AppComponent adds .app-ready on the first NavigationEnd. -->
+  <style>app-root:not(.app-ready){visibility:hidden}</style>
+  <noscript><style>app-root{visibility:visible!important}</style></noscript>
 </head>
 <body>
   <app-root></app-root>
