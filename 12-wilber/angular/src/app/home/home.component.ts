@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HeaderComponent } from '../shared/header/header.component';
 import { FooterComponent } from '../shared/footer/footer.component';
+import { AdPopupComponent } from '../shared/ad-popup/ad-popup.component';
 import { combineLatest } from 'rxjs';
 import { CatalogStoreService } from '../core/catalog-store.service';
 import { SeoService } from '../core/seo.service';
@@ -55,7 +56,7 @@ declare var bootstrap: any;
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, FooterComponent, AdPopupComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

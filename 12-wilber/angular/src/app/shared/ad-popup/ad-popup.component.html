@@ -1,0 +1,27 @@
+<div class="ad-popup-overlay" *ngIf="visible && banner" (click)="close()" role="dialog" aria-modal="true" [attr.aria-label]="banner.title || 'Advertisement'">
+  <div class="ad-popup-card" (click)="$event.stopPropagation()">
+    <button type="button" class="ad-popup-close" aria-label="Close" (click)="close()">&times;</button>
+
+    <!-- The banner artwork; wrapped in a link when the banner points somewhere -->
+    <ng-container *ngIf="route; else externalOrPlain">
+      <a [routerLink]="route" (click)="acted()" class="ad-popup-media">
+        <img [src]="banner.imageDesktop" [alt]="banner.altText || banner.title" class="ad-popup-img">
+      </a>
+    </ng-container>
+    <ng-template #externalOrPlain>
+      <a *ngIf="href; else plain" [href]="href" target="_blank" rel="noopener" (click)="acted()" class="ad-popup-media">
+        <img [src]="banner.imageDesktop" [alt]="banner.altText || banner.title" class="ad-popup-img">
+      </a>
+      <ng-template #plain>
+        <div class="ad-popup-media"><img [src]="banner.imageDesktop" [alt]="banner.altText || banner.title" class="ad-popup-img"></div>
+      </ng-template>
+    </ng-template>
+
+    <div class="ad-popup-body" *ngIf="banner.title || banner.subtitle || banner.ctaLabel">
+      <h3 *ngIf="banner.title">{{ banner.title }}</h3>
+      <p *ngIf="banner.subtitle">{{ banner.subtitle }}</p>
+      <a *ngIf="banner.ctaLabel && route" [routerLink]="route" (click)="acted()" class="ad-popup-cta">{{ banner.ctaLabel }}</a>
+      <a *ngIf="banner.ctaLabel && href" [href]="href" target="_blank" rel="noopener" (click)="acted()" class="ad-popup-cta">{{ banner.ctaLabel }}</a>
+    </div>
+  </div>
+</div>
