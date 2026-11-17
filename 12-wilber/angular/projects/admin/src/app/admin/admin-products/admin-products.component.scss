@@ -263,6 +263,10 @@
   width: 95%;
   max-height: 92vh;
   overflow-y: auto;
+}
+
+// Form field styles shared by the stock modal and the inline product View/Edit panel.
+.modal-content.product-editor, .product-panel {
 
   .modal-header {
     display: flex;
@@ -498,4 +502,169 @@
 .product-breadcrumb .crumb:hover {
   color: #0d6efd;
   text-decoration: underline;
+}
+
+// ---------- Product View / Edit: one inline panel shell (replaces full-screen overlays; keeps the sidebar) ----------
+.product-panel {
+  background: #fff;
+  border: 1px solid #e3e6f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.05);
+  overflow: hidden;
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e9ecf3;
+    background: #fbfcfe;
+
+    .ph-left { min-width: 0; }
+    .ph-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+  }
+
+  .panel-crumb {
+    font-size: 0.8rem;
+    color: #8a8d99;
+    margin-bottom: 0.15rem;
+    .crumb { color: #065baa; cursor: pointer; }
+    .crumb:hover { text-decoration: underline; }
+    .sep { margin: 0 0.4rem; color: #c2c6d2; }
+    .cur { color: #5a5c69; }
+  }
+
+  .panel-title {
+    font-size: 1.25rem;
+    font-weight: 650;
+    color: #1f2430;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .panel-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid #e3e6f0;
+    background: #fff;
+    color: #5a5c69;
+    &.chip-muted { background: #f3f4f8; }
+  }
+
+  .panel-body { padding: 1.25rem; }
+
+  .panel-loading {
+    padding: 0.5rem 0.85rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    background: #eef5ff;
+    color: #065baa;
+    font-size: 0.85rem;
+  }
+
+  .panel-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid #e9ecf3;
+    background: #fbfcfe;
+  }
+
+  // Sections — the View mirrors the Editor's section headers so the two line up.
+  .psection { margin-bottom: 0.5rem; }
+  .psection:last-child { margin-bottom: 0; }
+
+  .psection-title {
+    color: #065baa;
+    font-weight: 600;
+    margin: 1.5rem 0 0.9rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid #e3e6f0;
+    .count {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #5a5c69;
+      background: #eef2f9;
+      border-radius: 999px;
+      padding: 0.05rem 0.5rem;
+      margin-left: 0.35rem;
+    }
+  }
+
+  // Read-only field grid (View)
+  .ro-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem 1.5rem;
+    margin: 0;
+  }
+  .ro { min-width: 0; }
+  .ro.ro-wide { grid-column: 1 / -1; }
+  .ro dt { font-size: 0.82rem; font-weight: 600; color: #5a5c69; margin-bottom: 0.15rem; }
+  .ro dd { margin: 0; color: #2b2d33; font-size: 0.92rem; word-break: break-word; }
+  .ro-rich { line-height: 1.5; }
+  .ro-rich > :first-child { margin-top: 0; }
+  .ro-rich > :last-child { margin-bottom: 0; }
+
+  .ro-flags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .flag {
+    font-size: 0.78rem;
+    padding: 0.15rem 0.55rem;
+    border-radius: 6px;
+    border: 1px solid #e3e6f0;
+    color: #9397a4;
+    background: #fff;
+    &.on { color: #0a7d3c; border-color: #b7e4c7; background: #f0fbf4; }
+    &.on::before { content: "\2713\00a0"; }
+  }
+
+  .ro-list { margin: 0; padding-left: 1.1rem; }
+  .ro-list li { margin-bottom: 0.2rem; }
+
+  .ro-images { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .ro-img {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin: 0;
+    border: 1px solid #e3e6f0;
+    border-radius: 8px;
+    overflow: hidden;
+    img { width: 100%; height: 100%; object-fit: cover; }
+    figcaption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      font-size: 0.65rem;
+      text-align: center;
+      color: #fff;
+      background: rgba(6, 91, 170, 0.85);
+      padding: 1px 0;
+    }
+    &.primary { border-color: #065baa; border-width: 2px; }
+  }
+
+  @media (min-width: 992px) {
+    .ro-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .ro.ro-wide { grid-column: span 2; }
+    .ro.ro-full { grid-column: 1 / -1; }
+  }
+
+  @media (max-width: 575px) {
+    .ro-grid { grid-template-columns: 1fr; }
+    .panel-head .ph-actions { width: 100%; }
+  }
 }

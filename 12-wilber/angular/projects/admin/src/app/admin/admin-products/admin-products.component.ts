@@ -392,13 +392,21 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   }
 
   detailProduct: Product | null = null;
+  detailLoading = false;
 
   viewProductDetails(product: Product): void {
+    // Show immediately with the list row, then load the full product so the view mirrors the editor's sections.
     this.detailProduct = product;
+    this.detailLoading = true;
+    this.api.admin.product(product.id).subscribe({
+      next: full => { this.detailProduct = full; this.detailLoading = false; },
+      error: () => { this.detailLoading = false; }, // keep the partial list data on failure
+    });
   }
 
   closeProductDetails(): void {
     this.detailProduct = null;
+    this.detailLoading = false;
   }
 
   toggleProductAvailability(product: Product, event?: Event): void {
