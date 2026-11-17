@@ -69,14 +69,23 @@ export class AdminCategoriesComponent implements OnInit {
     this.selectedToAdd = new Set<string>();
   }
 
-  /** Active products NOT already in the target category, filtered by the search box. */
+  /** LEFT pane — active products NOT already in the target category, filtered by the search box. */
   get eligibleProducts(): Product[] {
     const cat = this.addToCategory;
     if (!cat) return [];
     const term = this.productSearch.trim().toLowerCase();
-    return this.allProducts.filter(p =>
-      !(p.categoryIds ?? []).includes(cat.id) &&
-      (!term || p.name.toLowerCase().includes(term) || (p.code ?? '').toLowerCase().includes(term)));
+    return this.allProducts
+      .filter(p => !(p.categoryIds ?? []).includes(cat.id) &&
+        (!term || p.name.toLowerCase().includes(term) || (p.code ?? '').toLowerCase().includes(term)))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  /** RIGHT pane — products already in this category. */
+  get inCategoryProducts(): Product[] {
+    const cat = this.addToCategory;
+    if (!cat) return [];
+    return this.allProducts.filter(p => (p.categoryIds ?? []).includes(cat.id))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   toggleProduct(id: string): void {
@@ -84,6 +93,7 @@ export class AdminCategoriesComponent implements OnInit {
     else this.selectedToAdd.add(id);
   }
 
+  /** Add the left-pane selection to the category; keep the modal open so membership can be managed in place. */
   saveAddProducts(): void {
     const cat = this.addToCategory;
     if (!cat || this.selectedToAdd.size === 0 || this.isAddingProducts) return;
@@ -91,19 +101,43 @@ export class AdminCategoriesComponent implements OnInit {
     const ids = [...this.selectedToAdd];
     const updates = ids.map(pid => {
       const p = this.allProducts.find(x => x.id === pid)!;
-      const categoryIds = [...new Set([...(p.categoryIds ?? []), cat.id])];
-      return this.api.admin.updateProduct(pid, { categoryIds });
+      return this.api.admin.updateProduct(pid, { categoryIds: [...new Set([...(p.categoryIds ?? []), cat.id])] });
     });
     forkJoin(updates).subscribe({
       next: () => {
-        this.toaster.showToast(`${ids.length} product(s) added to ${cat.name}`, ToastType.Success, 3000);
-        this.closeAddProductsModal();
-        this.loadCategoriesFromBackend();
+        for (const pid of ids) {   // reflect locally so both panes update without a reload
+          const p = this.allProducts.find(x => x.id === pid);
+          if (p) p.categoryIds = [...new Set([...(p.categoryIds ?? []), cat.id])];
+        }
+        this.productCounts[cat.id] = (this.productCounts[cat.id] ?? 0) + ids.length;
+        this.toaster.showToast(`${ids.length} product(s) added to ${cat.name}`, ToastType.Success, 2500);
+        this.selectedToAdd = new Set<string>();
         this.isAddingProducts = false;
       },
       error: err => {
         this.isAddingProducts = false;
         this.toaster.showToast(apiErrorMessage(err, 'Could not add products to the category'), ToastType.Error, 4000);
+      }
+    });
+  }
+
+  /** Detach a product from this category (products are many-to-many; its other categories are untouched). */
+  removeFromCategory(p: Product): void {
+    const cat = this.addToCategory;
+    if (!cat || this.isAddingProducts) return;
+    this.isAddingProducts = true;
+    const categoryIds = (p.categoryIds ?? []).filter(id => id !== cat.id);
+    this.api.admin.updateProduct(p.id, { categoryIds }).subscribe({
+      next: () => {
+        const prod = this.allProducts.find(x => x.id === p.id);
+        if (prod) prod.categoryIds = categoryIds;
+        this.productCounts[cat.id] = Math.max(0, (this.productCounts[cat.id] ?? 1) - 1);
+        this.toaster.showToast(`${p.name} removed from ${cat.name}`, ToastType.Success, 2500);
+        this.isAddingProducts = false;
+      },
+      error: err => {
+        this.isAddingProducts = false;
+        this.toaster.showToast(apiErrorMessage(err, 'Could not remove the product'), ToastType.Error, 4000);
       }
     });
   }

@@ -129,33 +129,51 @@
   </div>
 </div>
 
-<!-- Add existing products to a category -->
+<!-- Manage the products in a category: available on the left, already-in on the right -->
 <div *ngIf="showAddProductsModal" class="modal-overlay" (click)="closeAddProductsModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()" style="max-width:640px;width:100%">
+  <div class="modal-content" (click)="$event.stopPropagation()" style="max-width:880px;width:100%">
     <div class="p-3">
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h4 class="mb-0">Add products to “{{ addToCategory?.name }}”</h4>
+      <div class="d-flex justify-content-between align-items-center mb-1">
+        <h4 class="mb-0">Products in “{{ addToCategory?.name }}”</h4>
         <button type="button" class="btn btn-sm btn-light" aria-label="Close" (click)="closeAddProductsModal()"><i class="fas fa-times"></i></button>
       </div>
-      <p class="small text-muted mb-2">Pick existing products to add to this category. Products already in it are hidden. A product can belong to several categories.</p>
-      <input type="text" class="form-control mb-2" placeholder="Search products by name or code" [(ngModel)]="productSearch">
-      <div style="max-height:46vh;overflow:auto;border:1px solid #eee;border-radius:6px">
-        <div *ngIf="eligibleProducts.length === 0" class="text-center text-muted py-4">No matching products.</div>
-        <label *ngFor="let p of eligibleProducts" class="d-flex align-items-center gap-2 px-2 py-2 border-bottom m-0" style="cursor:pointer">
-          <input type="checkbox" [checked]="selectedToAdd.has(p.id)" (change)="toggleProduct(p.id)">
-          <img *ngIf="p.images?.length" [src]="p.images?.[0]" width="34" height="34" class="img-thumbnail" style="object-fit:cover">
-          <span class="flex-grow-1">{{ p.name }}</span>
-          <small class="text-muted" *ngIf="p.code">{{ p.code }}</small>
-        </label>
-      </div>
-      <div class="d-flex justify-content-between align-items-center mt-3">
-        <span class="small text-muted">{{ selectedToAdd.size }} selected</span>
-        <span>
-          <button type="button" class="btn btn-secondary me-2" (click)="closeAddProductsModal()">Cancel</button>
-          <button type="button" class="btn btn-primary" [disabled]="selectedToAdd.size === 0 || isAddingProducts" (click)="saveAddProducts()">
-            <i *ngIf="isAddingProducts" class="fas fa-spinner fa-spin me-1"></i>Add selected
+      <p class="small text-muted mb-3">Tick products on the left to add them; the right shows what is already in this category. A product can belong to several categories.</p>
+      <div class="row g-3">
+        <!-- LEFT: available to add -->
+        <div class="col-md-6">
+          <h6 class="text-muted mb-2">Available products <span class="text-secondary">({{ eligibleProducts.length }})</span></h6>
+          <input type="text" class="form-control form-control-sm mb-2" placeholder="Search by name or code" [(ngModel)]="productSearch">
+          <div style="height:42vh;overflow:auto;border:1px solid #eee;border-radius:6px">
+            <div *ngIf="eligibleProducts.length === 0" class="text-center text-muted py-4">No matching products.</div>
+            <label *ngFor="let p of eligibleProducts" class="d-flex align-items-center gap-2 px-2 py-2 border-bottom m-0" style="cursor:pointer">
+              <input type="checkbox" [checked]="selectedToAdd.has(p.id)" (change)="toggleProduct(p.id)">
+              <img *ngIf="p.images?.length" [src]="p.images?.[0]" width="32" height="32" class="img-thumbnail" style="object-fit:cover">
+              <span class="flex-grow-1">{{ p.name }}</span>
+              <small class="text-muted" *ngIf="p.code">{{ p.code }}</small>
+            </label>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm w-100 mt-2" [disabled]="selectedToAdd.size === 0 || isAddingProducts" (click)="saveAddProducts()">
+            <i *ngIf="isAddingProducts" class="fas fa-spinner fa-spin me-1"></i>Add {{ selectedToAdd.size || '' }} selected <i class="fas fa-arrow-right ms-1"></i>
           </button>
-        </span>
+        </div>
+        <!-- RIGHT: already in this category -->
+        <div class="col-md-6">
+          <h6 class="text-muted mb-2">In this category <span class="text-secondary">({{ inCategoryProducts.length }})</span></h6>
+          <div style="height:calc(42vh + 38px);overflow:auto;border:1px solid #eee;border-radius:6px">
+            <div *ngIf="inCategoryProducts.length === 0" class="text-center text-muted py-4">No products in this category yet.</div>
+            <div *ngFor="let p of inCategoryProducts" class="d-flex align-items-center gap-2 px-2 py-2 border-bottom">
+              <img *ngIf="p.images?.length" [src]="p.images?.[0]" width="32" height="32" class="img-thumbnail" style="object-fit:cover">
+              <span class="flex-grow-1">{{ p.name }}</span>
+              <small class="text-muted me-1" *ngIf="p.code">{{ p.code }}</small>
+              <button type="button" class="btn btn-sm btn-outline-danger" title="Remove from this category" [disabled]="isAddingProducts" (click)="removeFromCategory(p)">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="text-end mt-3">
+        <button type="button" class="btn btn-secondary" (click)="closeAddProductsModal()">Done</button>
       </div>
     </div>
   </div>
