@@ -10,7 +10,7 @@ import { CatalogStoreService } from '../core/catalog-store.service';
 import { SeoService } from '../core/seo.service';
 import { ApiService } from '@shared/core/api.service';
 import { apiErrorMessage } from '@shared/core/api.interceptor';
-import { PublishedBanner, Category, ProductCard } from '@shared/core/models';
+import { PublishedBanner, Category, ProductCard, Blog } from '@shared/core/models';
 
 /** One banner slide of the home hero carousel. */
 interface HeroSlide {
@@ -78,6 +78,9 @@ export class HomeComponent implements OnInit {
   /** Marketing categories surfaced on the landing (admin → category → Marketing toggle), in sort order. */
   marketingCats: { cat: Category; products: ProductCard[] }[] = [];
 
+  /** Latest published blogs for the "Our Blog" section (each card links to the post). */
+  recentBlogs: Blog[] = [];
+
   message = { name: '', phone: '', email: '', subject: '', text: '' };
   sending = false;
 
@@ -132,6 +135,8 @@ export class HomeComponent implements OnInit {
       error: () => this.seo.home([], [])
     });
     this.catalog.banners('home-hero').subscribe(bs => { if (bs.length) this.heroBanners = bs.map(toSlide); });
+    // "Our Blog" cards — real published posts, each linking to its detail page.
+    this.catalog.blogs().subscribe(blogs => { this.recentBlogs = (blogs || []).filter(b => b.published !== false).slice(0, 3); });
     // About photo + bottom CTA-strip photo: admin-managed via Marketing → Banners, else the built-in image.
     this.catalog.banners('home-feature').subscribe(bs => { if (bs[0]?.imageDesktop) this.aboutImg = bs[0].imageDesktop; });
     this.catalog.banners('home-strip').subscribe(bs => { if (bs[0]?.imageDesktop) this.ctaImg = bs[0].imageDesktop; });

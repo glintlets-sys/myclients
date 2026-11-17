@@ -10,7 +10,7 @@ import { CartStoreService } from '../core/cart-store.service';
 import { SeoService, categoryPath, productPath } from '../core/seo.service';
 import { categoryImage } from '../core/category-images';
 import { categoryNames, searchProducts } from '../core/product-search';
-import { Category as CatalogCategory, ProductCard, PublishedBanner } from '@shared/core/models';
+import { Category as CatalogCategory, ProductCard, PublishedBanner, VariantCard } from '@shared/core/models';
 
 const DEFAULT_PAGE_BANNER = 'assets/images/bnr3.jpg';
 import { ToasterService } from '@shared/ui/toaster.service';
@@ -93,6 +93,8 @@ export class CategoryDetailComponent implements OnInit {
   private allCategories: CatalogCategory[] = [];
 
   isInStock: { [productId: string]: boolean } = {};
+  /** Pack size (variant) the customer picked on a card; defaults to the first in-stock one. */
+  selectedVariantId: { [productId: string]: string } = {};
   stockLoading: { [productId: string]: boolean } = {};
 
   ngOnInit() {
@@ -239,9 +241,19 @@ export class CategoryDetailComponent implements OnInit {
     return stars;
   }
 
+  /** The pack size shown as selected on a card — the one the customer picked, else the first in stock. */
+  selectedVariant(product: CategoryProduct): VariantCard | undefined {
+    const picked = product.card.variants.find(v => v.id === this.selectedVariantId[product.id]);
+    return picked ?? product.card.variants.find(v => v.inStock) ?? product.card.variants[0];
+  }
+
+  selectVariant(product: CategoryProduct, v: VariantCard): void {
+    if (v.inStock) this.selectedVariantId[product.id] = v.id;
+  }
+
   addToCart(product: CategoryProduct) {
-    const variant = product.card.variants.find(v => v.inStock);
-    if (!variant) return;
+    const variant = this.selectedVariant(product);
+    if (!variant || !variant.inStock) return;
     this.stockLoading[product.id] = true;
     // Start at the pack size's minimum order quantity (the API rejects less).
     this.cart.add(product.card.id, variant.id, Math.max(1, variant.minQty ?? 1)).subscribe({

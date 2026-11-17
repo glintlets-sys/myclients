@@ -171,8 +171,16 @@
                                 </h4>
                                 <p class="product-description">{{ product.description }}</p>
                                 <div class="product-price" *ngIf="fromPrice(product) as price">From ₹{{ price | number:'1.0-2' }}</div>
-                                <div class="product-size">
-                                    <span class="badge bg-light text-dark" *ngFor="let size of product.size">{{ size }}</span>
+                                <div class="product-size" *ngIf="product.card.variants.length">
+                                    <button type="button" *ngFor="let v of product.card.variants"
+                                            class="variant-pill"
+                                            [class.selected]="selectedVariant(product)?.id === v.id"
+                                            [class.oos]="!v.inStock"
+                                            [disabled]="!v.inStock"
+                                            (click)="selectVariant(product, v); $event.stopPropagation()"
+                                            [title]="v.inStock ? v.name : v.name + ' — out of stock'">
+                                        {{ v.name }}
+                                    </button>
                                 </div>
                             </div>
                             <button class="add-to-cart"

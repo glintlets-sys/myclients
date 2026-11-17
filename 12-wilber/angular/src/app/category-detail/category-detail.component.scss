@@ -683,3 +683,35 @@ a.category-header.active .category-title {
   letter-spacing: .03em;
   margin-bottom: 4px;
 }
+
+/* Selectable pack-size (variant) pills on category cards */
+.product-size {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 2px;
+}
+.variant-pill {
+  border: 1px solid #d0d5dd;
+  background: #fff;
+  color: #0f1e3c;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: border-color .12s, background .12s, color .12s;
+
+  &:hover:not(:disabled) { border-color: #2f4a4c; }
+  &.selected {
+    border-color: #2f4a4c;
+    background: #2f4a4c;
+    color: #fff;
+    font-weight: 600;
+  }
+  &.oos, &:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+  }
+}

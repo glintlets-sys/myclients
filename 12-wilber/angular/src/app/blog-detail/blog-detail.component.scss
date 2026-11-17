@@ -388,3 +388,15 @@
 .back-to-top i {
     font-size: 18px;
 } 
+/* Blog detail breadcrumb */
+.blog-breadcrumb {
+  background: #f6f7f9;
+  padding: 12px 0;
+  font-size: 0.88rem;
+  border-bottom: 1px solid #eceef1;
+
+  a { color: #2f4a4c; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .sep { margin: 0 8px; color: #adb5bd; }
+  .current { color: #6c757d; }
+}

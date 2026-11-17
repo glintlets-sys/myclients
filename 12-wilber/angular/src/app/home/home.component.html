@@ -411,130 +411,26 @@
             <h2>Our Articles & News</h2>
         </div>
         <div class="blog-grid">
-            <div class="swiper blog-slider">
-                <!-- Additional required wrapper -->
-                <div class="swiper-wrapper">
-                    <!-- Slides -->
-                    <div class="swiper-slide">
-                        <div class="blog-card">
-                            <div class="blog-card-image">
-                                <span class="blog-category">Flooring</span>
-                                <img src="assets/images/resource/news-1.jpg" alt="Blog Post">
-                            </div>
-                            <div class="blog-card-content">
-                                <div class="blog-card-meta">
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>March 10, 2025</span>
-                                    </div>
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-clock"></i>
-                                        <span>3 min read</span>
-                                    </div>
-                                </div>
-                                <h3 class="blog-card-title"><a routerLink="/blogs">How to Install Engineered Wood Flooring</a></h3>
-                                <p class="blog-card-description">Learn the step-by-step process of installing engineered wood flooring for a beautiful and durable result in your home or commercial space.</p>
-                                <a routerLink="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
+            <div class="row g-4">
+              <div class="col-md-4" *ngFor="let b of recentBlogs">
+                <div class="blog-card h-100">
+                  <a [routerLink]="['/blog', b.slug]" class="blog-card-image d-block">
+                    <span class="blog-category" *ngIf="b.category">{{ b.category }}</span>
+                    <img [src]="b.image || 'assets/images/resource/news-1.jpg'" [alt]="b.title">
+                  </a>
+                  <div class="blog-card-content">
+                    <div class="blog-card-meta">
+                      <div class="blog-card-meta-item" *ngIf="b.publishDate"><i class="far fa-calendar-alt"></i><span>{{ b.publishDate | date:'MMM dd, yyyy' }}</span></div>
+                      <div class="blog-card-meta-item" *ngIf="b.readTime"><i class="far fa-clock"></i><span>{{ b.readTime }}</span></div>
                     </div>
-                    <div class="swiper-slide">
-                        <div class="blog-card">
-                            <div class="blog-card-image">
-                                <span class="blog-category">Flooring</span>
-                                <img src="assets/images/resource/news-2.jpg" alt="Blog Post">
-                            </div>
-                            <div class="blog-card-content">
-                                <div class="blog-card-meta">
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>March 8, 2025</span>
-                                    </div>
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-clock"></i>
-                                        <span>4 min read</span>
-                                    </div>
-                                </div>
-                                <h3 class="blog-card-title"><a routerLink="/blogs">What Are The Different Finishes Of Wood Flooring?</a></h3>
-                                <p class="blog-card-description">Explore the various finishes available for wood flooring, from matte to glossy, and understand which option best suits your specific needs.</p>
-                                <a routerLink="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="blog-card">
-                            <div class="blog-card-image">
-                                <span class="blog-category">Flooring</span>
-                                <img src="assets/images/resource/news-3.jpg" alt="Blog Post">
-                            </div>
-                            <div class="blog-card-content">
-                                <div class="blog-card-meta">
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>March 5, 2025</span>
-                                    </div>
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-clock"></i>
-                                        <span>3 min read</span>
-                                    </div>
-                                </div>
-                                <h3 class="blog-card-title"><a routerLink="/blogs">Advantages of Engineered Wood Flooring</a></h3>
-                                <p class="blog-card-description">Discover the numerous benefits of choosing engineered wood flooring over solid hardwood, including improved stability, versatility, and cost-effectiveness.</p>
-                                <a routerLink="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="blog-card">
-                            <div class="blog-card-image">
-                                <span class="blog-category">Flooring</span>
-                                <img src="assets/images/resource/news-2.jpg" alt="Blog Post">
-                            </div>
-                            <div class="blog-card-content">
-                                <div class="blog-card-meta">
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>March 8, 2025</span>
-                                    </div>
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-clock"></i>
-                                        <span>4 min read</span>
-                                    </div>
-                                </div>
-                                <h3 class="blog-card-title"><a routerLink="/blogs">What Are The Different Finishes Of Wood Flooring?</a></h3>
-                                <p class="blog-card-description">Explore the various finishes available for wood flooring, from matte to glossy, and understand which option best suits your specific needs.</p>
-                                <a routerLink="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="swiper-slide">
-                        <div class="blog-card">
-                            <div class="blog-card-image">
-                                <span class="blog-category">Flooring</span>
-                                <img src="assets/images/resource/news-3.jpg" alt="Blog Post">
-                            </div>
-                            <div class="blog-card-content">
-                                <div class="blog-card-meta">
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-calendar-alt"></i>
-                                        <span>March 5, 2025</span>
-                                    </div>
-                                    <div class="blog-card-meta-item">
-                                        <i class="far fa-clock"></i>
-                                        <span>3 min read</span>
-                                    </div>
-                                </div>
-                                <h3 class="blog-card-title"><a routerLink="/blogs">Advantages of Engineered Wood Flooring</a></h3>
-                                <p class="blog-card-description">Discover the numerous benefits of choosing engineered wood flooring over solid hardwood, including improved stability, versatility, and cost-effectiveness.</p>
-                                <a routerLink="/blogs" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
-                            </div>
-                        </div>
-                    </div>
+                    <h3 class="blog-card-title"><a [routerLink]="['/blog', b.slug]">{{ b.title }}</a></h3>
+                    <p class="blog-card-description">{{ b.excerpt }}</p>
+                    <a [routerLink]="['/blog', b.slug]" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                  </div>
                 </div>
-                <!-- If we need pagination -->
-                <div class="swiper-pagination"></div>
+              </div>
             </div>
-        </div>
+          </div>
     </div>
 </section>
 

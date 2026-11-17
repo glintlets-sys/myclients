@@ -1,6 +1,15 @@
 <!-- Header Component -->
 <app-header></app-header>
 
+<!-- Breadcrumb -->
+<nav class="blog-breadcrumb" aria-label="breadcrumb" *ngIf="blogPost">
+  <div class="container">
+    <a routerLink="/">Home</a><span class="sep">/</span>
+    <a routerLink="/blogs">Blogs</a><span class="sep">/</span>
+    <span class="current">{{ blogPost.title }}</span>
+  </div>
+</nav>
+
 <!-- Blog Post Content -->
 <section class="blog-post">
     <div class="container">
