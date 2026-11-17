@@ -206,7 +206,14 @@ export class AdminComponent implements OnInit, OnDestroy {
     return u?.name || u?.phone || '';
   }
 
+  /** System owner only (Krishna, 9663747110). Publish & SEO is hidden from everyone else for now. */
+  get isSystemAdmin(): boolean {
+    return this.session.user()?.phone === '9663747110';
+  }
+
   public canAccessSection(section: string): boolean {
+    // Publish & SEO is restricted to the system owner until the client is ready for it.
+    if (section === 'seo' && !this.isSystemAdmin) return false;
     return this.rolePermissionsService.canAccessSection(this.currentUserRole, section);
   }
 

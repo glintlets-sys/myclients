@@ -341,7 +341,7 @@
         </div>
 
         <!-- Publish & SEO -->
-        <div *ngIf="activeView === 'seo'" class="content-section">
+        <div *ngIf="activeView === 'seo' && canAccessSection('seo')" class="content-section">
           @defer (on immediate) { <app-admin-seo></app-admin-seo> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
         </div>
 
