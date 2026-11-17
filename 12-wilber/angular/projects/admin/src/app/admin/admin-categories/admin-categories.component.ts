@@ -8,19 +8,6 @@ import { apiErrorMessage } from '@shared/core/api.interceptor';
 import { ToasterService } from '@shared/ui/toaster.service';
 import { ToastType } from '@shared/ui/toaster';
 import { AddEditCategoryComponent } from './add-edit-category/add-edit-category.component';
-import { environment } from '../../../environments/environment';
-
-/**
- * Photos the storefront already ships (from the old wilber.co.in pages), shown here until a category gets
- * its own image in admin — an uploaded image always wins. Keyed by category slug.
- */
-const STORE_IMAGES: Record<string, string> = {
-  ...Object.fromEntries(['cementitious-tile-adhesive', 'epoxy-grout', 'sealers', 'cleaners', 'mastic', 'epoxy-products',
-    'ager-polish', 'lapizo-bond', 'crystalizer', 'marble-densifier'].map(s => [s, `assets/images/categories/${s}.jpg`])),
-  'industrial-solutions': 'assets/images/IndustrialSolutions.jpg',
-  'stone-solutions': 'assets/images/stonesolution.jpg',
-  crystalizer: 'assets/images/categories/crystalizer-v2.jpg',   // matches live admin build of 6 Nov 17:05
-};
 
 @Component({
   selector: 'app-admin-categories',
@@ -199,16 +186,14 @@ export class AdminCategoriesComponent implements OnInit {
 
   childCount(c: Category): number { return this.categories.filter(x => x.parentId === c.id).length; }
 
-  /** Uploaded image, else the storefront's photo for this slug, else the empty placeholder. */
+  /** The category's own image; otherwise a neutral blank placeholder (no slug-guessed URL). */
   imageOf(c: Category): string {
-    const store = STORE_IMAGES[c.slug];
-    return c.image || c.bannerImage || (store ? `${environment.storefrontUrl}/${store}` : 'assets/images/image_empty.jpg');
+    return c.image || c.bannerImage || 'assets/images/image_empty.jpg';
   }
 
-  /** Where the thumbnail comes from, so staff can tell a real set image from a fallback. */
-  imageSource(c: Category): 'own' | 'website' | 'none' {
-    if (c.image || c.bannerImage) return 'own';
-    return STORE_IMAGES[c.slug] ? 'website' : 'none';
+  /** Whether this category has its own image set, so staff can spot ones still missing a photo. */
+  imageSource(c: Category): 'own' | 'none' {
+    return (c.image || c.bannerImage) ? 'own' : 'none';
   }
 
   filterData(): void {

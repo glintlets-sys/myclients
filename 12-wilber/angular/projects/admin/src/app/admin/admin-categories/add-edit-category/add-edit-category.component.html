@@ -98,9 +98,9 @@
         <div class="form-group">
           <label class="control-label">Category Image</label>
           <div class="image-upload-container">
-            <img [src]="category.image || 'assets/images/image_empty.jpg'" 
+            <img [src]="category.image || 'assets/images/image_empty.jpg'"
                  (error)="$any($event.target).src='assets/images/image_empty.jpg'"
-                 alt="Category Image" 
+                 alt="Category Image"
                  class="category-preview-image" 
                  (click)="triggerFileInput()"
                  title="Click to upload image">

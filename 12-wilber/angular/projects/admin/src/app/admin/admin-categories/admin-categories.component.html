@@ -66,7 +66,6 @@
              width="60" height="60" class="img-thumbnail">
         <div class="small mt-1 text-nowrap" [ngSwitch]="imageSource(category)">
           <span *ngSwitchCase="'own'" class="text-success"><i class="fas fa-check-circle me-1"></i>Own image</span>
-          <span *ngSwitchCase="'website'" class="text-muted" title="Shown from the website; upload one in Edit to set the category's own image">Website photo</span>
           <span *ngSwitchDefault class="text-danger">No image</span>
         </div>
       </td>
@@ -84,13 +83,13 @@
       <td>{{ getParentCategory(category) }}</td>
       <td>{{ category.description }}</td>
       <td>
-        <span class="badge bg-info text-white">{{ productCounts[category.id] || 0 }}</span>
+        <button type="button" class="badge bg-info text-white border-0" style="cursor:pointer"
+                (click)="openAddProductsModal(category)"
+                [title]="'Add or manage products in ' + category.name">
+          {{ productCounts[category.id] || 0 }}
+        </button>
       </td>
       <td class="text-center">
-        <button type="button" class="btn btn-sm btn-outline-success mb-1 d-block w-100 text-nowrap" (click)="openAddProductsModal(category)"
-                [title]="'Add existing products to ' + category.name">
-          <i class="fas fa-plus me-1"></i>Add products
-        </button>
         <span>
           <a (click)="openAddEditPopupForCategory(category)" class="cursor_pointer me-2">
             <i class="fas fa-edit text-primary"></i>
