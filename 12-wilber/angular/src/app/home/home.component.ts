@@ -34,16 +34,6 @@ const BUILT_IN_HERO: HeroSlide[] = [
     alt: 'Adesiva Marble Epoxy 999 by Wilber - crystal-clear, non-yellowing epoxy for marble and granite' },
 ];
 
-/** Shown until testimonials are published from admin (the entries that were hard-coded here before). */
-const BUILT_IN_TESTIMONIALS: Testimonial[] = [
-  { id: 'b1', name: 'Guy Hawkins', location: 'UI/UX Designer', rating: 5, imageUrl: 'assets/images/testimonialProfile1_1.png',
-    text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which' },
-  { id: 'b2', name: 'Jain Santh', location: 'UI/UX Designer', rating: 5, imageUrl: 'assets/images/testimonialProfile1_1.png',
-    text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which' },
-  { id: 'b3', name: 'Guy Hawkins', location: 'UI/UX Designer', rating: 5, imageUrl: 'assets/images/testimonialProfile1_1.png',
-    text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which' },
-];
-
 function toSlide(b: PublishedBanner): HeroSlide {
   const target = b.linkTarget ?? '';
   const route = b.linkType === 'product' && b.linkSlug ? `/product/${b.linkSlug}`
@@ -91,8 +81,9 @@ export class HomeComponent implements OnInit {
   /** Latest published blogs for the "Our Blog" section (each card links to the post). */
   recentBlogs: Blog[] = [];
 
-  /** "Our Happy Customers" — admin-managed testimonials (admin → Testimonials), else the built-in list. */
-  testimonials: Testimonial[] = BUILT_IN_TESTIMONIALS;
+  /** "Our Happy Customers" — admin-managed testimonials (admin → Testimonials). Empty until the client
+   *  publishes real ones; the section is hidden while empty so no placeholder reviews ever show. */
+  testimonials: Testimonial[] = [];
   private reviewSlider: any;
 
   /** Star icons to render for a testimonial's rating (default 5). */
