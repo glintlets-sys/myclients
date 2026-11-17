@@ -2,7 +2,8 @@ import { Component, EventEmitter, OnInit, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminApi } from '../../core/admin-api';
-import { Category } from '@shared/core/models';
+import { Category, Product } from '@shared/core/models';
+import { forkJoin } from 'rxjs';
 import { apiErrorMessage } from '@shared/core/api.interceptor';
 import { ToasterService } from '@shared/ui/toaster.service';
 import { ToastType } from '@shared/ui/toaster';
@@ -42,9 +43,70 @@ export class AdminCategoriesComponent implements OnInit {
   count = 0;
   /** categoryId → number of products (incl. inactive) assigned to it. */
   productCounts: Record<string, number> = {};
+  /** Full product list (for the "add existing products to a category" picker). */
+  allProducts: Product[] = [];
 
   showAddEditModal = false;
   selectedCategory: Category | null = null;
+
+  // --- Add existing products to a category (products are many-to-many with categories) ---
+  showAddProductsModal = false;
+  addToCategory: Category | null = null;
+  productSearch = '';
+  selectedToAdd = new Set<string>();
+  isAddingProducts = false;
+
+  openAddProductsModal(category: Category): void {
+    this.addToCategory = category;
+    this.productSearch = '';
+    this.selectedToAdd = new Set<string>();
+    this.showAddProductsModal = true;
+  }
+
+  closeAddProductsModal(): void {
+    this.showAddProductsModal = false;
+    this.addToCategory = null;
+    this.selectedToAdd = new Set<string>();
+  }
+
+  /** Active products NOT already in the target category, filtered by the search box. */
+  get eligibleProducts(): Product[] {
+    const cat = this.addToCategory;
+    if (!cat) return [];
+    const term = this.productSearch.trim().toLowerCase();
+    return this.allProducts.filter(p =>
+      !(p.categoryIds ?? []).includes(cat.id) &&
+      (!term || p.name.toLowerCase().includes(term) || (p.code ?? '').toLowerCase().includes(term)));
+  }
+
+  toggleProduct(id: string): void {
+    if (this.selectedToAdd.has(id)) this.selectedToAdd.delete(id);
+    else this.selectedToAdd.add(id);
+  }
+
+  saveAddProducts(): void {
+    const cat = this.addToCategory;
+    if (!cat || this.selectedToAdd.size === 0 || this.isAddingProducts) return;
+    this.isAddingProducts = true;
+    const ids = [...this.selectedToAdd];
+    const updates = ids.map(pid => {
+      const p = this.allProducts.find(x => x.id === pid)!;
+      const categoryIds = [...new Set([...(p.categoryIds ?? []), cat.id])];
+      return this.api.admin.updateProduct(pid, { categoryIds });
+    });
+    forkJoin(updates).subscribe({
+      next: () => {
+        this.toaster.showToast(`${ids.length} product(s) added to ${cat.name}`, ToastType.Success, 3000);
+        this.closeAddProductsModal();
+        this.loadCategoriesFromBackend();
+        this.isAddingProducts = false;
+      },
+      error: err => {
+        this.isAddingProducts = false;
+        this.toaster.showToast(apiErrorMessage(err, 'Could not add products to the category'), ToastType.Error, 4000);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loadCategoriesFromBackend();
@@ -63,13 +125,14 @@ export class AdminCategoriesComponent implements OnInit {
         this.toaster.showToast(apiErrorMessage(err, 'Could not load categories'), ToastType.Error, 4000);
       }
     });
-    this.api.admin.products({ size: 200 }).subscribe({
+    this.api.admin.products({ size: 500 }).subscribe({
       next: res => {
+        this.allProducts = res.items ?? [];
         const counts: Record<string, number> = {};
-        for (const p of res.items) for (const id of p.categoryIds ?? []) counts[id] = (counts[id] ?? 0) + 1;
+        for (const p of this.allProducts) for (const id of p.categoryIds ?? []) counts[id] = (counts[id] ?? 0) + 1;
         this.productCounts = counts;
       },
-      error: () => { this.productCounts = {}; }
+      error: () => { this.productCounts = {}; this.allProducts = []; }
     });
   }
 
@@ -106,6 +169,12 @@ export class AdminCategoriesComponent implements OnInit {
   imageOf(c: Category): string {
     const store = STORE_IMAGES[c.slug];
     return c.image || c.bannerImage || (store ? `${environment.storefrontUrl}/${store}` : 'assets/images/image_empty.jpg');
+  }
+
+  /** Where the thumbnail comes from, so staff can tell a real set image from a fallback. */
+  imageSource(c: Category): 'own' | 'website' | 'none' {
+    if (c.image || c.bannerImage) return 'own';
+    return STORE_IMAGES[c.slug] ? 'website' : 'none';
   }
 
   filterData(): void {

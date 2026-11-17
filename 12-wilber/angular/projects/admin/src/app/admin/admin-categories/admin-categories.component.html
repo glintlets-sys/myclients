@@ -61,9 +61,14 @@
     <tr *ngFor="let category of filteredCategories">
       <td><small class="text-muted">{{ category.slug }}</small></td>
       <td>
-        <img [src]="imageOf(category)" [title]="category.image ? '' : 'Website photo (upload one in Edit to replace it)'" 
+        <img [src]="imageOf(category)" [title]="category.image ? '' : 'Website photo (upload one in Edit to replace it)'"
              (error)="$event.target.src='assets/images/image_empty.jpg'"
              width="60" height="60" class="img-thumbnail">
+        <div class="small mt-1 text-nowrap" [ngSwitch]="imageSource(category)">
+          <span *ngSwitchCase="'own'" class="text-success"><i class="fas fa-check-circle me-1"></i>Own image</span>
+          <span *ngSwitchCase="'website'" class="text-muted" title="Shown from the website; upload one in Edit to set the category's own image">Website photo</span>
+          <span *ngSwitchDefault class="text-danger">No image</span>
+        </div>
       </td>
       <td [style.padding-left.px]="12 + depth(category) * 26">
         <i *ngIf="depth(category)" class="fas fa-level-up-alt fa-rotate-90 text-muted me-2"></i>
@@ -82,9 +87,9 @@
         <span class="badge bg-info text-white">{{ productCounts[category.id] || 0 }}</span>
       </td>
       <td class="text-center">
-        <button type="button" class="btn btn-sm btn-outline-success mb-1 d-block w-100 text-nowrap" (click)="addProduct.emit(category.id)"
-                [title]="'Add a new product in ' + category.name">
-          <i class="fas fa-plus me-1"></i>Add product
+        <button type="button" class="btn btn-sm btn-outline-success mb-1 d-block w-100 text-nowrap" (click)="openAddProductsModal(category)"
+                [title]="'Add existing products to ' + category.name">
+          <i class="fas fa-plus me-1"></i>Add products
         </button>
         <span>
           <a (click)="openAddEditPopupForCategory(category)" class="cursor_pointer me-2">
@@ -121,5 +126,37 @@
       (closePopup)="closeModal()"
       (saveCategory)="onSaveCategory($event)">
     </app-add-edit-category>
+  </div>
+</div>
+
+<!-- Add existing products to a category -->
+<div *ngIf="showAddProductsModal" class="modal-overlay" (click)="closeAddProductsModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()" style="max-width:640px;width:100%">
+    <div class="p-3">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h4 class="mb-0">Add products to “{{ addToCategory?.name }}”</h4>
+        <button type="button" class="btn btn-sm btn-light" aria-label="Close" (click)="closeAddProductsModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <p class="small text-muted mb-2">Pick existing products to add to this category. Products already in it are hidden. A product can belong to several categories.</p>
+      <input type="text" class="form-control mb-2" placeholder="Search products by name or code" [(ngModel)]="productSearch">
+      <div style="max-height:46vh;overflow:auto;border:1px solid #eee;border-radius:6px">
+        <div *ngIf="eligibleProducts.length === 0" class="text-center text-muted py-4">No matching products.</div>
+        <label *ngFor="let p of eligibleProducts" class="d-flex align-items-center gap-2 px-2 py-2 border-bottom m-0" style="cursor:pointer">
+          <input type="checkbox" [checked]="selectedToAdd.has(p.id)" (change)="toggleProduct(p.id)">
+          <img *ngIf="p.images?.length" [src]="p.images?.[0]" width="34" height="34" class="img-thumbnail" style="object-fit:cover">
+          <span class="flex-grow-1">{{ p.name }}</span>
+          <small class="text-muted" *ngIf="p.code">{{ p.code }}</small>
+        </label>
+      </div>
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <span class="small text-muted">{{ selectedToAdd.size }} selected</span>
+        <span>
+          <button type="button" class="btn btn-secondary me-2" (click)="closeAddProductsModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" [disabled]="selectedToAdd.size === 0 || isAddingProducts" (click)="saveAddProducts()">
+            <i *ngIf="isAddingProducts" class="fas fa-spinner fa-spin me-1"></i>Add selected
+          </button>
+        </span>
+      </div>
+    </div>
   </div>
 </div>

@@ -68,6 +68,13 @@ export class HomeComponent implements OnInit {
   /** Hero slides after the Industrial/Stone split slide: admin "Home – hero slider" banners, else the built-in ones. */
   heroBanners: HeroSlide[] = BUILT_IN_HERO;
 
+  /** "Our Products" promo tiles — the category's own image (admin → Categories), else the built-in photo. */
+  industrialImg = 'assets/images/IndustrialSolutions.jpg';
+  stoneImg = 'assets/images/stonesolution.jpg';
+  /** About photo + bottom CTA-strip photo — admin → Marketing → Banners (home-feature / home-strip), else built-in. */
+  aboutImg = 'assets/images/aboutusimage.webp';
+  ctaImg = 'assets/images/resource/cta-1.jpg';
+
   message = { name: '', phone: '', email: '', subject: '', text: '' };
   sending = false;
 
@@ -106,10 +113,20 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     combineLatest([this.catalog.categories(), this.catalog.products()]).subscribe({
-      next: ([categories, products]) => this.seo.home(categories, products),
+      next: ([categories, products]) => {
+        this.seo.home(categories, products);
+        // "Our Products" tiles follow the category's own image set in admin → Categories.
+        const ind = categories.find(c => c.slug === 'industrial-solutions');
+        const stn = categories.find(c => c.slug === 'stone-solutions');
+        if (ind?.image) this.industrialImg = ind.image;
+        if (stn?.image) this.stoneImg = stn.image;
+      },
       error: () => this.seo.home([], [])
     });
     this.catalog.banners('home-hero').subscribe(bs => { if (bs.length) this.heroBanners = bs.map(toSlide); });
+    // About photo + bottom CTA-strip photo: admin-managed via Marketing → Banners, else the built-in image.
+    this.catalog.banners('home-feature').subscribe(bs => { if (bs[0]?.imageDesktop) this.aboutImg = bs[0].imageDesktop; });
+    this.catalog.banners('home-strip').subscribe(bs => { if (bs[0]?.imageDesktop) this.ctaImg = bs[0].imageDesktop; });
     this.initializeSliders();
     this.initializeCarousel();
     this.initializeBackToTop();
