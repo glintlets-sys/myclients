@@ -4,6 +4,7 @@ import { filter } from 'rxjs/operators';
 import { ToasterComponent } from '@shared/ui/toaster.component';
 import { ToasterService } from '@shared/ui/toaster.service';
 import { SeoService } from './core/seo.service';
+import { AnalyticsService } from './core/analytics.service';
 
 @Component({
   selector: 'app-root',
@@ -14,10 +15,11 @@ import { SeoService } from './core/seo.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router, private seo: SeoService) {}
+  constructor(private router: Router, private seo: SeoService, private analytics: AnalyticsService) {}
 
   ngOnInit() {
     this.seo.init();
+    this.analytics.init();   // inject GA / Facebook Pixel if the store owner set their IDs in admin → Settings
     // Subscribe to router events to scroll to top on navigation
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))

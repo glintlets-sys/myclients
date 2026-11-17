@@ -153,6 +153,8 @@ export interface PublicConfig {
     cod?: { maxOrderPaise: number; feePaise: number };
   };
   features: { blogs: boolean; reviews: boolean; wishlist: boolean; notifyMe: boolean; guestCheckout: boolean; hideOutOfStock?: boolean };
+  /** Public web-analytics tags set by the store owner in admin → Settings; the storefront injects them. */
+  analytics?: { googleMeasurementId?: string; facebookPixelId?: string };
   /** Inputs of the SEO rules (the same ones the pre-rendered pages use). */
   seo?: PublicSeoConfig;
   catalog?: CatalogPointer;

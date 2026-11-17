@@ -7,6 +7,7 @@ import { AdminShippingSettingsComponent } from './admin-shipping-settings/admin-
 import { AdminSmsSettingsComponent } from './admin-sms-settings/admin-sms-settings.component';
 import { AdminEmailSettingsComponent } from './admin-email-settings/admin-email-settings.component';
 import { AdminCouponsSettingsComponent } from './admin-coupons-settings/admin-coupons-settings.component';
+import { AdminAnalyticsSettingsComponent } from './admin-analytics-settings/admin-analytics-settings.component';
 import { SettingsStore } from './settings-store.service';
 import { SessionService } from '@shared/core/session.service';
 import { apiErrorMessage } from '@shared/core/api.interceptor';
@@ -22,7 +23,8 @@ import { apiErrorMessage } from '@shared/core/api.interceptor';
     AdminShippingSettingsComponent,
     AdminSmsSettingsComponent,
     AdminEmailSettingsComponent,
-    AdminCouponsSettingsComponent
+    AdminCouponsSettingsComponent,
+    AdminAnalyticsSettingsComponent
   ],
   providers: [SettingsStore],
   templateUrl: './admin-settings.component.html',

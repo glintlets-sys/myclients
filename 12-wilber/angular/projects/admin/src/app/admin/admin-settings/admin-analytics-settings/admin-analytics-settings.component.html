@@ -1,0 +1,26 @@
+<div class="card-body">
+  <p class="text-muted">
+    Paste your analytics IDs here. The storefront injects the tags automatically — leave a field blank to turn that tag off.
+    Changes republish to the live site.
+  </p>
+
+  <div class="row g-3" style="max-width:640px">
+    <div class="col-12">
+      <label class="form-label fw-semibold">Google Analytics 4 — Measurement ID</label>
+      <input type="text" class="form-control" placeholder="G-XXXXXXXXXX" [(ngModel)]="analytics.googleMeasurementId">
+      <div class="form-text">Google Analytics → Admin → Data streams → your web stream → “Measurement ID”.</div>
+    </div>
+
+    <div class="col-12">
+      <label class="form-label fw-semibold">Meta (Facebook) Pixel ID</label>
+      <input type="text" class="form-control" placeholder="e.g. 123456789012345" [(ngModel)]="analytics.facebookPixelId">
+      <div class="form-text">Meta Events Manager → your Pixel → the numeric Pixel ID.</div>
+    </div>
+
+    <div class="col-12">
+      <button type="button" class="btn btn-primary" [disabled]="isLoading" (click)="save()">
+        <i *ngIf="isLoading" class="fas fa-spinner fa-spin me-1"></i>Save analytics settings
+      </button>
+    </div>
+  </div>
+</div>
