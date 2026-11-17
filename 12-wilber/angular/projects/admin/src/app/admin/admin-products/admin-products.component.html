@@ -1,0 +1,711 @@
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 products-toolbar">
+  <h3 class="panel-title mb-0">
+    <i class="fas fa-boxes me-2"></i>Products Management
+  </h3>
+  <span class="pull-right toolbar-buttons">
+    <button type="button" class="btn btn-success me-2" (click)="openStockModal()" [disabled]="!selected.size"
+            title="Tick products in the list, then update their stock">
+      <i class="fas fa-boxes me-1"></i>Update Stock
+      <span *ngIf="selected.size" class="badge bg-light text-dark ms-1">{{ selected.size }}</span>
+    </button>
+    <button type="button" class="btn btn-primary me-2" (click)="exportProducts()" [disabled]="isExporting">
+      <i class="fas me-1" [ngClass]="isExporting ? 'fa-spinner fa-spin' : 'fa-download'"></i>Export Products
+    </button>
+    <button type="button" class="btn btn-primary me-2" (click)="importProducts()" [disabled]="isImporting">
+      <i class="fas me-1" [ngClass]="isImporting ? 'fa-spinner fa-spin' : 'fa-upload'"></i>Bulk Update
+    </button>
+    <button type="button" class="btn btn-primary me-2" (click)="refreshData()" [disabled]="isLoading">
+      <i class="fas fa-sync me-1" [class.fa-spin]="isLoading"></i>Refresh
+    </button>
+    <button type="button" class="btn btn-primary" (click)="gotoCategories.emit()"
+            title="New products are added from their category: Categories → Add product">
+      <i class="fas fa-plus me-1"></i>Add Product <small class="opacity-75">(via Categories)</small>
+    </button>
+  </span>
+</div>
+
+<!-- Hidden pack sizes -->
+<div class="alert alert-warning mb-3" role="alert" *ngIf="hiddenVariants.length">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <i class="fas fa-eye-slash me-2"></i>
+      <strong>{{ hiddenVariants.length }} pack size(s) are hidden from the store.</strong>
+      Confirm their price, tick <em>Active</em> and save to show them to customers.
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-dark" (click)="showHiddenList = !showHiddenList">
+      {{ showHiddenList ? 'Hide list' : 'Show list' }}
+    </button>
+  </div>
+  <table class="table table-sm table-bordered bg-white mt-2 mb-0" *ngIf="showHiddenList">
+    <thead class="table-light">
+      <tr><th>Product</th><th>Pack size</th><th>Current price</th><th></th></tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let h of hiddenVariants">
+        <td>{{ h.productName }}</td>
+        <td>{{ h.variantName }}</td>
+        <td>{{ h.pricePaise | money }} <small class="text-muted">(to confirm)</small></td>
+        <td class="text-end">
+          <button type="button" class="btn btn-sm btn-primary" (click)="editHiddenVariant(h)">
+            <i class="fas fa-edit me-1"></i>Set price
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Search and Filters -->
+<div class="row mb-3">
+  <div class="col-md-4">
+    <input 
+      type="text" 
+      class="form-control" 
+      placeholder="Search products..." 
+      [(ngModel)]="searchTerm" 
+      (keyup)="applyFilters()">
+  </div>
+  <div class="col-md-2">
+    <select class="form-control" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+      <option value="">All Categories</option>
+      <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select class="form-control" [(ngModel)]="stockFilter" (change)="onCategoryChange()">
+      <option value="">All stock levels</option>
+      <option value="out">Out of stock</option>
+      <option value="low">Low stock (below 10)</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <select class="form-control" (change)="onTableSizeChange($event)">
+      <option [value]="5">5 per page</option>
+      <option [value]="10" [selected]="tableSize === 10">10 per page</option>
+      <option [value]="20">20 per page</option>
+      <option [value]="50">50 per page</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <span class="item_count">Total: {{ count }} products</span>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="row mb-3">
+  <div class="col-12">
+    <div class="alert alert-primary">
+      <i class="fas fa-spinner fa-spin me-2"></i>
+      Loading products...
+    </div>
+  </div>
+</div>
+
+<!-- Products: cards on phones -->
+<div class="d-md-none product-cards">
+  <div class="mobile-select-all d-flex justify-content-between align-items-center mb-2" *ngIf="products.length">
+    <label class="form-check mb-0">
+      <input class="form-check-input" type="checkbox" [checked]="allOnPageSelected()" (change)="toggleSelectPage()">
+      <span class="form-check-label small">Select all on this page</span>
+    </label>
+    <small class="text-muted">{{ count }} products</small>
+  </div>
+  <div class="product-card-m" *ngFor="let product of products" [class.inactive]="!product.active" [class.selected]="isSelected(product)">
+    <div class="d-flex gap-2">
+      <input class="form-check-input mt-1" type="checkbox" [checked]="isSelected(product)" (change)="toggleSelected(product)"
+             [attr.aria-label]="'Select ' + product.name">
+      <img [src]="getProductThumbnail(product)" (error)="$any($event.target).src='assets/images/image_empty.jpg'" alt="" class="thumb">
+      <div class="flex-grow-1 min-w-0">
+        <div class="d-flex justify-content-between align-items-start gap-2">
+          <strong class="name">{{ getProductName(product) }}</strong>
+          <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" [checked]="product.active" (change)="toggleProductAvailability(product, $event)"
+                   [attr.aria-label]="'Active: ' + product.name">
+          </div>
+        </div>
+        <small class="text-muted">{{ product.code || 'No code' }}</small>
+      </div>
+    </div>
+    <div class="variant-lines">
+      <div *ngFor="let v of product.variants" class="variant-line" [class.text-muted]="v.active === false">
+        <span>{{ v.name }}<span *ngIf="v.active === false" class="badge bg-warning text-dark ms-1">hidden</span>
+          <span *ngIf="v.priceSlabs?.length" class="badge bg-light text-dark ms-1" title="Quantity slabs">bulk</span></span>
+        <strong>{{ v.pricePaise | money }}</strong>
+        <span [class]="v.active === false ? 'text-muted' : stockClass(v.stock, product)">
+          {{ product.stockManaged === false ? 'not tracked' : (v.stock ?? 0) + ' in stock' }}
+        </span>
+      </div>
+    </div>
+    <div class="d-flex gap-2 mt-2">
+      <button class="btn btn-sm btn-outline-primary flex-fill" type="button" (click)="editProduct(product)"><i class="fa fa-edit me-1"></i>Edit</button>
+      <button class="btn btn-sm btn-outline-success flex-fill" type="button" (click)="selected.clear(); toggleSelected(product); openStockModal()">
+        <i class="fas fa-boxes me-1"></i>Stock
+      </button>
+      <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteProduct(product)" title="Delete"><i class="fa fa-trash"></i></button>
+    </div>
+  </div>
+</div>
+
+<!-- Products Table -->
+<table class="table table-bordered d-none d-md-table">
+  <thead class="table-light">
+    <tr>
+      <th class="text-center" style="width: 36px;">
+        <input class="form-check-input" type="checkbox" [checked]="allOnPageSelected()" (change)="toggleSelectPage()" title="Select all on this page">
+      </th>
+      <th>Image</th>
+      <th>Name</th>
+      <th>Code</th>
+      <th>Brand</th>
+      <th>Price</th>
+      <th>Stock</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let product of products" [class.table-secondary]="!product.active">
+      <td class="text-center">
+        <input class="form-check-input" type="checkbox" [checked]="isSelected(product)" (change)="toggleSelected(product)">
+      </td>
+      <td>
+        <img 
+          [src]="getProductThumbnail(product)" 
+          (error)="$any($event.target).src='assets/images/image_empty.jpg'"
+          [alt]="getProductName(product)" 
+          class="img-thumbnail product-image"
+          style="width: 50px; height: 50px; object-fit: cover;">
+      </td>
+      <td>
+        <strong>{{ getProductName(product) }}</strong>
+        <br>
+        <small class="text-muted" *ngIf="getProductDescription(product) && getProductDescription(product).trim().length > 0">
+          {{ getProductDescription(product).length > 50 ? (getProductDescription(product) | slice:0:50) + '...' : getProductDescription(product) }}
+        </small>
+        <small class="text-muted" *ngIf="!getProductDescription(product) || getProductDescription(product).trim().length === 0">
+          No description available
+        </small>
+      </td>
+      <td>{{ product.code || 'N/A' }}</td>
+      <td>{{ product.brand || 'N/A' }}</td>
+      <td>
+        <ng-container *ngIf="product.variants?.length > 1; else singlePrice">
+          <div *ngFor="let v of product.variants" [class.text-muted]="v.active === false">
+            <small>{{ v.name }}: <strong>{{ v.pricePaise | money }}</strong>
+              <span *ngIf="v.active === false" class="badge bg-warning text-dark ms-1" title="Hidden from the store">hidden</span>
+            </small>
+          </div>
+        </ng-container>
+        <ng-template #singlePrice><strong>{{ minPrice(product) | money }}</strong></ng-template>
+      </td>
+      <td>
+        <div *ngFor="let v of product.variants" [class]="v.active === false ? 'text-muted' : stockClass(v.stock, product)">
+          <small>{{ v.name }}: <strong>{{ product.stockManaged === false ? 'not tracked' : (v.stock ?? 0) }}</strong></small>
+        </div>
+      </td>
+      <td>
+        <div class="form-check form-switch d-flex justify-content-center">
+          <input
+            class="form-check-input status-toggle"
+            type="checkbox"
+            [checked]="product.active"
+            (change)="toggleProductAvailability(product, $event)"
+            [id]="'toggle-' + product.id"
+            [class.toggle-active]="product.active"
+            [class.toggle-inactive]="!product.active"
+            title="Click to toggle availability">
+        </div>
+      </td>
+      <td>
+        <div class="btn-group" role="group">
+          <button class="btn btn-sm btn-outline-info" type="button" (click)="viewProductDetails(product)" title="View Details">
+            <i class="fa fa-eye"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-primary" type="button" (click)="editProduct(product)" title="Edit Product">
+            <i class="fa fa-edit"></i>
+          </button>
+          <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteProduct(product)" title="Delete Product">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Empty State -->
+<div *ngIf="products.length === 0 && !isLoading" class="text-center py-5">
+  <div class="no-record-found">
+    <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+    <h5>No Products Found</h5>
+    <p class="text-muted">
+      <span *ngIf="searchTerm || selectedCategory">Try adjusting your search filters.</span>
+      <span *ngIf="!searchTerm && !selectedCategory">No products yet. Add one from Categories &rarr; Add product.</span>
+    </p>
+  </div>
+</div>
+
+<!-- Pagination -->
+<div *ngIf="products.length > 0" class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-4">
+  <div class="pagination-info">
+    <small class="text-muted">
+      Showing {{ (page - 1) * tableSize + 1 }} to {{ Math.min(page * tableSize, count) }} of {{ count }} products
+    </small>
+  </div>
+  
+  <nav aria-label="Products pagination">
+    <ul class="pagination pagination-sm mb-0">
+      <!-- Previous button -->
+      <li class="page-item" [class.disabled]="page === 1">
+        <button class="page-link" (click)="onTableDataChange(page - 1)" [disabled]="page === 1">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+      </li>
+      
+      <!-- Page numbers -->
+      <li class="page-item" *ngFor="let pageNum of getPageNumbers()" [class.active]="pageNum === page">
+        <button class="page-link" (click)="onTableDataChange(pageNum)">
+          {{ pageNum }}
+        </button>
+      </li>
+      
+      <!-- Next button -->
+      <li class="page-item" [class.disabled]="page >= getTotalPages()">
+        <button class="page-link" (click)="onTableDataChange(page + 1)" [disabled]="page >= getTotalPages()">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Add / Edit Product Modal -->
+<!-- Update Stock -->
+<div *ngIf="showStockModal" class="modal-overlay" (click)="closeStockModal()">
+  <div class="modal-content product-editor" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="panel-title mb-0"><i class="fas fa-boxes me-2"></i>Update Stock</h3>
+      <button type="button" class="btn-close" (click)="closeStockModal()" [disabled]="savingStock" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-info py-2" *ngIf="changedStockRows().length">
+        <strong>{{ changedStockRows().length }}</strong> pack size(s) will be updated.
+      </div>
+      <div *ngIf="savingStock && !stockRows.length" class="text-muted py-3">
+        <i class="fas fa-spinner fa-spin me-2"></i>Loading current stock...
+      </div>
+      <div class="d-md-none stock-cards" *ngIf="stockRows.length">
+        <div class="stock-card-m" *ngFor="let r of stockRows; let i = index"
+             [class.up]="stockChange(r) > 0" [class.down]="stockChange(r) < 0">
+          <div class="d-flex justify-content-between gap-2">
+            <div class="min-w-0">
+              <strong class="d-block text-truncate">{{ r.productName }}</strong>
+              <small>{{ r.variantName }}</small>
+              <span *ngIf="!r.active" class="badge bg-warning text-dark ms-1">hidden</span>
+            </div>
+            <span class="badge bg-secondary align-self-start">now {{ r.current }}</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 mt-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="r.target = Math.max(0, (r.target ?? 0) - 1)"
+                    [disabled]="savingStock" aria-label="Decrease"><i class="fas fa-minus"></i></button>
+            <input type="number" min="0" step="1" inputmode="numeric" class="form-control form-control-sm text-center"
+                   [name]="'mstock' + i" [(ngModel)]="r.target" [disabled]="savingStock" aria-label="New stock">
+            <button type="button" class="btn btn-outline-secondary btn-sm" (click)="r.target = (r.target ?? 0) + 1"
+                    [disabled]="savingStock" aria-label="Increase"><i class="fas fa-plus"></i></button>
+            <span class="change small">
+              <span *ngIf="stockChange(r) > 0" class="text-success">+{{ stockChange(r) }}</span>
+              <span *ngIf="stockChange(r) < 0" class="text-danger">{{ stockChange(r) }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="table-responsive d-none d-md-block" *ngIf="stockRows.length">
+        <table class="table table-hover table-sm align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Product</th>
+              <th>Pack size</th>
+              <th>Current stock</th>
+              <th style="width: 130px;">New stock</th>
+              <th>Change</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of stockRows; let i = index"
+                [class.table-success]="stockChange(r) > 0" [class.table-danger]="stockChange(r) < 0">
+              <td><strong>{{ r.productName }}</strong></td>
+              <td>
+                {{ r.variantName }}
+                <span *ngIf="!r.active" class="badge bg-warning text-dark ms-1" title="Hidden from the store">hidden</span>
+              </td>
+              <td><span class="badge bg-secondary">{{ r.current }}</span></td>
+              <td>
+                <input type="number" min="0" step="1" class="form-control form-control-sm" [name]="'stock' + i"
+                       [(ngModel)]="r.target" [disabled]="savingStock">
+              </td>
+              <td>
+                <span *ngIf="stockChange(r) > 0" class="badge bg-success"><i class="fas fa-arrow-up me-1"></i>+{{ stockChange(r) }}</span>
+                <span *ngIf="stockChange(r) < 0" class="badge bg-danger"><i class="fas fa-arrow-down me-1"></i>{{ stockChange(r) }}</span>
+                <span *ngIf="stockChange(r) === 0" class="text-muted">No change</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small text-muted mb-0">
+        Enter the new total on hand. If an order comes in while you are editing, nothing is overwritten:
+        you'll be asked to check the latest numbers and save again.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="closeStockModal()" [disabled]="savingStock">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="saveStockModal()" [disabled]="savingStock || !changedStockRows().length">
+        <i class="fas me-1" [ngClass]="savingStock ? 'fa-spinner fa-spin' : 'fa-save'"></i>Update Stock
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Product details modal (replaces the old browser alert) -->
+<div *ngIf="detailProduct" class="modal-overlay" (click)="closeProductDetails()">
+  <div class="modal-content product-details" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="panel-title mb-0"><i class="fas fa-box-open me-2"></i>{{ detailProduct.name }}</h3>
+      <button type="button" class="btn-close" (click)="closeProductDetails()" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+        <span class="badge bg-light text-dark border" *ngIf="detailProduct.code">
+          <i class="fas fa-barcode me-1"></i>{{ detailProduct.code }}
+        </span>
+        <span [class]="getStatusClass(getProductStatus(detailProduct))">{{ getProductStatus(detailProduct) }}</span>
+      </div>
+
+      <dl class="details-grid mb-3">
+        <dt>Brand</dt>
+        <dd>{{ detailProduct.brand || '—' }}</dd>
+        <dt>Categories</dt>
+        <dd>{{ categoryNames(detailProduct) || 'None' }}</dd>
+      </dl>
+
+      <h6 class="section-title mb-2">
+        <i class="fas fa-layer-group me-1"></i>Variants
+        <span class="badge bg-secondary ms-1">{{ (detailProduct.variants ?? []).length }}</span>
+      </h6>
+
+      <div class="table-responsive" *ngIf="(detailProduct.variants ?? []).length; else noVariants">
+        <table class="table table-sm align-middle variants-table mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Pack size</th>
+              <th>SKU</th>
+              <th class="text-end">Price</th>
+              <th class="text-end">Stock</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of detailProduct.variants" [class.text-muted]="!v.active">
+              <td><strong>{{ v.name }}</strong></td>
+              <td><small class="text-muted">{{ v.sku || 'no SKU' }}</small></td>
+              <td class="text-end">{{ v.pricePaise | money }}</td>
+              <td class="text-end">
+                <span class="badge" [class.bg-success]="(v.stock ?? 0) >= 10"
+                      [class.bg-warning]="(v.stock ?? 0) > 0 && (v.stock ?? 0) < 10"
+                      [class.text-dark]="(v.stock ?? 0) > 0 && (v.stock ?? 0) < 10"
+                      [class.bg-danger]="!(v.stock ?? 0)">{{ v.stock ?? 0 }}</span>
+              </td>
+              <td class="text-end">
+                <span *ngIf="!v.active" class="badge bg-warning text-dark">hidden</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #noVariants>
+        <p class="text-muted mb-0">No pack sizes added yet.</p>
+      </ng-template>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="closeProductDetails()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showEditor" class="modal-overlay" (click)="closeEditor()">
+  <div class="modal-content product-editor" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="panel-title mb-0">{{ form.id ? 'Edit Product' : 'Add Product' }}</h3>
+      <button type="button" class="btn-close" (click)="closeEditor()" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+      <div *ngIf="editorLoading" class="alert alert-primary">
+        <i class="fas fa-spinner fa-spin me-2"></i>Loading product...
+      </div>
+
+      <form *ngIf="!editorLoading" (ngSubmit)="saveProduct()">
+        <!-- Basics -->
+        <h6 class="section-title">Basic Information</h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name *</label>
+            <input class="form-control" name="name" [(ngModel)]="form.name" required>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Code</label>
+            <input class="form-control" name="code" [(ngModel)]="form.code">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Brand</label>
+            <input class="form-control" name="brand" [(ngModel)]="form.brand">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">URL Slug</label>
+            <input class="form-control" name="slug" [(ngModel)]="form.slug" placeholder="auto-generated from the name">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Badge</label>
+            <input class="form-control" name="badge" [(ngModel)]="form.badge" placeholder="e.g. New, Bestseller">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Sort Order</label>
+            <input type="number" class="form-control" name="sortOrder" [(ngModel)]="form.sortOrder">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Categories</label>
+            <div class="category-picks">
+              <label *ngFor="let c of categories" class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" [checked]="isCategorySelected(c.id)" (change)="toggleCategory(c.id)">
+                <span class="form-check-label">{{ c.name }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Short Description</label>
+            <textarea class="form-control" rows="2" name="shortDescription" [(ngModel)]="form.shortDescription"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description (HTML allowed)</label>
+            <textarea class="form-control" rows="4" name="description" [(ngModel)]="form.description"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tags (comma separated)</label>
+            <input class="form-control" name="tags" [(ngModel)]="form.tags">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Packaging Type</label>
+            <input class="form-control" name="packagingType" [(ngModel)]="form.packagingType">
+          </div>
+          <div class="col-12 d-flex flex-wrap gap-4">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="pActive" name="active" [(ngModel)]="form.active">
+              <label class="form-check-label" for="pActive">Active (visible in store)</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="pFeatured" name="featured" [(ngModel)]="form.featured">
+              <label class="form-check-label" for="pFeatured">Featured</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="pStockManaged" name="stockManaged" [(ngModel)]="form.stockManaged">
+              <label class="form-check-label" for="pStockManaged">Track stock</label>
+            </div>
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="pHide" name="hideWhenOutOfStock" [(ngModel)]="form.hideWhenOutOfStock">
+              <label class="form-check-label" for="pHide">Hide when out of stock</label>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label">Min order qty</label>
+            <input type="number" min="1" max="99" step="1" inputmode="numeric" class="form-control" name="minOrderQty"
+                   [(ngModel)]="form.minOrderQty" placeholder="1">
+          </div>
+          <div class="col-6 col-md-3">
+            <label class="form-label">Max order qty</label>
+            <input type="number" min="1" max="99" step="1" inputmode="numeric" class="form-control" name="maxOrderQty"
+                   [(ngModel)]="form.maxOrderQty" placeholder="no limit">
+          </div>
+          <div class="col-12 col-md-6 d-flex align-items-end">
+            <small class="text-muted">Per cart line. Pack sizes can override these under <em>Bulk price / limits</em>.</small>
+          </div>
+        </div>
+
+        <!-- Variants -->
+        <h6 class="section-title d-flex justify-content-between align-items-center">
+          <span>Variants, Prices &amp; Stock</span>
+          <button type="button" class="btn btn-sm btn-outline-primary" (click)="addVariant()">
+            <i class="fas fa-plus me-1"></i>Add Variant
+          </button>
+        </h6>
+        <div class="table-responsive">
+          <table class="table table-bordered table-sm variant-table">
+            <thead class="table-light">
+              <tr>
+                <th>Name *</th>
+                <th>SKU</th>
+                <th>Price (₹) *</th>
+                <th>MRP (₹)</th>
+                <th>Weight (kg)</th>
+                <th>Stock</th>
+                <th>Active</th>
+                <th>Bulk price / limits</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let v of form.variants; let i = index">
+              <tr [class.table-warning]="!v.active || (highlightVariantId && v.id === highlightVariantId)"
+                  [title]="v.active ? '' : 'Hidden from the store - confirm the price and tick Active to show it'">
+                <td><input class="form-control form-control-sm" [name]="'vName' + i" [(ngModel)]="v.name" placeholder="e.g. 20 KG"></td>
+                <td><input class="form-control form-control-sm" [name]="'vSku' + i" [(ngModel)]="v.sku"></td>
+                <td><input type="number" min="0" step="0.01" class="form-control form-control-sm" [name]="'vPrice' + i" [(ngModel)]="v.price"></td>
+                <td><input type="number" min="0" step="0.01" class="form-control form-control-sm" [name]="'vMrp' + i" [(ngModel)]="v.mrp"></td>
+                <td><input type="number" min="0" step="0.01" class="form-control form-control-sm" [name]="'vWeight' + i" [(ngModel)]="v.weightKg"></td>
+                <td><input type="number" min="0" step="1" class="form-control form-control-sm" [name]="'vStock' + i" [(ngModel)]="v.stock" [disabled]="!form.stockManaged"></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" [name]="'vActive' + i" [(ngModel)]="v.active"></td>
+                <td>
+                  <button type="button" class="btn btn-sm text-nowrap" [class.btn-outline-secondary]="!rulesSummary(v)"
+                          [class.btn-outline-success]="!!rulesSummary(v)" (click)="v.showRules = !v.showRules">
+                    <i class="fas me-1" [ngClass]="v.showRules ? 'fa-chevron-up' : 'fa-layer-group'"></i>{{ rulesSummary(v) || 'Add' }}
+                  </button>
+                </td>
+                <td class="text-center">
+                  <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeVariant(i)" [disabled]="form.variants.length <= 1" title="Remove variant">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="v.showRules" class="rules-row">
+                <td colspan="9">
+                  <div class="rules-editor">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                      <strong class="small">Quantity slabs for {{ v.name || 'this pack size' }}
+                        <span class="text-muted fw-normal">(e.g. "5 and above at ₹950 each"; GST-inclusive like the price)</span></strong>
+                      <button type="button" class="btn btn-sm btn-outline-primary" (click)="addSlab(v)"><i class="fas fa-plus me-1"></i>Add slab</button>
+                    </div>
+                    <div class="slab-row d-flex align-items-center gap-2 mb-2 flex-wrap" *ngFor="let s of v.slabs; let j = index">
+                      <span class="small">Buy</span>
+                      <input type="number" min="2" max="99" step="1" inputmode="numeric" class="form-control form-control-sm slab-qty"
+                             [name]="'slabQty' + i + '_' + j" [(ngModel)]="s.minQty" aria-label="Minimum quantity">
+                      <span class="small">or more at ₹</span>
+                      <input type="number" min="0" step="0.01" inputmode="decimal" class="form-control form-control-sm slab-price"
+                             [name]="'slabPrice' + i + '_' + j" [(ngModel)]="s.unitPrice" aria-label="Unit price">
+                      <span class="small">each</span>
+                      <span class="badge bg-success" *ngIf="slabDiscountPct(v, s) !== null && slabDiscountPct(v, s)! > 0">{{ slabDiscountPct(v, s) }}% off</span>
+                      <button type="button" class="btn btn-sm btn-link text-danger" (click)="removeSlab(v, j)" title="Remove slab"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div class="small text-muted mb-2" *ngIf="!v.slabs.length">No slabs: every unit costs the selling price.</div>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                      <span class="small">This pack size: min</span>
+                      <input type="number" min="1" max="99" step="1" inputmode="numeric" class="form-control form-control-sm slab-qty"
+                             [name]="'vMin' + i" [(ngModel)]="v.minOrderQty" [placeholder]="form.minOrderQty || 1" aria-label="Minimum order quantity">
+                      <span class="small">max</span>
+                      <input type="number" min="1" max="99" step="1" inputmode="numeric" class="form-control form-control-sm slab-qty"
+                             [name]="'vMax' + i" [(ngModel)]="v.maxOrderQty" [placeholder]="form.maxOrderQty || 'any'" aria-label="Maximum order quantity">
+                      <small class="text-muted">empty = product setting</small>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+        <p class="small text-muted mb-3" *ngIf="hasHiddenVariant()">
+          <i class="fas fa-eye-slash me-1"></i>Highlighted pack sizes are hidden from the store. Check the price, tick <em>Active</em> and save to show them.
+        </p>
+
+        <!-- Images -->
+        <h6 class="section-title d-flex justify-content-between align-items-center">
+          <span>Images</span>
+          <label class="btn btn-sm btn-outline-primary mb-0" [class.disabled]="uploadingImages">
+            <i class="fas me-1" [ngClass]="uploadingImages ? 'fa-spinner fa-spin' : 'fa-upload'"></i>Upload Images
+            <input type="file" accept="image/*" multiple class="d-none" (change)="onImagesSelected($event)" [disabled]="uploadingImages">
+          </label>
+        </h6>
+        <div class="image-grid">
+          <div *ngFor="let img of form.images; let i = index" class="image-tile" [class.primary]="i === 0">
+            <img [src]="img" (error)="$any($event.target).src='assets/images/image_empty.jpg'" alt="">
+            <div class="image-actions">
+              <button type="button" class="btn btn-sm btn-light" *ngIf="i > 0" (click)="makePrimaryImage(i)" title="Make main image"><i class="fas fa-star"></i></button>
+              <button type="button" class="btn btn-sm btn-light text-danger" (click)="removeImage(i)" title="Remove"><i class="fas fa-times"></i></button>
+            </div>
+            <span *ngIf="i === 0" class="badge bg-primary primary-label">Main</span>
+          </div>
+          <div *ngIf="!form.images.length" class="text-muted small">No images yet. The first image is used as the thumbnail.</div>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <label class="form-label">Application Image</label>
+            <div class="input-group">
+              <input class="form-control" name="applicationImage" [(ngModel)]="form.applicationImage" placeholder="URL">
+              <label class="btn btn-outline-secondary mb-0" title="Upload">
+                <i class="fas fa-upload"></i>
+                <input type="file" accept="image/*" class="d-none" (change)="onApplicationImageSelected($event)">
+              </label>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Video URL</label>
+            <input class="form-control" name="videoUrl" [(ngModel)]="form.videoUrl" placeholder="https://www.youtube.com/embed/...">
+          </div>
+        </div>
+
+        <!-- Details -->
+        <h6 class="section-title">Product Details <small class="text-muted">(one item per line)</small></h6>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Specifications (Label: Value)</label>
+            <textarea class="form-control" rows="3" name="specs" [(ngModel)]="form.specs"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Features</label>
+            <textarea class="form-control" rows="3" name="features" [(ngModel)]="form.features"></textarea>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Applications</label>
+            <textarea class="form-control" rows="3" name="applications" [(ngModel)]="form.applications"></textarea>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Considerations</label>
+            <textarea class="form-control" rows="3" name="considerations" [(ngModel)]="form.considerations"></textarea>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">How to Apply</label>
+            <textarea class="form-control" rows="3" name="howToApply" [(ngModel)]="form.howToApply"></textarea>
+          </div>
+        </div>
+
+        <!-- Tax & SEO -->
+        <h6 class="section-title">Tax &amp; SEO</h6>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <label class="form-label">HSN Code</label>
+            <input class="form-control" name="hsn" [(ngModel)]="form.hsn">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">GST Rate %</label>
+            <input type="number" min="0" step="0.01" class="form-control" name="taxRatePercent" [(ngModel)]="form.taxRatePercent" placeholder="store default">
+          </div>
+          <div class="col-12">
+            <app-seo-fields [(seoTitle)]="form.seoTitle" [(seoDescription)]="form.seoDescription" kind="product"
+                            [name]="form.name" [texts]="[form.shortDescription, form.description]"
+                            [path]="'/product/' + (form.slug || slugPreview(form.name))"></app-seo-fields>
+          </div>
+        </div>
+
+        <div *ngIf="editorError" class="alert alert-danger mt-3 mb-0">{{ editorError }}</div>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-white" (click)="closeEditor()" [disabled]="saving">
+            <i class="fas fa-times me-1"></i>Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving || uploadingImages">
+            <i class="fas me-1" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>{{ form.id ? 'Update Product' : 'Save Product' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

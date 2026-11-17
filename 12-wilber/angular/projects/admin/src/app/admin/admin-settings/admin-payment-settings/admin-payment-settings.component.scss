@@ -1,0 +1,14 @@
+@use '../settings-panel' as sp;
+
+.payment-settings {
+  @include sp.panel;
+
+  .provider-status {
+    font-size: 0.75rem;
+    vertical-align: middle;
+  }
+
+  code {
+    word-break: break-all;
+  }
+}

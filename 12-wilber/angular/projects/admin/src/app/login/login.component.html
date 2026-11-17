@@ -1,0 +1,51 @@
+<div class="login-page d-flex align-items-center justify-content-center">
+  <div class="card login-card shadow-sm">
+    <div class="card-body p-4">
+      <div class="text-center mb-4">
+        <div class="brand-icon mb-2"><i class="fas fa-user-shield"></i></div>
+        <h1 class="h4 mb-1">{{ storeName ? storeName + ' admin' : 'Store admin' }}</h1>
+        <p class="text-muted small mb-0">Staff sign-in</p>
+      </div>
+
+      <div class="alert alert-danger small py-2" role="alert" *ngIf="errorMessage">
+        {{ errorMessage }}
+        <div *ngIf="notStaff && storefrontUrl" class="mt-1">
+          <a [href]="storefrontUrl" class="alert-link">Go to the storefront</a>
+        </div>
+      </div>
+      <div class="alert alert-success small py-2" role="status" *ngIf="successMessage && !errorMessage">{{ successMessage }}</div>
+
+      <form *ngIf="step === 'mobile'" (ngSubmit)="sendOTP()" novalidate>
+        <label for="mobile" class="form-label">Mobile number</label>
+        <div class="input-group mb-3">
+          <span class="input-group-text">+91</span>
+          <input id="mobile" name="mobile" type="tel" inputmode="numeric" autocomplete="tel-national" maxlength="10"
+                 class="form-control" placeholder="10-digit mobile number" [(ngModel)]="mobile" [disabled]="loading" required>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" [disabled]="loading || !isValidMobile()">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Send OTP
+        </button>
+      </form>
+
+      <form *ngIf="step === 'otp'" (ngSubmit)="verifyOTP()" novalidate>
+        <p class="small text-muted mb-2">
+          Enter the 6-digit code sent to +91 {{ mobile }}.
+          <button type="button" class="btn btn-link btn-sm p-0 align-baseline" (click)="changeNumber()">Change</button>
+        </p>
+        <input id="otp" name="otp" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6"
+               class="form-control otp-input mb-3" placeholder="6-digit OTP" [value]="otp" (input)="onOtpInput($event)"
+               [disabled]="loading">
+        <button type="submit" class="btn btn-primary w-100" [disabled]="loading || otp.length !== 6">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>
+          Sign in
+        </button>
+        <div class="text-center mt-3 small">
+          <button type="button" class="btn btn-link btn-sm" (click)="resendOTP()" [disabled]="resendIn > 0 || loading">
+            {{ resendIn > 0 ? 'Resend OTP in ' + resendIn + 's' : 'Resend OTP' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

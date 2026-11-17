@@ -1,0 +1,125 @@
+<!-- Header Actions -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+  <h3 class="panel-title mb-0">
+    <span class="align-text-top">Category List</span>
+  </h3>
+  <span class="pull-right">
+    <button type="button" class="btn btn-primary me-2" (click)="refreshCategories()" [disabled]="isLoading">
+      <i class="fas fa-sync me-1" [class.fa-spin]="isLoading"></i>Refresh Categories
+    </button>
+    <button type="button" class="btn btn-primary btn-with-icon" (click)="openAddEditPopupForCategory('')">
+      <svg style="width: 13px" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+        <defs>
+          <style>
+            .cls-1 {
+              fill: #fff;
+            }
+          </style>
+        </defs>
+        <path class="cls-1" d="M96.09,46.09H53.91V3.91a3.91,3.91,0,1,0-7.82,0V46.09H3.91a3.91,3.91,0,1,0,0,7.82H46.09V96.09a3.91,3.91,0,0,0,7.82,0V53.91H96.09a3.91,3.91,0,0,0,0-7.82Z" />
+      </svg>&nbsp;Add Category
+    </button>
+  </span>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="row mb-3">
+  <div class="col-12">
+    <div class="alert alert-primary">
+      <i class="fas fa-spinner fa-spin me-2"></i>
+      Loading categories from backend...
+    </div>
+  </div>
+</div>
+
+<!-- Search -->
+<div class="row mb-3">
+  <div class="col-4">
+    <input type="text" class="form-control" placeholder="Search category" [(ngModel)]="searchTerm" (keyup)="filterData()">
+  </div>
+
+  <div class="col-md-5">
+    <span class="item_count">Total: {{ count }} categories</span>
+  </div>
+</div>
+
+<!-- Categories Table -->
+<table class="table table-bordered">
+  <thead class="table-light">
+    <tr>
+      <th>Slug</th>
+      <th>Image</th>
+      <th>Category Name</th>
+      <th>Status</th>
+      <th>Parent Category</th>
+      <th>Description</th>
+      <th>Product Count</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let category of filteredCategories">
+      <td><small class="text-muted">{{ category.slug }}</small></td>
+      <td>
+        <img [src]="imageOf(category)" [title]="category.image ? '' : 'Website photo (upload one in Edit to replace it)'" 
+             (error)="$event.target.src='assets/images/image_empty.jpg'"
+             width="60" height="60" class="img-thumbnail">
+      </td>
+      <td [style.padding-left.px]="12 + depth(category) * 26">
+        <i *ngIf="depth(category)" class="fas fa-level-up-alt fa-rotate-90 text-muted me-2"></i>
+        <strong *ngIf="childCount(category); else plainName">{{ category.name }}</strong>
+        <ng-template #plainName>{{ category.name }}</ng-template>
+        <div *ngIf="childCount(category)" class="small text-muted">{{ childCount(category) }} sub-categories</div>
+      </td>
+      <td>
+        <span class="badge" [ngClass]="category.active !== false ? 'bg-success text-white' : 'bg-secondary text-white'">
+          {{ category.active !== false ? 'Active' : 'Hidden' }}
+        </span>
+      </td>
+      <td>{{ getParentCategory(category) }}</td>
+      <td>{{ category.description }}</td>
+      <td>
+        <span class="badge bg-info text-white">{{ productCounts[category.id] || 0 }}</span>
+      </td>
+      <td class="text-center">
+        <button type="button" class="btn btn-sm btn-outline-success mb-1 d-block w-100 text-nowrap" (click)="addProduct.emit(category.id)"
+                [title]="'Add a new product in ' + category.name">
+          <i class="fas fa-plus me-1"></i>Add product
+        </button>
+        <span>
+          <a (click)="openAddEditPopupForCategory(category)" class="cursor_pointer me-2">
+            <i class="fas fa-edit text-primary"></i>
+          </a>
+          <a (click)="deleteCategory(category)" class="cursor_pointer">
+            <i class="fas fa-trash text-danger"></i>
+          </a>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Empty State -->
+<div *ngIf="filteredCategories.length === 0" class="text-center py-5">
+  <h3 class="no-record-found">No Record Found.</h3>
+</div>
+
+<!-- Pagination -->
+<div *ngIf="filteredCategories.length > 0" class="d-flex justify-content-center" style="padding: 15px">
+  <div class="item_count">
+    Total Items: {{ count }}
+  </div>
+</div>
+
+<!-- Add/Edit Category Modal -->
+<div *ngIf="showAddEditModal" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <app-add-edit-category 
+      [editCategoryData]="selectedCategory"
+      [categories]="categories"
+      [saving]="isSaving"
+      (closePopup)="closeModal()"
+      (saveCategory)="onSaveCategory($event)">
+    </app-add-edit-category>
+  </div>
+</div>

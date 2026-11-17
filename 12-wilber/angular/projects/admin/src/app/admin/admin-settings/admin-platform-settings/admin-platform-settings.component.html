@@ -1,0 +1,175 @@
+<div class="platform-settings">
+  <div class="card shadow">
+    <div class="card-header">
+      <h4 class="mb-0">
+        <i class="fas fa-store me-2"></i>Store Settings
+      </h4>
+      <p class="text-muted mb-0">Store details shown to customers and on invoices, GST behaviour and storefront features</p>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="savePlatform()">
+        <!-- Store details -->
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-building me-2"></i>Store Details</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="storeName" class="form-label">Store Name</label>
+                <input type="text" id="storeName" name="storeName" class="form-control" [(ngModel)]="store.name" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="legalName" class="form-label">Legal Name</label>
+                <input type="text" id="legalName" name="legalName" class="form-control" [(ngModel)]="store.legalName"
+                       placeholder="Registered business name (for invoices)">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="supportEmail" class="form-label">Support Email</label>
+                <input type="email" id="supportEmail" name="supportEmail" class="form-control" [(ngModel)]="store.supportEmail">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="supportPhone" class="form-label">Support Phone</label>
+                <input type="text" id="supportPhone" name="supportPhone" class="form-control" [(ngModel)]="store.supportPhone">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="whatsapp" class="form-label">WhatsApp Number</label>
+                <input type="text" id="whatsapp" name="whatsapp" class="form-control" [(ngModel)]="store.whatsapp">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="storefrontUrl" class="form-label">Storefront URL</label>
+                <input type="url" id="storefrontUrl" name="storefrontUrl" class="form-control" [(ngModel)]="store.storefrontUrl"
+                       placeholder="https://www.example.com">
+                <div class="form-text">Customers return here after paying online.</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea id="address" name="address" rows="2" class="form-control" [(ngModel)]="store.address"></textarea>
+          </div>
+          <div class="form-group mb-0">
+            <label for="logoUrl" class="form-label">Logo</label>
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+              <img *ngIf="store.logoUrl" [src]="store.logoUrl" alt="Logo" class="logo-preview">
+              <input type="url" id="logoUrl" name="logoUrl" class="form-control flex-grow-1" style="max-width: 420px"
+                     [(ngModel)]="store.logoUrl" placeholder="https://...">
+              <label class="btn btn-outline-secondary mb-0" [class.disabled]="uploadingLogo">
+                <i class="fas me-1" [class.fa-upload]="!uploadingLogo" [class.fa-spinner]="uploadingLogo" [class.fa-spin]="uploadingLogo"></i>
+                {{ uploadingLogo ? 'Uploading...' : 'Upload' }}
+                <input type="file" accept="image/*" hidden (change)="onLogoSelected($event)">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tax -->
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-percent me-2"></i>GST</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group mb-3">
+                <label for="gstin" class="form-label">GSTIN</label>
+                <input type="text" id="gstin" name="gstin" class="form-control text-uppercase" maxlength="15" [(ngModel)]="store.gstin">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group mb-3">
+                <label for="homeState" class="form-label">Home State</label>
+                <select id="homeState" name="homeState" class="form-select" [(ngModel)]="store.homeState">
+                  <option [ngValue]="null">-- Select --</option>
+                  <option *ngFor="let s of states" [ngValue]="s">{{ s }}</option>
+                </select>
+                <div class="form-text">Same-state orders split CGST + SGST; others use IGST.</div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group mb-3">
+                <label for="defaultRate" class="form-label">Default GST Rate (%)</label>
+                <input type="number" id="defaultRate" name="defaultRate" class="form-control" min="0" max="100" step="0.01"
+                       [(ngModel)]="tax.defaultRatePercent">
+                <div class="form-text">Used when a product has no rate of its own.</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="pricesIncludeTax" name="pricesIncludeTax" [(ngModel)]="tax.pricesIncludeTax">
+            <label class="form-check-label" for="pricesIncludeTax">Catalog prices include GST</label>
+          </div>
+        </div>
+
+        <!-- Features -->
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-toggle-on me-2"></i>Storefront Features</h5>
+          <div class="row">
+            <div class="col-md-4 form-check form-switch mb-2 ms-2">
+              <input class="form-check-input" type="checkbox" id="fBlogs" name="fBlogs" [(ngModel)]="features.blogs">
+              <label class="form-check-label" for="fBlogs">Blogs</label>
+            </div>
+            <div class="col-md-4 form-check form-switch mb-2 ms-2">
+              <input class="form-check-input" type="checkbox" id="fReviews" name="fReviews" [(ngModel)]="features.reviews">
+              <label class="form-check-label" for="fReviews">Product reviews</label>
+            </div>
+            <div class="col-md-4 form-check form-switch mb-2 ms-2">
+              <input class="form-check-input" type="checkbox" id="fWishlist" name="fWishlist" [(ngModel)]="features.wishlist">
+              <label class="form-check-label" for="fWishlist">Wishlist</label>
+            </div>
+            <div class="col-md-4 form-check form-switch mb-2 ms-2">
+              <input class="form-check-input" type="checkbox" id="fNotify" name="fNotify" [(ngModel)]="features.notifyMe">
+              <label class="form-check-label" for="fNotify">Back-in-stock alerts</label>
+            </div>
+            <div class="col-md-4 form-check form-switch mb-2 ms-2">
+              <input class="form-check-input" type="checkbox" id="fGuest" name="fGuest" [(ngModel)]="features.guestCheckout">
+              <label class="form-check-label" for="fGuest">Guest checkout</label>
+            </div>
+            <div class="col-md-4 form-check form-switch mb-2 ms-2">
+              <input class="form-check-input" type="checkbox" id="fHideOos" name="fHideOos" [(ngModel)]="features.hideOutOfStock">
+              <label class="form-check-label" for="fHideOos" title="Products with no pack size in stock are hidden from listings, category pages and search">Hide out-of-stock products</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 mb-4">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <i class="fas fa-save me-2" [class.fa-spin]="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Save Settings' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="reset()" [disabled]="isLoading">
+            <i class="fas fa-undo me-2"></i>Reset
+          </button>
+        </div>
+      </form>
+
+      <!-- Catalog publishing -->
+      <div class="settings-block mb-0" *ngIf="canPublish">
+        <h5 class="mb-3"><i class="fas fa-cloud-upload-alt me-2"></i>Storefront Catalog</h5>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+          <div>
+            <div *ngIf="lastPublish?.publishedAt; else neverPublished">
+              Last published <strong>{{ lastPublish.publishedAt | date:'medium' }}</strong>
+              <span class="text-muted" *ngIf="lastPublish.productCount != null">· {{ lastPublish.productCount }} products</span>
+            </div>
+            <ng-template #neverPublished><span class="text-muted">Not published yet</span></ng-template>
+            <div class="form-text">The catalog is republished automatically after every change; use this to force a refresh.</div>
+          </div>
+          <button type="button" class="btn btn-outline-primary" (click)="publishNow()" [disabled]="publishing">
+            <i class="fas me-2" [class.fa-sync-alt]="true" [class.fa-spin]="publishing"></i>
+            {{ publishing ? 'Publishing...' : 'Publish catalog now' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+@use '../settings-panel' as sp;
+
+.email-settings {
+  @include sp.panel;
+
+  .template-html {
+    font-family: SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+  }
+
+  .template-preview {
+    background: #fff;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.375rem;
+    padding: 1rem;
+    max-height: 360px;
+    overflow: auto;
+  }
+
+  code {
+    word-break: break-word;
+  }
+}

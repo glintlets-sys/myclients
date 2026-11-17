@@ -1,0 +1,161 @@
+<div class="modal-header">
+  <h3 class="panel-title mb-0 p-0">
+    <span *ngIf="!isEdit">Add Product Recommendation</span>
+    <span *ngIf="isEdit">Edit Product Recommendation</span>
+  </h3>
+  <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close"></button>
+</div>
+
+<div class="modal-body">
+  <section>
+    <div class="container">
+      <form #myForm="ngForm">
+
+        <!-- Recommendation Type -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="recommendationType" class="form-label">Recommendation Type <span class="text-danger">*</span></label>
+          </div>
+          <div class="col-md-8">
+            <select class="form-select" 
+                    [(ngModel)]="type"
+                    [disabled]="isEdit" 
+                    name="recommendationType" 
+                    (change)="onChangeLoad()" 
+                    #recommendType="ngModel" 
+                    required>
+              <option value="">Select Type</option>
+              <option *ngFor="let t of recommendationTypes" [value]="t.id">{{ t.label }}</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="controlHasError('required', recommendType)">
+              Please select a recommendation type
+            </div>
+          </div>
+        </div>
+
+        <!-- Source Product -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="sourceId" class="form-label">Source Product <span class="text-danger">*</span></label>
+          </div>
+          <div class="col-md-8">
+            <select class="form-select" 
+                    [(ngModel)]="sourceId"
+                    [disabled]="isEdit" 
+                    name="sourceId" 
+                    (change)="onChangeLoad()" 
+                    #sourceIdControl="ngModel" 
+                    required>
+              <option value="">Select Source Product</option>
+              <option *ngFor="let toy of products" [value]="toy.id">{{ toy.name }}{{ toy.code ? ' (' + toy.code + ')' : '' }}</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="controlHasError('required', sourceIdControl)">
+              Please select a source product
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Recommended Items -->
+        <div class="row mb-3" *ngIf="recommended_list && recommended_list.length > 0">
+          <div class="col-md-4">
+            <label class="form-label">Current Recommended Items</label>
+          </div>
+          <div class="col-md-8">
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead class="table-light">
+                  <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let toy of recommended_list">
+                    <td>{{ toy.name }}</td>
+                    <td>{{ toy.code }}</td>
+                    <td>{{ toy.brand }}</td>
+                    <td>{{ minPrice(toy) | money }}</td>
+                    <td>
+                      <button type="button" class="btn btn-sm btn-danger" (click)="removeSelectedToys(toy)">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add More Recommended Items -->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Add Recommended Items <span class="text-danger">*</span></label>
+          </div>
+          <div class="col-md-8">
+            <div class="mb-3">
+              <input type="text" 
+                     class="form-control" 
+                     placeholder="Search products..." 
+                     (keyup)="filterData()" 
+                     [(ngModel)]="searchToy"
+                     name="searchToy">
+            </div>
+
+            <div class="table-responsive" *ngIf="toysPaginated && toysPaginated.length > 0">
+              <table class="table table-sm">
+                <thead class="table-light">
+                  <tr>
+                    <th>Name</th>
+                    <th>Code</th>
+                    <th>Brand</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let toy of toysPaginated">
+                    <td>{{ toy.name }}</td>
+                    <td>{{ toy.code }}</td>
+                    <td>{{ toy.brand }}</td>
+                    <td>{{ minPrice(toy) | money }}</td>
+                    <td>
+                      <button type="button" class="btn btn-sm btn-primary" (click)="addSelectedToys(toy)">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div *ngIf="!toysPaginated || toysPaginated.length === 0" class="text-center py-3">
+              <p class="text-muted">No products available to add</p>
+            </div>
+
+            <div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+            <div class="alert alert-warning" *ngIf="!recommended_list || recommended_list.length === 0">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              Please add at least one recommended item
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+  </section>
+</div>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+  <button type="button" 
+          class="btn btn-primary" 
+          (click)="saveRecommendedItem()"
+          [disabled]="saving || !recommended_list || recommended_list.length === 0">
+    <i class="fas me-2" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+    {{ isEdit ? 'Update' : 'Save' }}
+  </button>
+</div>

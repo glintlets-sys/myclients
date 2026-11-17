@@ -1,0 +1,562 @@
+<header class="admin-topbar d-flex align-items-center justify-content-between px-3 px-md-4">
+  <span class="brand text-truncate"><i class="fas fa-store me-2"></i>{{ storeName || 'Store' }} <span class="text-muted fw-normal">admin</span></span>
+  <div class="d-flex align-items-center gap-2">
+    <a *ngIf="storefrontUrl" class="btn btn-sm btn-outline-secondary" [href]="storefrontUrl" target="_blank" rel="noopener" title="Open the storefront">
+      <i class="fas fa-external-link-alt"></i><span class="d-none d-sm-inline ms-1">View site</span>
+    </a>
+    <button type="button" class="btn btn-sm btn-outline-primary" (click)="mobileView()" title="Phone-friendly admin (separate mobile screens)">
+      <i class="fas fa-mobile-alt"></i><span class="d-none d-sm-inline ms-1">Mobile view</span>
+    </button>
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="signOut()" title="Sign out">
+      <i class="fas fa-sign-out-alt"></i><span class="d-none d-sm-inline ms-1">Sign out</span>
+    </button>
+  </div>
+</header>
+<div class="support-banner px-3 px-md-4 py-2 small" *ngIf="isSupportSession" role="status">
+  <i class="fas fa-life-ring me-1"></i>
+  <strong>Support session</strong> &mdash; signed in from the platform console as {{ userName || 'support' }}.
+  <span *ngIf="sessionExpiresAt">Expires at {{ sessionExpiresAt | date: 'shortTime' }}; it is not renewed.</span>
+</div>
+
+<div class="admin-container">
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Admin Header -->
+      <div class="col-12">
+        <div class="admin-header d-flex align-items-center justify-content-between px-3 px-md-4 py-2 py-md-3">
+          <div class="d-flex align-items-center min-w-0">
+            <button type="button" class="btn btn-sm btn-light d-md-none me-2 menu-btn" (click)="toggleSidebar()"
+                    [attr.aria-expanded]="sidebarOpen" aria-controls="adminSidebar" aria-label="Open admin menu">
+              <i class="fas" [ngClass]="sidebarOpen ? 'fa-times' : 'fa-bars'"></i>
+            </button>
+            <h2 class="text-white mb-0 me-3 admin-title">Administration Panel</h2>
+            <span class="badge bg-light text-dark d-none d-sm-inline-block">
+              <i class="fas fa-user-shield me-1"></i>
+              {{ getRoleDisplayName() }}
+            </span>
+          </div>
+          <!-- Menu search: type part of a screen name (or what you want to do) and press Enter. "/" jumps here. -->
+          <div class="menu-search d-none d-md-block ms-auto me-3" role="search">
+            <i class="fas fa-search"></i>
+            <input id="adminMenuSearch" type="search" [(ngModel)]="menuQuery" (ngModelChange)="searchMenu()"
+                   (keydown)="onMenuSearchKey($event)" (focus)="searchMenu()" (blur)="menuSearchOpen = false"
+                   autocomplete="off" placeholder="Search menu… (press /)" aria-label="Search the admin menu"
+                   [attr.aria-expanded]="menuSearchOpen && !!menuQuery.trim()" aria-controls="adminMenuResults">
+            <ul id="adminMenuResults" class="menu-search-results" *ngIf="menuSearchOpen && menuQuery.trim()" role="listbox">
+              <li *ngFor="let e of menuResults; let i = index" role="option" [attr.aria-selected]="i === menuIndex"
+                  [class.active]="i === menuIndex" (mousedown)="$event.preventDefault(); openMenuEntry(e)" (mouseenter)="menuIndex = i">
+                <i class="fas {{ e.icon }}"></i>
+                <span class="m-label">{{ e.label }}</span>
+                <span class="m-group">{{ e.group }}</span>
+              </li>
+              <li class="menu-search-empty" *ngIf="!menuResults.length">No menu item matches &ldquo;{{ menuQuery.trim() }}&rdquo;</li>
+            </ul>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-light profile-btn" (click)="showProfile()" title="My profile">
+            <i class="fas fa-user-circle"></i><span class="d-none d-md-inline ms-1">{{ userName }}</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Left Sidebar Navigation -->
+      <div class="sidebar-backdrop d-md-none" *ngIf="sidebarOpen" (click)="closeSidebar()"></div>
+      <nav id="adminSidebar" class="col-md-3 col-lg-2 d-md-block sidebar collapse" [class.show]="sidebarOpen">
+        <div class="position-sticky pt-3">
+          <div class="admin-sidebar">
+            
+            <!-- Dashboard Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('dashboard')">
+              <div class="sidebar-header" (click)="toggleSection('dashboard')">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                Dashboard
+                <i class="fas" [class.fa-chevron-down]="sections.dashboard" [class.fa-chevron-right]="!sections.dashboard"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.dashboard">
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'dashboard'" (click)="showDashboard()">
+                    <i class="fas fa-chart-line me-2"></i>
+                    Overview
+                  </button>
+                </li>
+                <li *ngIf="canAccessSection('admin-users')">
+                  <button class="sidebar-item" [class.active]="activeView === 'admin-users'" (click)="showAdminUsers()">
+                    <i class="fas fa-users-cog me-2"></i>
+                    Manage Users
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'profile'" (click)="showProfile()">
+                    <i class="fas fa-id-badge me-2"></i>
+                    My Profile
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Products Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('products') || canAccessSection('categories')">
+              <div class="sidebar-header" (click)="toggleSection('products')">
+                <i class="fas fa-box me-2"></i>
+                Products
+                <i class="fas" [class.fa-chevron-down]="sections.products" [class.fa-chevron-right]="!sections.products"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.products">
+                <li *ngIf="canAccessSection('products')">
+                  <button class="sidebar-item" [class.active]="activeView === 'products'" (click)="showProducts()">
+                    <i class="fas fa-list me-2"></i>
+                    Manage Products
+                  </button>
+                </li>
+                <li *ngIf="canAccessSection('categories')">
+                  <button class="sidebar-item" [class.active]="activeView === 'categories'" (click)="showCategories()">
+                    <i class="fas fa-tags me-2"></i>
+                    Categories
+                  </button>
+                </li>
+                <li *ngIf="canAccessSection('seo')">
+                  <button class="sidebar-item" [class.active]="activeView === 'seo'" (click)="showOps('seo')">
+                    <i class="fas fa-search me-2"></i>
+                    Publish &amp; SEO
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('orders')">
+              <div class="sidebar-header" (click)="toggleSection('orders')">
+                <i class="fas fa-shopping-cart me-2"></i>
+                Orders
+                <i class="fas" [class.fa-chevron-down]="sections.orders" [class.fa-chevron-right]="!sections.orders"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.orders">
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'orders'" (click)="showOrders()">
+                    <i class="fas fa-clipboard-list me-2"></i>
+                    All Orders
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'confirmations'" (click)="showOps('confirmations')">
+                    <i class="fas fa-user-check me-2"></i>
+                    Pending Confirmations
+                    <span *ngIf="opsApi.pendingCount() > 0" class="badge rounded-pill bg-danger ms-1">{{ opsApi.pendingCount() }}</span>
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'staff-order'" (click)="showOps('staff-order')">
+                    <i class="fas fa-phone-alt me-2"></i>
+                    Place Order
+                  </button>
+                </li>
+                <li *ngIf="showQuotes && canAccessSection('quotes')">
+                  <button class="sidebar-item" [class.active]="activeView === 'quotes'" (click)="showOps('quotes')">
+                    <i class="fas fa-file-signature me-2"></i>
+                    Quotations
+                  </button>
+                </li>
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'invoices'" (click)="showOps('invoices')">
+                    <i class="fas fa-file-invoice me-2"></i>
+                    Invoices
+                  </button>
+                </li>
+                <li *ngIf="showCollections">
+                  <button class="sidebar-item" [class.active]="activeView === 'collections'" (click)="showOps('collections')">
+                    <i class="fas fa-hand-holding-usd me-2"></i>
+                    COD Collections
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Quotations only (staff without order access) -->
+            <div class="sidebar-section" *ngIf="showQuotes && !canAccessSection('orders') && canAccessSection('quotes')">
+              <ul class="sidebar-menu">
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'quotes'" (click)="showOps('quotes')">
+                    <i class="fas fa-file-signature me-2"></i>
+                    Quotations
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Reports Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('reports') || (showAudit && canAccessSection('audit'))">
+              <div class="sidebar-header" (click)="toggleSection('reports')">
+                <i class="fas fa-chart-bar me-2"></i>
+                Reports
+                <i class="fas" [class.fa-chevron-down]="sections['reports']" [class.fa-chevron-right]="!sections['reports']"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections['reports']">
+                <li *ngIf="canAccessSection('reports')">
+                  <button class="sidebar-item" [class.active]="activeView === 'reports'" (click)="showOps('reports')">
+                    <i class="fas fa-chart-pie me-2"></i>
+                    Sales &amp; GST Reports
+                  </button>
+                </li>
+                <li *ngIf="showAudit && canAccessSection('audit')">
+                  <button class="sidebar-item" [class.active]="activeView === 'audit'" (click)="showOps('audit')">
+                    <i class="fas fa-history me-2"></i>
+                    Audit Log
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Stock Management Section -->
+            <!-- Consignments are hidden: stock is managed on the Products page (Update Stock / Excel). -->
+            <div class="sidebar-section" *ngIf="showConsignments && canAccessSection('stock-consignment')">
+              <div class="sidebar-header" (click)="toggleSection('stock')">
+                <i class="fas fa-boxes me-2"></i>
+                Stock Management
+                <i class="fas" [class.fa-chevron-down]="sections.stock" [class.fa-chevron-right]="!sections.stock"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.stock">
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'stock-consignment'" (click)="showStockConsignment()">
+                    <i class="fas fa-truck me-2"></i>
+                    Stock Consignments
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Customers Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('customers')">
+              <div class="sidebar-header" (click)="toggleSection('customers')">
+                <i class="fas fa-users me-2"></i>
+                Customers
+                <i class="fas" [class.fa-chevron-down]="sections.customers" [class.fa-chevron-right]="!sections.customers"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.customers">
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'customers'" (click)="showCustomers()">
+                    <i class="fas fa-user-friends me-2"></i>
+                    Manage Customers
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Content Management Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('content')">
+              <div class="sidebar-header" (click)="toggleSection('content')">
+                <i class="fas fa-edit me-2"></i>
+                Content
+                <i class="fas" [class.fa-chevron-down]="sections.content" [class.fa-chevron-right]="!sections.content"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.content">
+                <li *ngIf="canAccessFeature('manage_blogs')">
+                  <button class="sidebar-item" [class.active]="activeView === 'blogs'" (click)="showBlogs()">
+                    <i class="fas fa-blog me-2"></i>
+                    Blogs
+                  </button>
+                </li>
+                <li *ngIf="canAccessFeature('manage_recommendations')">
+                  <button class="sidebar-item" [class.active]="activeView === 'recommendations'" (click)="showRecommendations()">
+                    <i class="fas fa-thumbs-up me-2"></i>
+                    Product Recommendations
+                  </button>
+                </li>
+                <!-- <li>
+                  <button class="sidebar-item" disabled>
+                    <i class="fas fa-envelope me-2"></i>
+                    Newsletters
+                  </button>
+                </li> -->
+              </ul>
+            </div>
+
+            <!-- Marketing Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('banners')">
+              <div class="sidebar-header" (click)="toggleSection('marketing')">
+                <i class="fas fa-bullhorn me-2"></i>
+                Marketing
+                <i class="fas" [class.fa-chevron-down]="sections['marketing'] !== false" [class.fa-chevron-right]="sections['marketing'] === false"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections['marketing'] !== false">
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'banners'" (click)="showBanners()">
+                    <i class="fas fa-images me-2"></i>
+                    Banners
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Settings Section -->
+            <div class="sidebar-section" *ngIf="canAccessSection('settings') || canAccessSection('access-control')">
+              <div class="sidebar-header" (click)="toggleSection('settings')">
+                <i class="fas fa-cog me-2"></i>
+                Settings
+                <i class="fas" [class.fa-chevron-down]="sections.settings" [class.fa-chevron-right]="!sections.settings"></i>
+              </div>
+              <ul class="sidebar-menu" *ngIf="sections.settings">
+                <li *ngIf="canAccessSection('settings')">
+                  <button class="sidebar-item" [class.active]="activeView === 'settings'" (click)="showSettings()">
+                    <i class="fas fa-tools me-2"></i>
+                    General Settings
+                  </button>
+                </li>
+                <li *ngIf="canAccessSection('access-control')">
+                  <button class="sidebar-item" [class.active]="activeView === 'access-control'" (click)="showAccessControl()">
+                    <i class="fas fa-user-lock me-2"></i>
+                    Access Control
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 admin-content">
+        
+        <!-- Dashboard View -->
+        <div *ngIf="activeView === 'dashboard'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Dashboard</h1>
+          </div>
+          <app-admin-dashboard></app-admin-dashboard>
+        </div>
+
+        <!-- Products View -->
+        <div *ngIf="activeView === 'products'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Manage Products</h1>
+          </div>
+          @defer (on immediate) { <app-admin-products [addToCategory]="addToCategory" (gotoCategories)="showCategories()"></app-admin-products> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- Categories View -->
+        <div *ngIf="activeView === 'categories'" class="content-section">
+          
+          <app-admin-categories (addProduct)="addProductTo($event)"></app-admin-categories>
+        </div>
+
+        <!-- Publish & SEO -->
+        <div *ngIf="activeView === 'seo'" class="content-section">
+          @defer (on immediate) { <app-admin-seo></app-admin-seo> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- Orders View -->
+        <div *ngIf="activeView === 'orders'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Orders Management</h1>
+          </div>
+          <app-admin-orders></app-admin-orders>
+        </div>
+
+        <!-- Operations views -->
+        <div *ngIf="activeView === 'confirmations'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Pending Confirmations</h1>
+          </div>
+          @defer {
+            <app-admin-confirmations (openOrder)="openOrder($event)"></app-admin-confirmations>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+        <div *ngIf="activeView === 'staff-order'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Place Order for a Customer</h1>
+          </div>
+          @defer {
+            <app-admin-staff-order (openOrder)="openOrder($event)"></app-admin-staff-order>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+        <div *ngIf="activeView === 'quotes'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Quotations</h1>
+          </div>
+          @defer {
+            <app-admin-quotes [openQuoteId]="quoteParam" (openOrder)="openOrder($event)"></app-admin-quotes>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+        <div *ngIf="activeView === 'invoices'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Tax Invoices</h1>
+          </div>
+          @defer {
+            <app-admin-invoices></app-admin-invoices>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+        <div *ngIf="activeView === 'collections'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">COD Collections</h1>
+          </div>
+          @defer {
+            <app-admin-collections></app-admin-collections>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+        <div *ngIf="activeView === 'reports'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Reports</h1>
+          </div>
+          @defer {
+            <app-admin-reports></app-admin-reports>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+        <div *ngIf="activeView === 'audit'" class="content-section">
+          <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Audit Log</h1>
+          </div>
+          @defer {
+            <app-admin-audit></app-admin-audit>
+          } @placeholder {
+            <div class="text-center py-4"><span class="spinner-border text-primary"></span></div>
+          }
+        </div>
+
+        <!-- Customers View -->
+        <div *ngIf="activeView === 'customers'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Customer Management</h1>
+          </div>
+          <app-admin-customers></app-admin-customers>
+        </div>
+
+        <!-- Settings View -->
+        <div *ngIf="activeView === 'settings'" class="content-section">
+          <app-admin-settings [tab]="settingsTab"></app-admin-settings>
+        </div>
+
+        <!-- Stock Consignment View -->
+        <div *ngIf="activeView === 'stock-consignment'" class="content-section">
+          @defer (on immediate) { <app-admin-stock-consignment></app-admin-stock-consignment> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- Blogs View -->
+        <div *ngIf="activeView === 'blogs'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Blog Management</h1>
+          </div>
+          <app-admin-blogs></app-admin-blogs>
+        </div>
+
+        <!-- Recommendations View -->
+        <div *ngIf="activeView === 'recommendations'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Product Recommendations</h1>
+          </div>
+          <app-admin-recommendations></app-admin-recommendations>
+        </div>
+
+        <!-- Marketing: Banners -->
+        <div *ngIf="activeView === 'banners'" class="content-section">
+          @defer (on immediate) { <app-admin-banners></app-admin-banners> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- Access Control -->
+        <div *ngIf="activeView === 'access-control'" class="content-section">
+          @defer (on immediate) { <app-admin-access-control></app-admin-access-control> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- My Profile -->
+        <div *ngIf="activeView === 'profile'" class="content-section">
+          @defer (on immediate) { <app-admin-profile></app-admin-profile> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- Admin Users View -->
+        <div *ngIf="activeView === 'admin-users'" class="content-section">
+          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+            <h1 class="h2">Admin Users Management</h1>
+          </div>
+          
+          <!-- Role Information Section -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Understanding User Roles
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <h6 class="text-primary mb-3">Available Roles:</h6>
+                      <div class="role-info-list">
+                        <div class="role-item mb-3">
+                          <span class="badge bg-danger me-2">Super Admin</span>
+                          <small class="text-muted">Full access to all system features and user management</small>
+                        </div>
+                        <div class="role-item mb-3">
+                          <span class="badge bg-primary me-2">Admin</span>
+                          <small class="text-muted">Access to products, pricing, discounts, and general management</small>
+                        </div>
+                        <div class="role-item mb-3">
+                          <span class="badge bg-success me-2">Store Manager</span>
+                          <small class="text-muted">Operational access for store management, stock, and orders</small>
+                        </div>
+                        <div class="role-item mb-3">
+                          <span class="badge bg-warning me-2">Finance Manager</span>
+                          <small class="text-muted">Access to financial information, pricing, and tax data</small>
+                        </div>
+                        <div class="role-item mb-3">
+                          <span class="badge bg-info me-2">Accounts</span>
+                          <small class="text-muted">Access to order processing and customer accounts</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <h6 class="text-primary mb-3">Role Selection Guidelines:</h6>
+                      <ul class="list-unstyled">
+                        <li class="mb-2">
+                          <i class="fas fa-check-circle text-success me-2"></i>
+                          <strong>Super Admin:</strong> Choose for system administrators who need full control
+                        </li>
+                        <li class="mb-2">
+                          <i class="fas fa-check-circle text-success me-2"></i>
+                          <strong>Admin:</strong> Choose for department heads who manage products and content
+                        </li>
+                        <li class="mb-2">
+                          <i class="fas fa-check-circle text-success me-2"></i>
+                          <strong>Store Manager:</strong> Choose for staff who handle daily operations and orders
+                        </li>
+                        <li class="mb-2">
+                          <i class="fas fa-check-circle text-success me-2"></i>
+                          <strong>Finance Manager:</strong> Choose for staff who handle pricing and financial data
+                        </li>
+                        <li class="mb-2">
+                          <i class="fas fa-check-circle text-success me-2"></i>
+                          <strong>Accounts:</strong> Choose for staff who process orders and manage customer accounts
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div class="alert alert-info mt-3">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    <strong>Tip:</strong> Start with lower-level roles and upgrade as needed. You can always change a user's role later.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <app-admin-users></app-admin-users>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</div>

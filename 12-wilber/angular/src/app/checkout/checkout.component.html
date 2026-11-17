@@ -1,0 +1,370 @@
+<app-header></app-header>
+<div class="checkout-container">
+  <div class="container py-5">
+    <div class="row">
+      <!-- Cart Items Section -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-shopping-cart me-2"></i>
+              Shopping Cart ({{ totalItems }} items)
+            </h6>
+          </div>
+          <div class="card-body">
+            <div *ngIf="loading" class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+            <div *ngIf="!loading && cartItems.length === 0" class="text-center py-5">
+              <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+              <h5 class="text-muted">Your cart is empty</h5>
+              <p class="text-muted">Add some products to get started!</p>
+              <a routerLink="/" class="btn" style="background: var(--gradient-primary); color: white; border: none;">Continue Shopping</a>
+            </div>
+
+            <div *ngIf="cartItems.length > 0">
+              <div class="cart-item mb-4" *ngFor="let item of cartItems; let i = index">
+                <div class="row align-items-center">
+                                     <div class="col-md-2">
+                     <img [src]="item.image" [alt]="item.name" class="img-fluid rounded">
+                   </div>
+                  <div class="col-md-4">
+                    <h6 class="mb-1">{{ item.name }}</h6>
+                    <div class="product-variants small text-muted">
+                       <span *ngIf="item.variantName" class="badge bg-light text-dark me-1">
+                         {{ item.variantName }}
+                       </span>
+                       <span *ngIf="!item.available" class="badge bg-danger me-1">
+                         {{ item.stockAvailable ? 'Only ' + item.stockAvailable + ' available' : 'Out of stock' }}
+                       </span>
+                       <span *ngIf="item.appliedSlab" class="badge bg-success me-1" title="Quantity price applied">
+                         Bulk price: {{ item.appliedSlab.minQty }}+ at {{ item.appliedSlab.unitPricePaise | money }}
+                       </span>
+                     </div>
+                    <div class="small text-success" *ngIf="(item.slabSavingsPaise ?? 0) > 0">
+                      You save {{ item.slabSavingsPaise | money }} on this item
+                    </div>
+                    <div class="small text-muted" *ngIf="item.nextSlab">
+                      Add {{ item.nextSlab.minQty - item.qty }} more to pay {{ item.nextSlab.unitPricePaise | money }} each
+                    </div>
+                    <div class="small text-muted" *ngIf="(item.minQty ?? 1) > 1">Minimum order: {{ item.minQty }}</div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="quantity-controls">
+                      <button class="btn btn-sm btn-outline-secondary"
+                              (click)="updateQuantity(item, item.qty - 1)"
+                              [disabled]="item.qty <= (item.minQty ?? 1) || updating">
+                        <i class="fas fa-minus"></i>
+                      </button>
+                      <span class="mx-2">{{ item.qty }}</span>
+                      <button class="btn btn-sm btn-outline-secondary"
+                              (click)="updateQuantity(item, item.qty + 1)"
+                              [disabled]="item.qty >= (item.maxQty ?? 99) || updating">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-2 text-end">
+                    <div class="price-info">
+                      <div class="item-price">{{ item.lineTotalPaise | money }}</div>
+                      <div class="unit-price text-muted small">
+                        <del *ngIf="item.appliedSlab && item.basePricePaise" class="me-1">{{ item.basePricePaise | money }}</del>{{ item.unitPricePaise | money }} each
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2 text-end">
+                    <button class="btn btn-sm btn-outline-danger"
+                            (click)="removeItem(item)"
+                            [disabled]="updating"
+                            title="Remove item">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <hr *ngIf="i < cartItems.length - 1">
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center mt-4">
+                <button class="btn btn-outline-secondary" (click)="clearCart()" [disabled]="updating">
+                  <i class="fas fa-trash me-2"></i>Clear Cart
+                </button>
+                <a routerLink="/" class="btn btn-outline-primary">
+                  <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary Section -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm sticky-top" style="top: 20px;">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Order Summary</h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="cartItems.length > 0">
+              <div class="summary-item d-flex justify-content-between mb-2" *ngFor="let item of cartItems">
+                <span>{{ item.name }} ({{ item.qty }}x)</span>
+                <span>{{ item.lineTotalPaise | money }}</span>
+              </div>
+
+              <hr>
+
+              <div class="summary-total d-flex justify-content-between mb-3">
+                <strong>Total Items:</strong>
+                <strong>{{ totalItems }}</strong>
+              </div>
+
+              <div class="summary-total d-flex justify-content-between mb-3">
+                <strong>Subtotal:</strong>
+                <strong>{{ quote?.subtotalPaise | money }}</strong>
+              </div>
+
+              <div class="summary-item d-flex justify-content-between mb-2 text-success" *ngIf="(quote?.slabSavingsPaise ?? 0) > 0">
+                <span>Bulk savings (included):</span>
+                <span>-{{ quote?.slabSavingsPaise | money }}</span>
+              </div>
+
+              <div class="summary-total d-flex justify-content-between mb-3" *ngIf="(quote?.discountPaise ?? 0) > 0">
+                <span>Discount<span *ngIf="quote?.couponCode"> ({{ quote?.couponCode }})</span>:</span>
+                <span class="text-success">-{{ quote?.discountPaise | money }}</span>
+              </div>
+
+              <div class="summary-total d-flex justify-content-between mb-3">
+                <span>Shipping:</span>
+                <span class="text-success" *ngIf="(quote?.shippingPaise ?? 0) === 0">Free</span>
+                <span *ngIf="(quote?.shippingPaise ?? 0) > 0">{{ quote?.shippingPaise | money }}</span>
+              </div>
+
+              <div class="summary-total d-flex justify-content-between mb-3" *ngIf="(quote?.codFeePaise ?? 0) > 0">
+                <span>Cash on Delivery fee:</span>
+                <span>{{ quote?.codFeePaise | money }}</span>
+              </div>
+
+              <div class="summary-item d-flex justify-content-between mb-2" *ngIf="(quote?.cgstPaise ?? 0) > 0">
+                <span>CGST{{ quote?.pricesIncludeTax ? ' (included)' : '' }}:</span>
+                <span>{{ quote?.cgstPaise | money }}</span>
+              </div>
+              <div class="summary-item d-flex justify-content-between mb-2" *ngIf="(quote?.sgstPaise ?? 0) > 0">
+                <span>SGST{{ quote?.pricesIncludeTax ? ' (included)' : '' }}:</span>
+                <span>{{ quote?.sgstPaise | money }}</span>
+              </div>
+              <div class="summary-item d-flex justify-content-between mb-2" *ngIf="(quote?.igstPaise ?? 0) > 0">
+                <span>IGST{{ quote?.pricesIncludeTax ? ' (included)' : '' }}:</span>
+                <span>{{ quote?.igstPaise | money }}</span>
+              </div>
+              <div class="summary-item d-flex justify-content-between mb-2"
+                   *ngIf="(quote?.taxPaise ?? 0) > 0 && !(quote?.cgstPaise || quote?.sgstPaise || quote?.igstPaise)">
+                <span>GST{{ quote?.pricesIncludeTax ? ' (included)' : '' }}:</span>
+                <span>{{ quote?.taxPaise | money }}</span>
+              </div>
+
+              <hr>
+
+              <div class="summary-total d-flex justify-content-between mb-4">
+                <h5>Total:</h5>
+                <h5 style="color: var(--primary);">{{ quote?.totalPaise | money }}</h5>
+              </div>
+
+              <!-- Coupon -->
+              <div class="coupon-block mb-3">
+                <label class="coupon-label" for="couponInput">Have a coupon?</label>
+
+                <!-- One field: icon + input + Apply inside the same rounded border -->
+                <div class="coupon-field" *ngIf="!couponApplied" [class.has-error]="!!(quote?.couponMessage && couponCode)">
+                  <i class="fas fa-tag coupon-icon" aria-hidden="true"></i>
+                  <input id="couponInput" type="text" [(ngModel)]="couponInput" name="couponInput"
+                         placeholder="Coupon code" autocomplete="off" autocapitalize="characters" spellcheck="false"
+                         (keyup.enter)="applyCoupon()">
+                  <button class="coupon-apply" type="button" (click)="applyCoupon()"
+                          [disabled]="!couponInput.trim() || updating">
+                    <span *ngIf="!updating">Apply</span>
+                    <span *ngIf="updating" class="spinner-border spinner-border-sm" role="status" aria-label="Applying"></span>
+                  </button>
+                </div>
+
+                <!-- Applied: green chip with the code and the saving -->
+                <div class="coupon-applied" *ngIf="couponApplied">
+                  <i class="fas fa-check-circle" aria-hidden="true"></i>
+                  <div class="coupon-applied-text">
+                    <strong>{{ quote?.couponCode }}</strong>
+                    <span *ngIf="quote?.discountPaise">You save {{ quote?.discountPaise | money }}</span>
+                  </div>
+                  <button class="coupon-remove" type="button" (click)="removeCoupon()">Remove</button>
+                </div>
+
+                <small class="coupon-msg" *ngIf="quote?.couponMessage && couponCode"
+                       [class.ok]="couponApplied" [class.err]="!couponApplied">
+                  {{ quote?.couponMessage }}
+                </small>
+              </div>
+
+              <!-- Payment method (only what the server offers for this order) -->
+              <div class="mb-3">
+                <label class="form-label small mb-1">Payment method</label>
+                <div *ngIf="availablePaymentMethods.length === 0" class="text-muted small">
+                  No payment method is available for this order.
+                </div>
+                <div class="form-check" *ngFor="let method of availablePaymentMethods">
+                  <input class="form-check-input" type="radio" name="paymentMethod"
+                         [id]="'pay-' + method.id"
+                         [checked]="paymentMethod === method.id"
+                         [disabled]="updating"
+                         (change)="selectPaymentMethod(method.id)">
+                  <label class="form-check-label" [for]="'pay-' + method.id">{{ paymentLabels[method.id] }}</label>
+                </div>
+              </div>
+
+              <div class="alert alert-warning small py-2" *ngIf="quote?.issues?.length">
+                <div *ngFor="let issue of quote?.issues">
+                  <i class="fas fa-exclamation-triangle me-1"></i>{{ issue }}
+                </div>
+              </div>
+
+              <button class="btn w-100 mb-3"
+                      (click)="proceedToPayment()"
+                      [disabled]="!canPlaceOrder"
+                      style="background: var(--gradient-primary); color: white; border: none;">
+                <span *ngIf="placing" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!placing" class="fas fa-credit-card me-2"></i>
+                {{ paymentMethod === 'cod' ? 'Place Order' : 'Proceed to Payment' }}
+              </button>
+
+              <div class="text-center">
+                <small class="text-muted">
+                  <i class="fas fa-lock me-1"></i>
+                  Secure checkout powered by SSL
+                </small>
+              </div>
+            </div>
+
+            <div *ngIf="!loading && cartItems.length === 0" class="text-center py-4">
+              <p class="text-muted">No items in cart</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Selection Section -->
+    <div class="row mt-4" *ngIf="cartItems.length > 0">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-map-marker-alt me-2"></i>
+              Delivery Address
+            </h6>
+          </div>
+          <div class="card-body">
+            <div *ngIf="addresses.length === 0 && !showAddressForm" class="text-center py-4">
+              <p class="text-muted mb-3">No addresses found</p>
+              <p class="text-muted mb-3">Please add a delivery address to continue</p>
+              <button class="btn btn-primary" (click)="openAddressForm()">
+                <i class="fas fa-plus me-2"></i>Add Address
+              </button>
+            </div>
+
+            <form *ngIf="showAddressForm" class="mb-4" (ngSubmit)="saveAddress()">
+              <h6 class="mb-3">{{ editingAddressId ? 'Edit Address' : 'New Address' }}</h6>
+              <div *ngIf="addressError" class="alert alert-danger py-2">{{ addressError }}</div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.name" name="name" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Mobile Number</label>
+                  <input type="tel" class="form-control" [(ngModel)]="addressForm.phone" name="phone" maxlength="10" inputmode="numeric" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Address Line 1</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.line1" name="line1" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Address Line 2</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.line2" name="line2">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Landmark</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.landmark" name="landmark">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Email (Optional)</label>
+                  <input type="email" class="form-control" [(ngModel)]="addressForm.email" name="email">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.city" name="city" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">State</label>
+                  <select class="form-select" [(ngModel)]="addressForm.state" name="state" required>
+                    <option value="">Select State</option>
+                    <option *ngFor="let s of states" [value]="s">{{ s }}</option>
+                  </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Pincode</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.pincode" name="pincode" maxlength="6" inputmode="numeric" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">GSTIN (Optional — for a business tax invoice)</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.gstin" name="gstin" maxlength="15" style="text-transform:uppercase">
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary" [disabled]="savingAddress">
+                  <span *ngIf="savingAddress" class="spinner-border spinner-border-sm me-2"></span>Save Address
+                </button>
+                <button type="button" class="btn btn-outline-secondary" (click)="cancelAddressForm()" *ngIf="addresses.length > 0">Cancel</button>
+              </div>
+            </form>
+
+            <div *ngIf="addresses.length > 0 && !showAddressForm">
+              <div class="mb-3">
+                <label class="form-label">Select Delivery Address:</label>
+                <div class="address-options">
+                  <div *ngFor="let address of addresses" class="address-option mb-2">
+                    <div class="form-check">
+                      <input class="form-check-input"
+                             type="radio"
+                             [id]="'address-' + address.id"
+                             [name]="'selectedAddress'"
+                             [checked]="selectedAddressId === address.id"
+                             (change)="selectAddress(address)">
+                      <label class="form-check-label" [for]="'address-' + address.id">
+                        <div class="address-details">
+                          <div class="fw-bold">{{ address.name }}</div>
+                          <div>{{ address.line1 }} {{ address.line2 }}<span *ngIf="address.landmark">, {{ address.landmark }}</span></div>
+                          <div class="text-muted">{{ address.phone }}</div>
+                          <div class="text-muted">{{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.pincode }}</div>
+                          <div class="text-muted">{{ address.email }}</div>
+                          <span *ngIf="address.isDefault" class="badge bg-primary ms-2">Default</span>
+                          <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="openAddressForm(address); $event.preventDefault()">Edit</button>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button class="btn btn-outline-primary" (click)="openAddressForm()">
+                  <i class="fas fa-plus me-2"></i>Add New Address
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+ 

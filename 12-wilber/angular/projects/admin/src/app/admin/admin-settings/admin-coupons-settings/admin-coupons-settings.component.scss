@@ -1,0 +1,15 @@
+@use '../settings-panel' as sp;
+
+.coupons-settings {
+  @include sp.panel;
+
+  .coupon-code {
+    font-family: SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .table td, .table th {
+    vertical-align: middle;
+  }
+}

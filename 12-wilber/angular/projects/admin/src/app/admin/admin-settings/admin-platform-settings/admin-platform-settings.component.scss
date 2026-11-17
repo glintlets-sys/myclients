@@ -1,0 +1,15 @@
+@use '../settings-panel' as sp;
+
+.platform-settings {
+  @include sp.panel;
+
+  .logo-preview {
+    max-height: 48px;
+    max-width: 160px;
+    object-fit: contain;
+    background: #fff;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+  }
+}

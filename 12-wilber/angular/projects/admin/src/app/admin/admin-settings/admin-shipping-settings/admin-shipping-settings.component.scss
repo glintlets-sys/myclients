@@ -1,0 +1,5 @@
+@use '../settings-panel' as sp;
+
+.shipping-settings {
+  @include sp.panel;
+}

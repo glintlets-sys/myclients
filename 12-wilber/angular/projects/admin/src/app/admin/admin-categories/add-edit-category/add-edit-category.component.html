@@ -1,0 +1,143 @@
+<div class="modal-header">
+  <h3 class="panel-title">
+    <span *ngIf="!editCategoryData?.id">Add Category</span>
+    <span *ngIf="editCategoryData?.id">Edit Category</span>
+  </h3>
+  <button type="button" class="btn-close" (click)="onCancel()" aria-label="Close">
+    <i class="fas fa-times"></i>
+  </button>
+</div>
+
+<div class="modal-body">
+  <section>
+    <div class="container">
+      <form>
+        <!-- Category Name -->
+        <div class="form-group">
+          <label for="categoryName" class="control-label">Category Name *</label>
+          <input type="text" 
+                 name="categoryName" 
+                 id="categoryName"
+                 class="form-control"
+                 placeholder="Enter category name" 
+                 [(ngModel)]="category.name" 
+                 required />
+        </div>
+
+        <!-- Parent Category -->
+        <div class="form-group">
+          <label for="parentCategory" class="control-label">Parent Category</label>
+          <select class="form-control" 
+                  name="parentCategory" 
+                  id="parentCategory" 
+                  [(ngModel)]="category.parentId">
+            <option [ngValue]="undefined">No Parent (Root Category)</option>
+            <option *ngFor="let parentCat of parentCategories"
+                    [ngValue]="parentCat.id"
+                    [disabled]="editCategoryData?.id === parentCat.id">
+              {{ parentCat.name }}
+            </option>
+          </select>
+          <small class="form-text text-muted">
+            Select a parent category to create a sub-category, or leave as "No Parent" for a root category.
+          </small>
+        </div>
+
+        <!-- Slug, sort order, visibility -->
+        <div class="form-group">
+          <label for="categorySlug" class="control-label">URL Slug</label>
+          <input type="text" name="categorySlug" id="categorySlug" class="form-control"
+                 placeholder="auto-generated from the name" [(ngModel)]="category.slug" />
+        </div>
+        <div class="form-group d-flex gap-3 align-items-end">
+          <div class="flex-grow-1">
+            <label for="categorySort" class="control-label">Sort Order</label>
+            <input type="number" name="categorySort" id="categorySort" class="form-control" [(ngModel)]="category.sortOrder" />
+          </div>
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" id="categoryActive" name="categoryActive" [(ngModel)]="category.active">
+            <label class="form-check-label" for="categoryActive">Visible in store</label>
+          </div>
+        </div>
+
+        <!-- Category Description -->
+        <div class="form-group">
+          <label for="categoryDescription" class="control-label">Description</label>
+          <textarea name="categoryDescription" 
+                    id="categoryDescription"
+                    class="form-control" 
+                    rows="4"
+                    placeholder="Enter category description" 
+                    [(ngModel)]="category.description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <app-seo-fields [(seoTitle)]="category.seoTitle" [(seoDescription)]="category.seoDescription" kind="category"
+                          [name]="category.name" [texts]="[category.description]"
+                          [path]="'/category/' + (category.slug || slugPreview(category.name))"></app-seo-fields>
+        </div>
+
+        <!-- Category Image -->
+        <div class="form-group">
+          <label class="control-label">Category Image</label>
+          <div class="image-upload-container">
+            <img [src]="category.image || 'assets/images/image_empty.jpg'" 
+                 (error)="$any($event.target).src='assets/images/image_empty.jpg'"
+                 alt="Category Image" 
+                 class="category-preview-image" 
+                 (click)="triggerFileInput()"
+                 title="Click to upload image">
+            <input type="file" 
+                   id="categoryImage" 
+                   class="d-none" 
+                   accept="image/*" 
+                   (change)="onImageUpload($event, 'image')">
+            <button type="button" class="btn btn-outline-primary" (click)="triggerFileInput()" [disabled]="uploading">
+              <i class="fas" [ngClass]="uploading === 'image' ? 'fa-spinner fa-spin' : 'fa-upload'"></i>Upload Image
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner Image -->
+        <div class="form-group">
+          <label class="control-label">Banner Image (optional)</label>
+          <div class="image-upload-container">
+            <img [src]="category.bannerImage || 'assets/images/image_empty.jpg'"
+                 (error)="$any($event.target).src='assets/images/image_empty.jpg'"
+                 alt="Category Banner"
+                 class="category-preview-image"
+                 (click)="triggerFileInput('categoryBanner')"
+                 title="Click to upload banner">
+            <input type="file" id="categoryBanner" class="d-none" accept="image/*" (change)="onImageUpload($event, 'bannerImage')">
+            <button type="button" class="btn btn-outline-primary" (click)="triggerFileInput('categoryBanner')" [disabled]="uploading">
+              <i class="fas" [ngClass]="uploading === 'bannerImage' ? 'fa-spinner fa-spin' : 'fa-upload'"></i>Upload Banner
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+
+        <!-- Save and Cancel Buttons -->
+        <div class="form-group" style="margin-top: 2rem;">
+          <div class="d-flex justify-content-end gap-2">
+            <button class="btn btn-white" type="button" (click)="onCancel()">
+              <i class="fas fa-times me-1"></i>Cancel
+            </button>
+            <button type="button" 
+                    *ngIf="!editCategoryData?.id" 
+                    (click)="onSave()" [disabled]="saving || uploading"
+                    class="btn btn-primary">
+              <i class="fas fa-save me-1"></i>Save Category
+            </button>
+            <button type="button" 
+                    *ngIf="editCategoryData?.id" 
+                    (click)="onSave()" [disabled]="saving || uploading"
+                    class="btn btn-primary">
+              <i class="fas fa-edit me-1"></i>Update Category
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>

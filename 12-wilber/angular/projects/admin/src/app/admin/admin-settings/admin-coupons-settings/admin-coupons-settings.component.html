@@ -1,0 +1,139 @@
+<div class="coupons-settings">
+  <div class="card shadow">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <div>
+        <h4 class="mb-0"><i class="fas fa-ticket-alt me-2"></i>Coupons</h4>
+        <p class="text-muted mb-0">Discount codes customers can apply at checkout</p>
+      </div>
+      <button type="button" class="btn btn-light btn-sm" *ngIf="!form" (click)="newCoupon()">
+        <i class="fas fa-plus me-1"></i>Add Coupon
+      </button>
+    </div>
+    <div class="card-body">
+      <!-- Form -->
+      <form *ngIf="form" (ngSubmit)="save()" class="settings-block" autocomplete="off">
+        <h5 class="mb-3">{{ editingCode ? 'Edit Coupon ' + editingCode : 'New Coupon' }}</h5>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="cCode" class="form-label">Code</label>
+            <input type="text" id="cCode" name="cCode" class="form-control text-uppercase coupon-code" maxlength="30"
+                   [(ngModel)]="form.code" [readonly]="!!editingCode" required placeholder="WELCOME10">
+          </div>
+          <div class="col-md-8 mb-3">
+            <label for="cDesc" class="form-label">Description</label>
+            <input type="text" id="cDesc" name="cDesc" class="form-control" [(ngModel)]="form.description"
+                   placeholder="Shown to the customer when applied">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="cType" class="form-label">Type</label>
+            <select id="cType" name="cType" class="form-select" [(ngModel)]="form.type">
+              <option value="PERCENT">Percentage</option>
+              <option value="FLAT">Flat amount</option>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="cValue" class="form-label">{{ form.type === 'PERCENT' ? 'Discount (%)' : 'Discount (₹)' }}</label>
+            <input type="number" id="cValue" name="cValue" class="form-control" min="0" [max]="form.type === 'PERCENT' ? 100 : null"
+                   [step]="form.type === 'PERCENT' ? 1 : 0.01" [(ngModel)]="form.value" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="cMin" class="form-label">Minimum Order (₹)</label>
+            <input type="number" id="cMin" name="cMin" class="form-control" min="0" step="0.01" [(ngModel)]="form.minOrderRupees">
+          </div>
+          <div class="col-md-3 mb-3" *ngIf="form.type === 'PERCENT'">
+            <label for="cMax" class="form-label">Max Discount (₹)</label>
+            <input type="number" id="cMax" name="cMax" class="form-control" min="0" step="0.01" [(ngModel)]="form.maxDiscountRupees">
+            <div class="form-text">0 = no cap</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="cStart" class="form-label">Starts</label>
+            <input type="date" id="cStart" name="cStart" class="form-control" [(ngModel)]="form.startsAt">
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="cEnd" class="form-label">Ends</label>
+            <input type="date" id="cEnd" name="cEnd" class="form-control" [(ngModel)]="form.endsAt">
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="cUsage" class="form-label">Total Uses</label>
+            <input type="number" id="cUsage" name="cUsage" class="form-control" min="0" step="1" [(ngModel)]="form.usageLimit">
+            <div class="form-text">0 = unlimited</div>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="cPerUser" class="form-label">Uses per Customer</label>
+            <input type="number" id="cPerUser" name="cPerUser" class="form-control" min="0" step="1" [(ngModel)]="form.perUserLimit">
+            <div class="form-text">0 = unlimited, 1 = one-time</div>
+          </div>
+        </div>
+        <div class="form-check form-switch mb-3">
+          <input class="form-check-input" type="checkbox" id="cActive" name="cActive" [(ngModel)]="form.active">
+          <label class="form-check-label" for="cActive">Active</label>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="saving">
+            <i class="fas fa-save me-2" [class.fa-spin]="saving"></i>{{ saving ? 'Saving...' : 'Save Coupon' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="cancel()" [disabled]="saving">Cancel</button>
+        </div>
+      </form>
+
+      <!-- List -->
+      <div *ngIf="loading" class="text-center text-muted py-4"><i class="fas fa-spinner fa-spin me-2"></i>Loading coupons...</div>
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      <div *ngIf="!loading && !error && coupons.length === 0 && !form" class="text-center text-muted py-4">
+        <i class="fas fa-ticket-alt fa-2x mb-2 d-block"></i>No coupons yet.
+      </div>
+      <div class="table-responsive" *ngIf="coupons.length">
+        <table class="table table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Code</th>
+              <th>Discount</th>
+              <th>Min. Order</th>
+              <th>Validity</th>
+              <th>Used</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of coupons">
+              <td>
+                <span class="coupon-code">{{ c.code }}</span>
+                <div class="small text-muted" *ngIf="c.description">{{ c.description }}</div>
+              </td>
+              <td>
+                {{ describe(c) }}
+                <div class="small text-muted" *ngIf="c.type === 'PERCENT' && c.maxDiscountPaise">up to {{ c.maxDiscountPaise | money }}</div>
+              </td>
+              <td>{{ c.minOrderPaise ? (c.minOrderPaise | money) : '—' }}</td>
+              <td class="small">
+                {{ c.startsAt ? (c.startsAt | date:'mediumDate') : 'Any time' }}
+                <span *ngIf="c.endsAt"> – {{ c.endsAt | date:'mediumDate' }}</span>
+              </td>
+              <td>{{ c.usedCount || 0 }}<span class="text-muted" *ngIf="c.usageLimit"> / {{ c.usageLimit }}</span></td>
+              <td>
+                <span class="badge" [class.bg-success]="c.active" [class.bg-secondary]="!c.active">{{ c.active ? 'Active' : 'Inactive' }}</span>
+              </td>
+              <td class="text-end text-nowrap">
+                <button type="button" class="btn btn-sm btn-outline-secondary me-1" (click)="toggleActive(c)"
+                        [title]="c.active ? 'Deactivate' : 'Activate'">
+                  <i class="fas" [class.fa-toggle-on]="c.active" [class.fa-toggle-off]="!c.active"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="edit(c)" title="Edit">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="remove(c)" title="Delete">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

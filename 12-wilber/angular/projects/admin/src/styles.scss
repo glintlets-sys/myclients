@@ -1,0 +1,26 @@
+/* Admin app global styles: Bootstrap + Font Awesome from node_modules, plus a neutral base. No tenant branding. */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+:root {
+  --primary: #065baa;
+  --primary-color: #065baa;
+  --accent: #065baa;
+  --dark: #1a2a36;
+  --light: #f1f5f9;
+  --gray: #6c757d;
+  --white: #ffffff;
+  --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  --border-radius: 8px;
+}
+
+body {
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--dark);
+  background-color: #f8f9fa;
+}
+
+a { text-decoration: none; }
+
+/* Mobile admin (/m): separate mobile-first screens */
+@import 'mobile';

@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h3 class="panel-title mb-0"><i class="fas fa-user-lock me-2"></i>Access Control</h3>
+  <div class="d-flex gap-2 flex-wrap">
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="reset()" [disabled]="saving || !editableRoles.length">
+      <i class="fas fa-undo me-1"></i>Reset all to defaults
+    </button>
+    <button type="button" class="btn btn-outline-secondary btn-sm" (click)="discard()" [disabled]="saving || !dirtyRoles.length">Discard</button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="save()" [disabled]="saving || !dirtyRoles.length">
+      <i class="fas me-1" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>Save changes
+      <span *ngIf="dirtyRoles.length" class="badge bg-light text-dark ms-1">{{ dirtyRoles.length }}</span>
+    </button>
+  </div>
+</div>
+
+<div class="alert alert-info small py-2">
+  <i class="fas fa-info-circle me-1"></i>
+  Tick what each role may do. Changes apply to signed-in staff immediately. <strong>Super Admin</strong> always has everything,
+  so the store owner can never be locked out. Individual extra grants on a staff member (Manage Users) still add on top.
+  <span class="d-block mt-1"><span class="legend default"></span> = built-in default for that role.</span>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div *ngIf="loading" class="text-muted py-3"><i class="fas fa-spinner fa-spin me-2"></i>Loading...</div>
+
+<div class="matrix-wrap" *ngIf="matrix && !loading">
+  <table class="table table-sm table-bordered matrix">
+    <thead class="table-light">
+      <tr>
+        <th class="perm-col">Permission</th>
+        <th *ngFor="let r of matrix.roles" class="text-center role-col" [class.changed]="changed(r)">
+          <div>{{ roleName(r.role) }}</div>
+          <small *ngIf="r.overridden" class="badge bg-warning text-dark">customised</small>
+          <small *ngIf="!r.editable" class="d-block text-muted fw-normal">{{ r.role === 'SUPER_ADMIN' ? 'always all' : 'your role' }}</small>
+          <button *ngIf="r.editable && r.overridden" type="button" class="btn btn-link btn-sm p-0" (click)="reset(r.role)" [disabled]="saving">reset</button>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of matrix.permissions">
+        <td class="perm-col">
+          <strong>{{ label(p) }}</strong>
+          <small class="d-block text-muted">{{ hint(p) }}</small>
+        </td>
+        <td *ngFor="let r of matrix.roles" class="text-center cell" [class.default]="isDefault(r, p)"
+            [class.locked]="!r.editable" (click)="toggle(r, p)">
+          <input class="form-check-input" type="checkbox" [checked]="has(r, p)" [disabled]="!r.editable || saving"
+                 (click)="$event.stopPropagation()" (change)="toggle(r, p)"
+                 [attr.aria-label]="roleName(r.role) + ': ' + label(p)">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

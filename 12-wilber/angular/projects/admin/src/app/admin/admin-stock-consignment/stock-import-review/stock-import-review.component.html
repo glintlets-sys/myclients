@@ -1,0 +1,195 @@
+<div class="import-review-overlay" *ngIf="showModal && draft">
+  <div class="import-review-modal">
+    <div class="import-review-header">
+      <h3>{{ title }}</h3>
+      <div class="header-actions">
+        <button class="btn btn-outline-light btn-sm" (click)="toggleEdit()">
+          <i class="fas" [class.fa-edit]="!isEditing" [class.fa-eye]="isEditing"></i>
+          {{ isEditing ? 'Preview' : 'Edit' }}
+        </button>
+        <button class="btn-close" (click)="onCancel()">&times;</button>
+      </div>
+    </div>
+
+    <div class="import-review-body">
+      <!-- Validation Errors Summary -->
+      <div class="validation-summary" *ngIf="hasValidationErrors">
+        <div class="alert alert-danger">
+          <h5><i class="fas fa-exclamation-triangle"></i> Please fix the following errors:</h5>
+          <ul>
+            <li *ngFor="let error of validationErrors | keyvalue">{{ error.value }}</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="file-info" *ngIf="importFileName">
+        <strong>File:</strong> {{ importFileName }}
+        &nbsp;·&nbsp; <span class="text-success">{{ okCount }} matched</span>
+        <span *ngIf="skippedCount > 0" class="text-danger">&nbsp;·&nbsp;{{ skippedCount }} need attention (skipped unless fixed)</span>
+      </div>
+
+      <div class="dealer-info">
+        <h4>Consignment Information <span class="text-danger">*</span> = Required</h4>
+        <div class="info-grid">
+          <div class="info-item" [class.has-error]="hasError('dealerName')">
+            <label>Supplier Name <span class="text-danger">*</span>:</label>
+            <div class="field-content">
+              <span *ngIf="!isEditing">{{ draft.supplier.name || 'N/A' }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="draft.supplier.name"
+                     [class.is-invalid]="hasError('dealerName')">
+              <div class="error-message" *ngIf="hasError('dealerName')">{{ getError('dealerName') }}</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <label>Invoice Number:</label>
+            <div class="field-content">
+              <span *ngIf="!isEditing">{{ draft.invoiceNumber || 'N/A' }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="draft.invoiceNumber">
+            </div>
+          </div>
+
+          <div class="info-item">
+            <label>Invoice Date:</label>
+            <div class="field-content">
+              <span *ngIf="!isEditing">{{ draft.invoiceDate || 'N/A' }}</span>
+              <input *ngIf="isEditing" type="date" class="form-control" [(ngModel)]="draft.invoiceDate">
+            </div>
+          </div>
+
+          <div class="info-item" *ngIf="isEditing">
+            <label>Supplier Phone:</label>
+            <div class="field-content">
+              <input type="text" class="form-control" [(ngModel)]="draft.supplier.phone">
+            </div>
+          </div>
+
+          <div class="info-item" *ngIf="isEditing">
+            <label>Supplier GSTIN:</label>
+            <div class="field-content">
+              <input type="text" class="form-control" [(ngModel)]="draft.supplier.gstin">
+            </div>
+          </div>
+
+          <div class="info-item" *ngIf="isEditing">
+            <label>Supplier Address:</label>
+            <div class="field-content">
+              <input type="text" class="form-control" [(ngModel)]="draft.supplier.address">
+            </div>
+          </div>
+
+          <div class="info-item">
+            <label>Shipping Cost (₹):</label>
+            <div class="field-content">
+              <span *ngIf="!isEditing">₹{{ draft.shippingCost || 0 | number:'1.0-2' }}</span>
+              <input *ngIf="isEditing" type="number" min="0" step="0.01" class="form-control" [(ngModel)]="draft.shippingCost">
+            </div>
+          </div>
+
+          <div class="info-item">
+            <label>Goods Cost (matched lines):</label>
+            <div class="field-content">
+              <span>₹{{ totalCost | number:'1.0-2' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="consignment-items">
+        <div class="section-header">
+          <h4>Consignment Items <span class="text-danger">*</span> ({{ draft.lines.length }} items)</h4>
+        </div>
+
+        <div class="d-flex gap-2 mb-3" *ngIf="isEditing">
+          <select class="form-select" [(ngModel)]="pickerVariantId">
+            <option value="">Choose a product variant to add…</option>
+            <option *ngFor="let r of stockRows" [value]="r.variantId">{{ variantLabel(r) }}</option>
+          </select>
+          <button class="btn btn-sm btn-primary text-nowrap" (click)="addItem()" [disabled]="!pickerVariantId">
+            <i class="fas fa-plus"></i> Add Item
+          </button>
+        </div>
+
+        <div class="table-responsive" *ngIf="draft.lines.length > 0">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Product <span class="text-danger">*</span></th>
+                <th>Variant</th>
+                <th>Current Stock</th>
+                <th>Unit Cost (₹)</th>
+                <th>Quantity <span class="text-danger">*</span></th>
+                <th *ngIf="isEditing">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of draft.lines; let i = index; trackBy: trackByIndex"
+                  [class.has-error]="!lineReady(item) || hasError('quantity_' + i) || hasError('purchasePrice_' + i)">
+                <td>
+                  <span class="badge" [class.bg-success]="lineReady(item)" [class.bg-warning]="!lineReady(item)">{{ statusLabel(item) }}</span>
+                </td>
+                <td>
+                  <ng-container *ngIf="item.productId; else unmatched">
+                    {{ item.productName }}
+                    <div class="text-muted small" *ngIf="item.sku">{{ item.sku }}</div>
+                  </ng-container>
+                  <ng-template #unmatched>
+                    <div class="text-muted small" *ngIf="item.source">“{{ item.source }}”</div>
+                    <select class="form-select form-select-sm" [ngModel]="''" (ngModelChange)="assignVariant(item, $event)">
+                      <option value="">Match to…</option>
+                      <option *ngFor="let r of stockRows" [value]="r.variantId">{{ variantLabel(r) }}</option>
+                    </select>
+                  </ng-template>
+                </td>
+                <td>
+                  <ng-container *ngIf="item.variantOptions?.length && !item.variantId; else variantName">
+                    <select class="form-select form-select-sm" [ngModel]="''" (ngModelChange)="chooseVariant(item, $event)">
+                      <option value="">Choose variant…</option>
+                      <option *ngFor="let o of item.variantOptions" [value]="o.id">{{ o.name }}</option>
+                    </select>
+                  </ng-container>
+                  <ng-template #variantName>{{ item.variantName || '—' }}</ng-template>
+                </td>
+                <td>{{ item.currentStock ?? '—' }}</td>
+                <td>
+                  <span *ngIf="!isEditing">₹{{ item.unitCost || 0 | number:'1.0-2' }}</span>
+                  <input *ngIf="isEditing" type="number" min="0" step="0.01" class="form-control" [(ngModel)]="item.unitCost"
+                         [class.is-invalid]="hasError('purchasePrice_' + i)">
+                  <div class="error-message" *ngIf="hasError('purchasePrice_' + i)">{{ getError('purchasePrice_' + i) }}</div>
+                </td>
+                <td>
+                  <span *ngIf="!isEditing">{{ item.qty }}</span>
+                  <input *ngIf="isEditing" type="number" min="1" step="1" class="form-control" [(ngModel)]="item.qty"
+                         [class.is-invalid]="hasError('quantity_' + i)">
+                  <div class="error-message" *ngIf="hasError('quantity_' + i)">{{ getError('quantity_' + i) }}</div>
+                </td>
+                <td *ngIf="isEditing">
+                  <button class="btn btn-sm btn-danger" (click)="removeItem(i)" title="Remove Item">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="no-items" *ngIf="!draft.lines.length">
+          <p>{{ importFileName ? 'No items found in the Excel file.' : 'No items yet — choose a product above.' }}</p>
+          <div class="error-message" *ngIf="hasError('consignmentItems')">{{ getError('consignmentItems') }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="import-review-footer">
+      <button class="btn btn-secondary" (click)="onCancel()" [disabled]="saving">Cancel</button>
+      <button class="btn btn-outline-primary" (click)="onConfirm(false)" [disabled]="saving || !isDataValid()">
+        Save as Draft
+      </button>
+      <button class="btn btn-primary" (click)="onConfirm(true)" [disabled]="saving || !isDataValid()">
+        <span *ngIf="saving" class="spinner-border spinner-border-sm me-1"></span>
+        Save &amp; Add to Stock
+      </button>
+    </div>
+  </div>
+</div>

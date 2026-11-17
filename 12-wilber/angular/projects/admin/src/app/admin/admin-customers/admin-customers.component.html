@@ -1,0 +1,244 @@
+<!-- Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="text-primary">
+    <i class="fas fa-users me-2"></i>Customer Management
+  </h3>
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-primary" (click)="refreshCustomers()" [disabled]="isLoading">
+      <i class="fas fa-sync me-1" [class.fa-spin]="isLoading"></i>Refresh
+    </button>
+    <button type="button" class="btn btn-outline-primary" (click)="exportCustomers()">
+      <i class="fas fa-download me-1"></i>Export
+    </button>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading customers...</span>
+  </div>
+  <p class="mt-2 text-muted">Loading customer data...</p>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">
+  <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+</div>
+
+<!-- Customer Statistics (loaded customers) -->
+<div *ngIf="!isLoading" class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center stats-card">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ customers.length }}{{ nextCursor ? '+' : '' }}</h5>
+        <p class="card-text">Total Customers</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center stats-card">
+      <div class="card-body">
+        <h5 class="card-title text-info">{{ countByStatus('ACTIVE') }}</h5>
+        <p class="card-text">Active</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center stats-card">
+      <div class="card-body">
+        <h5 class="card-title text-danger">{{ countByStatus('BLOCKED') }}</h5>
+        <p class="card-text">Blocked</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center stats-card">
+      <div class="card-body">
+        <h5 class="card-title text-warning">{{ activeLast30Days() }}</h5>
+        <p class="card-text">Logged in (30 days)</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div *ngIf="!isLoading" class="card mb-4">
+  <div class="card-header">
+    <h6 class="mb-0">
+      <i class="fas fa-filter me-2"></i>Search & Filters
+    </h6>
+  </div>
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Search Customers</label>
+        <input type="text" class="form-control" [(ngModel)]="searchTerm" (input)="onSearchInput()"
+               placeholder="Name, email, mobile...">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-select" [(ngModel)]="selectedStatus">
+          <option value="">All</option>
+          <option value="ACTIVE">Active</option>
+          <option value="BLOCKED">Blocked</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Actions</label>
+        <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+          <i class="fas fa-times me-1"></i>Clear
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer details -->
+<div *ngIf="selected" class="card mb-4 border-primary">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0">
+      <i class="fas fa-user me-2"></i>{{ selected.name || 'Customer' }}
+      <small class="text-muted ms-2">{{ selected.phone }}<span *ngIf="selected.email"> · {{ selected.email }}</span></small>
+      <span class="badge ms-2" [class.bg-success]="selected.status === 'ACTIVE'" [class.bg-danger]="selected.status !== 'ACTIVE'">{{ selected.status }}</span>
+    </h6>
+    <button class="btn btn-sm btn-outline-secondary" (click)="closeDetails()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="card-body">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <h6 class="text-primary"><i class="fas fa-map-marker-alt me-1"></i>Addresses ({{ selected.addresses.length }})</h6>
+        <div *ngIf="selected.addresses.length === 0" class="text-muted small">No saved addresses</div>
+        <div *ngFor="let a of selected.addresses" class="border rounded p-2 mb-2 small">
+          <strong>{{ a.name }}</strong> <span class="badge bg-primary ms-1" *ngIf="a.isDefault">Default</span>
+          <div>{{ formatAddress(a) }}</div>
+          <div class="text-muted">{{ a.phone }}</div>
+        </div>
+        <div class="small mt-3">
+          <div><strong>Registered:</strong> {{ selected.createdAt | date:'MMM dd, yyyy' }}</div>
+          <div><strong>Last login:</strong> {{ (selected.lastLoginAt | date:'MMM dd, yyyy hh:mm a') || '—' }}</div>
+          <div><strong>Lifetime value:</strong> {{ lifetimeValuePaise(selected) | money }}</div>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <h6 class="text-primary"><i class="fas fa-shopping-cart me-1"></i>Orders ({{ selected.orders.length }})</h6>
+        <div *ngIf="selected.orders.length === 0" class="text-muted small">No orders yet</div>
+        <div class="table-responsive" *ngIf="selected.orders.length > 0">
+          <table class="table table-sm table-hover">
+            <thead class="table-light">
+              <tr><th>Order</th><th>Date</th><th>Total</th><th>Payment</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of selected.orders">
+                <td><strong>#{{ o.id }}</strong></td>
+                <td>{{ o.createdAt | date:'MMM dd, yyyy' }}</td>
+                <td>{{ o.totalPaise | money }}</td>
+                <td><small>{{ paymentLabel(o.paymentStatus) }}</small></td>
+                <td><small>{{ statusLabel(o.status) }}</small></td>
+                <td><button class="btn btn-sm btn-outline-primary" (click)="openOrder(o.id)" title="Open order"><i class="fas fa-eye"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Customers Table -->
+<div *ngIf="!isLoading" class="card">
+  <div class="card-header">
+    <h6 class="mb-0">
+      <i class="fas fa-table me-2"></i>Customer List
+      <span class="badge bg-primary ms-2">{{ visibleCustomers.length }} customers</span>
+    </h6>
+  </div>
+  <div class="card-body">
+    <!-- Empty State -->
+    <div *ngIf="visibleCustomers.length === 0" class="text-center py-5">
+      <i class="fas fa-users fa-3x text-muted mb-3"></i>
+      <p class="text-muted">No customers found</p>
+      <button class="btn btn-primary" (click)="refreshCustomers()">
+        <i class="fas fa-sync me-1"></i>Refresh Data
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="visibleCustomers.length > 0" class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th (click)="sortBy('name')" style="cursor: pointer;">
+              Name <i [class]="getSortIcon('name')" class="ms-1"></i>
+            </th>
+            <th (click)="sortBy('email')" style="cursor: pointer;">
+              Email <i [class]="getSortIcon('email')" class="ms-1"></i>
+            </th>
+            <th>Mobile</th>
+            <th (click)="sortBy('createdAt')" style="cursor: pointer;">
+              Registered <i [class]="getSortIcon('createdAt')" class="ms-1"></i>
+            </th>
+            <th (click)="sortBy('lastLoginAt')" style="cursor: pointer;">
+              Last Login <i [class]="getSortIcon('lastLoginAt')" class="ms-1"></i>
+            </th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of visibleCustomers" [class.table-active]="selected?.id === customer.id">
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
+                  <i class="fas fa-user text-muted"></i>
+                </div>
+                <div>
+                  <strong>{{ customer.name || '—' }}</strong>
+                  <br>
+                  <small class="text-muted">{{ customer.id }}</small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <a *ngIf="customer.email" href="mailto:{{ customer.email }}" class="text-decoration-none">{{ customer.email }}</a>
+              <span *ngIf="!customer.email" class="text-muted">N/A</span>
+            </td>
+            <td>
+              <a href="tel:{{ customer.phone }}" class="text-decoration-none">{{ customer.phone }}</a>
+            </td>
+            <td>
+              <div>
+                <strong>{{ customer.createdAt | date:'MMM dd, yyyy' }}</strong>
+                <br>
+                <small class="text-muted">{{ customer.createdAt | date:'hh:mm a' }}</small>
+              </div>
+            </td>
+            <td>
+              <small>{{ (customer.lastLoginAt | date:'MMM dd, yyyy hh:mm a') || '—' }}</small>
+            </td>
+            <td>
+              <span class="badge bg-success" *ngIf="customer.status === 'ACTIVE'">Active</span>
+              <span class="badge bg-danger" *ngIf="customer.status !== 'ACTIVE'">{{ customer.status }}</span>
+            </td>
+            <td>
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-primary" (click)="viewCustomerDetails(customer)" title="View Details" [disabled]="loadingDetailId === customer.id">
+                  <i class="fas" [class.fa-eye]="loadingDetailId !== customer.id" [class.fa-spinner]="loadingDetailId === customer.id" [class.fa-spin]="loadingDetailId === customer.id"></i>
+                </button>
+                <button *ngIf="canChangeStatus()" class="btn btn-sm btn-outline-warning" (click)="toggleCustomerStatus(customer)"
+                        [title]="customer.status === 'BLOCKED' ? 'Unblock' : 'Block'">
+                  <i class="fas" [class.fa-toggle-on]="customer.status !== 'BLOCKED'" [class.fa-toggle-off]="customer.status === 'BLOCKED'"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div *ngIf="nextCursor" class="text-center mt-3">
+      <button class="btn btn-outline-primary" (click)="loadMore()" [disabled]="isLoadingMore">
+        <span *ngIf="isLoadingMore" class="spinner-border spinner-border-sm me-1"></span>Load more
+      </button>
+    </div>
+  </div>
+</div>

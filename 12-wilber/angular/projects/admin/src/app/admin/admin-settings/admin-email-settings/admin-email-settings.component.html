@@ -1,0 +1,91 @@
+<div class="email-settings">
+  <div class="card shadow">
+    <div class="card-header">
+      <h4 class="mb-0">
+        <i class="fas fa-envelope me-2"></i>Email Settings
+      </h4>
+      <p class="text-muted mb-0">Order emails to customers, alerts to staff and the templates they use</p>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="saveEmailSettings()" autocomplete="off">
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-paper-plane me-2"></i>Delivery</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="emailProvider" class="form-label">Email Provider</label>
+                <select class="form-select" id="emailProvider" name="emailProvider" [(ngModel)]="email.provider">
+                  <option *ngFor="let p of providers" [value]="p.id">{{ p.label }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="emailFrom" class="form-label">From Address</label>
+                <input type="text" id="emailFrom" name="emailFrom" class="form-control" [(ngModel)]="email.from"
+                       placeholder="Store Name <orders@example.com>">
+                <div class="form-text" *ngIf="email.provider === 'ses'">Must be verified in Amazon SES.</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="emailReplyTo" class="form-label">Reply-To</label>
+                <input type="email" id="emailReplyTo" name="emailReplyTo" class="form-control" [(ngModel)]="email.replyTo">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="emailNotifyTo" class="form-label">Staff Alerts To</label>
+                <input type="email" id="emailNotifyTo" name="emailNotifyTo" class="form-control" [(ngModel)]="email.notifyTo">
+                <div class="form-text">Receives new-order and enquiry alerts.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-file-alt me-2"></i>Templates</h5>
+          <div class="row align-items-end mb-3">
+            <div class="col-md-6">
+              <label for="emailEvent" class="form-label">Event</label>
+              <select class="form-select" id="emailEvent" name="emailEvent" [(ngModel)]="selectedEvent">
+                <option *ngFor="let e of events" [value]="e.id">{{ e.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-6 d-flex gap-2 mt-2 mt-md-0">
+              <button type="button" class="btn btn-outline-secondary btn-sm" (click)="showPreview = !showPreview">
+                <i class="fas me-1" [class.fa-eye]="!showPreview" [class.fa-code]="showPreview"></i>{{ showPreview ? 'Edit HTML' : 'Preview' }}
+              </button>
+              <button type="button" class="btn btn-outline-secondary btn-sm" *ngIf="hasDefault" (click)="restoreDefault()">
+                <i class="fas fa-undo me-1"></i>Restore default
+              </button>
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="tplSubject" class="form-label">Subject</label>
+            <input type="text" id="tplSubject" class="form-control" [name]="'subject_' + selectedEvent" [(ngModel)]="current.subject">
+          </div>
+          <div class="form-group mb-2">
+            <label for="tplHtml" class="form-label">Body (HTML)</label>
+            <textarea *ngIf="!showPreview" id="tplHtml" rows="10" class="form-control template-html" [name]="'html_' + selectedEvent"
+                      [(ngModel)]="current.html"></textarea>
+            <div *ngIf="showPreview" class="template-preview" [innerHTML]="current.html"></div>
+          </div>
+          <div class="form-text">Placeholders: <code>{{ placeholders }}</code>. Leave subject and body empty to use the built-in default.</div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <i class="fas fa-save me-2" [class.fa-spin]="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Save Settings' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="loadEmailSettings()" [disabled]="isLoading">
+            <i class="fas fa-undo me-2"></i>Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+@use '../settings-panel' as sp;
+
+.sms-settings {
+  @include sp.panel;
+
+  .template-table td {
+    vertical-align: middle;
+  }
+}

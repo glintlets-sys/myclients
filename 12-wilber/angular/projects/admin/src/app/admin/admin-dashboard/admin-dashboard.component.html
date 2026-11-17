@@ -1,0 +1,370 @@
+<!-- Loading State -->
+<div *ngIf="isLoading" class="text-center py-5">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading dashboard...</span>
+  </div>
+  <p class="mt-2 text-muted">Loading dashboard data...</p>
+  
+  <!-- Debug Information -->
+  <div class="mt-3 p-3 bg-light rounded">
+    <small class="text-muted">
+      <strong>Debug Info:</strong><br>
+      Products: {{ products !== undefined ? 'Loaded' : 'Loading...' }}<br>
+      Customers: {{ customers !== undefined ? 'Loaded' : 'Loading...' }}<br>
+      Orders: {{ orders !== undefined ? 'Loaded' : 'Loading...' }}<br>
+      Categories: {{ categories !== undefined ? 'Loaded' : 'Loading...' }}
+    </small>
+  </div>
+</div>
+
+<!-- Dashboard Content -->
+<div *ngIf="!isLoading && data">
+  <!-- Phone home: key numbers and quick actions -->
+  <div class="mobile-home d-md-none">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <strong class="text-primary">Today</strong>
+      <button class="btn btn-sm btn-outline-primary" (click)="refreshDashboard()" aria-label="Refresh"><i class="fas fa-sync"></i></button>
+    </div>
+    <div class="tiles">
+      <button type="button" class="tile" (click)="navigateToOrders()">
+        <span class="value">{{ stats.ordersToday }}</span>
+        <span class="label">Orders today</span>
+      </button>
+      <button type="button" class="tile warn" (click)="navigateToOrders()">
+        <span class="value">{{ awaitingConfirmation }}</span>
+        <span class="label">To confirm</span>
+      </button>
+      <button type="button" class="tile ok" (click)="navigateToOrders()">
+        <span class="value small-value">{{ stats.revenueTodayPaise | money }}</span>
+        <span class="label">Revenue today</span>
+      </button>
+      <button type="button" class="tile danger" (click)="navigateToProducts()">
+        <span class="value">{{ outOfStockCount }}<small class="text-muted" *ngIf="lowStockCount"> +{{ lowStockCount }}</small></span>
+        <span class="label">Out of stock<span *ngIf="lowStockCount"> / low</span></span>
+      </button>
+    </div>
+    <div class="status-chips">
+      <span class="chip" *ngFor="let s of statusChips">{{ statusLabel(s.status) }} <strong>{{ s.count }}</strong></span>
+    </div>
+    <div class="quick-actions">
+      <button type="button" class="btn btn-primary" (click)="navigateToOrders()"><i class="fas fa-clipboard-list me-1"></i>Orders</button>
+      <button type="button" class="btn btn-success" (click)="navigateToProducts()"><i class="fas fa-boxes me-1"></i>Update stock</button>
+      <button type="button" class="btn btn-outline-primary" (click)="navigateTo('products')"><i class="fas fa-plus me-1"></i>Products</button>
+      <button type="button" class="btn btn-outline-primary" (click)="navigateTo('banners')"><i class="fas fa-images me-1"></i>Banners</button>
+    </div>
+
+    <h6 class="mt-3 mb-2">Recent orders</h6>
+    <div class="order-card" *ngFor="let o of recentOrders" (click)="openOrder(o.id)">
+      <div class="d-flex justify-content-between">
+        <strong>#{{ o.id }}</strong>
+        <strong>{{ o.totalPaise | money }}</strong>
+      </div>
+      <div class="d-flex justify-content-between align-items-center small mt-1">
+        <span class="text-muted text-truncate me-2">{{ o.customer || o.phone || 'Customer' }} &middot; {{ o.createdAt | date:'d MMM, h:mm a' }}</span>
+        <span [class]="getOrderStatusClass(o.status)">{{ statusLabel(o.status) }}</span>
+      </div>
+    </div>
+    <p class="text-muted small" *ngIf="!recentOrders.length">No orders yet.</p>
+    <hr>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-primary">
+      <i class="fas fa-tachometer-alt me-2"></i>
+      Dashboard Overview
+    </h3>
+    <button class="btn btn-outline-primary" (click)="refreshDashboard()">
+      <i class="fas fa-sync me-2"></i>Refresh Data
+    </button>
+  </div>
+
+  <!-- Primary Stats Cards -->
+  <div class="row mb-4 d-none d-md-flex">
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card border-left-primary h-100 clickable-card" (click)="navigateToOrders()" title="Click to view Orders">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                Total Orders
+              </div>
+              <div class="h4 mb-0 font-weight-bold text-gray-800">{{ stats.totalOrders }}</div>
+              <small class="text-muted">
+                <i class="fas fa-check-circle text-success me-1"></i>{{ stats.completedOrders }} completed
+              </small>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card border-left-success h-100 clickable-card" (click)="navigateToCustomers()" title="Click to view Customers">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                Total Customers
+              </div>
+              <div class="h4 mb-0 font-weight-bold text-gray-800">{{ stats.totalCustomers }}</div>
+              <small class="text-muted">
+                <i class="fas fa-user-plus text-info me-1"></i>Registered users
+              </small>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-users fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card border-left-info h-100 clickable-card" (click)="navigateToProducts()" title="Click to view Products">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                Total Products
+              </div>
+              <div class="h4 mb-0 font-weight-bold text-gray-800">{{ stats.totalProducts }}</div>
+              <small class="text-muted">
+                <i class="fas fa-eye text-success me-1"></i>{{ stats.activeProducts }} active
+              </small>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-box fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+      <div class="card stats-card border-left-warning h-100">
+        <div class="card-body">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                Revenue (30 days)
+              </div>
+              <div class="h4 mb-0 font-weight-bold text-gray-800">{{ stats.revenue30dPaise | money }}</div>
+              <small class="text-muted">
+                <i class="fas fa-chart-line text-success me-1"></i>From {{ stats.orders30d }} orders
+              </small>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-rupee-sign fa-2x text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Secondary Stats Row -->
+  <div class="row mb-4 d-none d-md-flex">
+    <div class="col-xl-4 col-md-6 mb-3">
+      <div class="card border-left-secondary">
+        <div class="card-body py-3">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">Today</div>
+              <div class="h6 mb-0 font-weight-bold text-gray-800">{{ stats.revenueTodayPaise | money }} <small class="text-muted">· {{ stats.ordersToday }} orders</small></div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calendar-day fa-lg text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6 mb-3">
+      <div class="card border-left-warning">
+        <div class="card-body py-3">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Pending Orders</div>
+              <div class="h6 mb-0 font-weight-bold text-gray-800">{{ stats.pendingOrders }}</div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-clock fa-lg text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-4 col-md-6 mb-3">
+      <div class="card border-left-success">
+        <div class="card-body py-3">
+          <div class="row no-gutters align-items-center">
+            <div class="col mr-2">
+              <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Avg Order Value (30 days)</div>
+              <div class="h6 mb-0 font-weight-bold text-gray-800">
+                {{ avgOrderValuePaise() | money }}
+              </div>
+            </div>
+            <div class="col-auto">
+              <i class="fas fa-calculator fa-lg text-gray-300"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Revenue trend + low stock -->
+<div class="row" *ngIf="!isLoading && data">
+  <div class="col-lg-8 mb-4">
+    <div class="card shadow h-100">
+      <div class="card-header py-3" style="background: var(--gradient-primary); color: white;">
+        <h6 class="m-0 font-weight-bold">
+          <i class="fas fa-chart-bar me-2"></i>
+          Daily Revenue (Last 30 days)
+        </h6>
+      </div>
+      <div class="card-body">
+        <div class="revenue-chart">
+          <div class="revenue-bar" *ngFor="let d of dailyRevenue" [title]="(d.date | date:'MMM dd') + ': ' + formatCurrency(d.revenuePaise)">
+            <div class="revenue-bar-fill" [style.height.%]="d.pct"></div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between small text-muted mt-1" *ngIf="dailyRevenue.length">
+          <span>{{ dailyRevenue[0].date | date:'MMM dd' }}</span>
+          <span>{{ dailyRevenue[dailyRevenue.length - 1].date | date:'MMM dd' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4 mb-4">
+    <div class="card shadow h-100">
+      <div class="card-header py-3 clickable-card" style="background: var(--gradient-primary); color: white;" (click)="navigateToStock()" title="Click to manage stock">
+        <h6 class="m-0 font-weight-bold">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          Low Stock ({{ lowStock.length }})
+        </h6>
+      </div>
+      <div class="card-body p-0">
+        <div *ngIf="lowStock.length === 0" class="text-center py-4 text-muted">
+          <i class="fas fa-check-circle text-success me-1"></i> All variants have more than 5 in stock
+        </div>
+        <ul class="list-group list-group-flush low-stock-list" *ngIf="lowStock.length > 0">
+          <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let s of lowStock">
+            <span>
+              <strong>{{ s.name }}</strong>
+              <br><small class="text-muted">{{ s.variantName }}</small>
+            </span>
+            <span class="badge" [class.bg-danger]="s.qty <= 0" [class.bg-warning]="s.qty > 0">{{ s.qty }}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Orders (phones show the cards above) -->
+<div class="row d-none d-md-flex" *ngIf="!isLoading && data">
+  <div class="col-lg-12">
+    <div class="card shadow mb-4">
+      <div class="card-header py-3" style="background: var(--gradient-primary); color: white;">
+        <h6 class="m-0 font-weight-bold">
+          <i class="fas fa-list me-2"></i>
+          Recent Orders (Last 5)
+        </h6>
+      </div>
+      <div class="card-body">
+        <div *ngIf="recentOrders.length === 0" class="text-center py-4">
+          <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+          <p class="text-muted">No orders found</p>
+        </div>
+
+        <div *ngIf="recentOrders.length > 0" class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Payment Status</th>
+                <th>Order Status</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of recentOrders">
+                <td>
+                  <strong class="text-primary">#{{ order.id }}</strong>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
+                      <i class="fas fa-user text-muted"></i>
+                    </div>
+                    <div>
+                      <strong>{{ order.customer || 'Customer' }}</strong>
+                      <br><small class="text-muted">{{ order.phone }} · {{ order.items }} item(s)</small>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <strong class="text-success">{{ order.totalPaise | money }}</strong>
+                  <br><small class="text-muted text-uppercase">{{ order.paymentMethod }}</small>
+                </td>
+                <td>
+                  <span [class]="getPaymentStatusClass(order.paymentStatus)">
+                    {{ paymentLabel(order.paymentStatus) }}
+                  </span>
+                </td>
+                <td>
+                  <span [class]="getOrderStatusClass(order.status)">{{ statusLabel(order.status) }}</span>
+                </td>
+                <td>
+                  <div>
+                    <strong>{{ order.createdAt | date:'MMM dd, yyyy' }}</strong>
+                    <br>
+                    <small class="text-muted">{{ order.createdAt | date:'hh:mm a' }}</small>
+                  </div>
+                </td>
+                <td>
+                  <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-outline-primary" title="View Details" (click)="openOrder(order.id)">
+                      <i class="fas fa-eye"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Quick Stats Footer -->
+        <div class="row mt-3 pt-3 border-top">
+          <div class="col-md-3 text-center">
+            <div class="text-muted small">Today's Orders</div>
+            <div class="h6 text-primary">{{ stats.ordersToday }}</div>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="text-muted small">Today's Revenue</div>
+            <div class="h6 text-info">{{ stats.revenueTodayPaise | money }}</div>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="text-muted small">Last 30 Days</div>
+            <div class="h6 text-success">{{ stats.orders30d }}</div>
+          </div>
+          <div class="col-md-3 text-center">
+            <div class="text-muted small">Delivery Rate</div>
+            <div class="h6 text-warning">{{ getSuccessRate() }}%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

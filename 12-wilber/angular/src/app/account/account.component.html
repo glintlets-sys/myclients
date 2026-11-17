@@ -1,0 +1,421 @@
+<app-header></app-header>
+
+<div class="account-container">
+  <div class="container py-5">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-user-circle me-2"></i>
+              My Account
+            </h6>
+          </div>
+          <div class="card-body p-0">
+            <div class="nav flex-column nav-pills">
+              <button
+                class="nav-link"
+                [class.active]="activeTab === 'profile'"
+                (click)="setActiveTab('profile')">
+                <i class="fas fa-user me-2"></i>
+                Profile
+              </button>
+              <button
+                class="nav-link"
+                [class.active]="activeTab === 'addresses'"
+                (click)="setActiveTab('addresses')">
+                <i class="fas fa-map-marker-alt me-2"></i>
+                Addresses
+              </button>
+              <button
+                class="nav-link"
+                [class.active]="activeTab === 'orders'"
+                (click)="setActiveTab('orders')">
+                <i class="fas fa-shopping-bag me-2"></i>
+                Orders
+              </button>
+              <button
+                class="nav-link text-danger"
+                (click)="logout()">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="col-lg-9">
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+          <i class="fas fa-exclamation-triangle me-2"></i>
+          {{ errorMessage }}
+          <button type="button" class="btn-close" (click)="errorMessage = ''"></button>
+        </div>
+
+        <!-- Success Message -->
+        <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+          <i class="fas fa-check-circle me-2"></i>
+          {{ successMessage }}
+          <button type="button" class="btn-close" (click)="successMessage = ''"></button>
+        </div>
+
+        <!-- Profile Tab -->
+        <div *ngIf="activeTab === 'profile'" class="card shadow-sm">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-user me-2"></i>
+              Profile Information
+            </h6>
+          </div>
+          <div class="card-body">
+            <form (ngSubmit)="updateProfile()">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="firstName" class="form-label">First Name *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="firstName"
+                    [(ngModel)]="profileForm.firstName"
+                    name="firstName"
+                    required
+                  >
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="lastName" class="form-label">Last Name *</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="lastName"
+                    [(ngModel)]="profileForm.lastName"
+                    name="lastName"
+                    required
+                  >
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="email" class="form-label">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    [(ngModel)]="profileForm.email"
+                    name="email"
+                  >
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="mobile" class="form-label">Mobile Number</label>
+                  <input
+                    type="tel"
+                    class="form-control"
+                    id="mobile"
+                    [(ngModel)]="profileForm.mobile"
+                    name="mobile"
+                    readonly
+                  >
+                  <small class="text-muted">Mobile number cannot be changed</small>
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="btn"
+                [disabled]="loading"
+                style="background: var(--gradient-primary); color: white; border: none;">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!loading" class="fas fa-save me-2"></i>
+                {{ loading ? 'Updating...' : 'Update Profile' }}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Addresses Tab -->
+        <div *ngIf="activeTab === 'addresses'" class="card shadow-sm">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-map-marker-alt me-2"></i>
+              Manage Addresses
+            </h6>
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Manage Addresses</h5>
+
+            <div class="card mb-3">
+              <div class="card-body">
+                <div class="card-text">
+                  <a *ngIf="!add_address" class="btn text-primary fw-bold add_new_address" (click)="addAdress()">
+                    + ADD A NEW ADDRESS
+                  </a>
+                  <h6 *ngIf="add_address" class="text-primary add_new_address">{{ editingAddressId ? 'EDIT ADDRESS' : 'ADD A NEW ADDRESS' }}</h6>
+                  <form *ngIf="add_address">
+                    <div class="row g-3">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="addrName">Full Name <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="addrName" name="addrName" [(ngModel)]="newAddress.name">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="firstName">Address 1 <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="firstName" name="firstName" [(ngModel)]="newAddress.line1">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="secondName">Address 2</label>
+                          <input type="text" class="form-control" id="secondName" name="secondName" [(ngModel)]="newAddress.line2">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="landmark">Landmark</label>
+                          <input type="text" class="form-control" id="landmark" name="landmark" [(ngModel)]="newAddress.landmark">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="city">City <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="city" name="city" [(ngModel)]="newAddress.city">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="state">State <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="state" name="state" [(ngModel)]="newAddress.state">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="pincode">Pincode <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="pincode" name="pincode" [(ngModel)]="newAddress.pincode" maxlength="6" inputmode="numeric">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="gstin">GSTIN <small class="text-muted">(optional, for business invoices)</small></label>
+                          <input type="text" class="form-control" id="gstin" name="gstin" [(ngModel)]="newAddress.gstin" maxlength="15" style="text-transform:uppercase">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="mobile">Mobile Number <span class="text-danger">*</span></label>
+                          <input type="text" class="form-control" id="mobile" name="mobile" [(ngModel)]="newAddress.phone" maxlength="10" inputmode="numeric">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="alternate">Alternate Number</label>
+                          <input type="text" class="form-control" id="alternate" name="alternate" [(ngModel)]="newAddress.alternatePhone">
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label for="email">Email Address</label>
+                          <input type="email" class="form-control" id="email" name="email" [(ngModel)]="newAddress.email">
+                        </div>
+                      </div>
+
+                      <div class="col-md-12">
+                        <div class="btn-addresss-submit mb-3">
+                          <button type="button" class="cancel cursor_pointer" (click)="cancelNewAddress()">Cancel</button>
+                          <button type="button" class="cont-save cursor_pointer" (click)="saveNewAddress()">Save</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mb-2" *ngFor="let address of addresses">
+              <div class="card-body d-flex">
+                <div class="card-text">
+                  <div class="fw-bold">{{ address.name }} <span *ngIf="address.isDefault" class="badge bg-primary ms-2">Default</span></div>
+                  <div>{{ address.line1 }} {{ address.line2 }}<span *ngIf="address.landmark">, {{ address.landmark }}</span></div>
+                  <p>{{address.phone}} <br/>{{ address.city }}, {{ address.state }}, {{ address.country }}, &nbsp;{{address.pincode}}</p>
+                  <p>{{ address.email }}</p>
+                </div>
+
+                <div class="dropdown ms-auto">
+                  <button class="btn btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    <i class="fas fa-ellipsis-v"></i>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" (click)="editAddress(address)">Edit</a></li>
+                    <li *ngIf="!address.isDefault"><a class="dropdown-item" (click)="setDefaultAddress(address)">Set as default</a></li>
+                    <li><a class="dropdown-item" (click)="deleteAddress(address)">Delete</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders Tab -->
+        <div *ngIf="activeTab === 'orders'" class="card shadow-sm">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-shopping-bag me-2"></i>
+              My Orders
+            </h6>
+          </div>
+          <div class="card-body">
+            <div *ngIf="ordersLoading && displayOrders.length === 0" class="text-center py-4">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+            </div>
+            <div *ngIf="!ordersLoading && displayOrders.length === 0" class="text-center py-4">
+              <i class="fas fa-shopping-bag fa-3x text-muted mb-3"></i>
+              <p class="text-muted">No orders found</p>
+            </div>
+            <div *ngFor="let order of displayOrders" class="order-card mb-4">
+              <div class="card">
+                <div class="card-header bg-light">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h6 class="mb-1">Order #{{ order.orderNumber }}</h6>
+                      <small class="text-muted">{{ order.orderDate | date:'mediumDate' }}</small>
+                      <small class="text-muted ms-2">· {{ order.paymentMethod === 'cod' ? 'Cash on Delivery' : (order.paymentMethod | titlecase) }}</small>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!-- Order Status Summary -->
+                  <div class="row mb-3">
+                    <div class="col-12">
+                      <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
+                        <div>
+                          <small class="text-muted">Payment Status:</small>
+                          <div>
+                            <span [class]="getPaymentStatusClass(order.paymentStatus)">
+                              {{ getPaymentStatusText(order.paymentStatus) }}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <small class="text-muted">Shipping Status:</small>
+                          <div>
+                            <span [class]="getShippingStatusClass(order.shippingStatus)">
+                              {{ getShippingStatusText(order.shippingStatus) }}
+                            </span>
+                          </div>
+                        </div>
+                        <div>
+                          <small class="text-muted">Order Date:</small>
+                          <div class="fw-bold">{{ order.orderDate | date:'shortDate' }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-8">
+                      <h6 class="mb-3">
+                        Order Items
+                        <span class="items-count">{{ order.items.length }} {{ order.items.length === 1 ? 'item' : 'items' }}</span>
+                      </h6>
+                      <div class="order-items-list">
+                        <div *ngFor="let item of order.items" class="order-item">
+                          <a class="item-thumb" [routerLink]="item.slug ? ['/product', item.slug] : null">
+                            <img *ngIf="item.image; else noImg" [src]="item.image" [alt]="item.productName" loading="lazy">
+                            <ng-template #noImg><i class="fas fa-box-open"></i></ng-template>
+                          </a>
+                          <div class="item-info">
+                            <a class="item-name" [routerLink]="item.slug ? ['/product', item.slug] : null">{{ item.productName }}</a>
+                            <span *ngIf="item.size" class="item-variant">{{ item.size }}</span>
+                            <div class="item-qty">{{ item.quantity }} × {{ item.unitPrice | money }}</div>
+                          </div>
+                          <div class="item-total">{{ item.price | money }}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <h6 class="mb-3">Shipping Address</h6>
+                      <div class="small">
+                        <strong>{{ order.shippingAddress.fullName }}</strong><br>
+                        {{ order.shippingAddress.addressLine1 }}<br>
+                        <span *ngIf="order.shippingAddress.addressLine2">{{ order.shippingAddress.addressLine2 }}<br></span>
+                        {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} - {{ order.shippingAddress.pincode }}
+                      </div>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="mb-0">Total: {{ order.totalAmount | money }}</h5>
+                    </div>
+                    <div>
+                      <button
+                        *ngIf="order.awaitingPayment"
+                        class="btn btn-sm btn-outline-primary me-2"
+                        (click)="completePayment(order)">
+                        <i class="fas fa-credit-card me-1"></i>
+                        Complete Payment
+                      </button>
+                      <button
+                        *ngIf="order.order.invoiceNumber"
+                        class="btn btn-sm btn-outline-secondary me-2"
+                        (click)="viewInvoice(order)">
+                        <i class="fas fa-file-invoice me-1"></i>
+                        Invoice
+                      </button>
+                      <button
+                        *ngIf="order.shippingStatus !== 'CANCELLED' && order.shippingStatus !== 'PENDING_PAYMENT'"
+                        class="btn btn-sm btn-outline-primary me-2"
+                        (click)="trackOrder(order)">
+                        <i class="fas fa-truck me-1"></i>
+                        Track Order
+                      </button>
+                      <button
+                        *ngIf="order.canCancel"
+                        class="btn btn-sm btn-outline-danger"
+                        [disabled]="busyOrderId === order.id"
+                        (click)="cancelOrder(order)">
+                        <i class="fas fa-times me-1"></i>
+                        Cancel Order
+                      </button>
+                    </div>
+                  </div>
+                  <div *ngIf="tracking[order.id] as t" class="mt-3 p-2 bg-light rounded small">
+                    <div *ngIf="t.loading"><span class="spinner-border spinner-border-sm me-2"></span>Fetching tracking...</div>
+                    <ng-container *ngIf="!t.loading">
+                      <div *ngIf="t.status"><strong>Status:</strong> {{ t.status }}</div>
+                      <div *ngIf="t.courier"><strong>Courier:</strong> {{ t.courier }}</div>
+                      <div *ngIf="t.awb"><strong>AWB:</strong> {{ t.awb }}</div>
+                      <div *ngIf="t.trackingUrl"><a [href]="t.trackingUrl" target="_blank" rel="noopener">Track on courier website</a></div>
+                      <div *ngIf="t.error" class="text-muted">{{ t.error }}</div>
+                      <ul class="mb-0 mt-2 ps-3" *ngIf="t.activities.length">
+                        <li *ngFor="let a of t.activities">{{ a.date }} – {{ a.activity }}<span *ngIf="a.location"> ({{ a.location }})</span></li>
+                      </ul>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="text-center" *ngIf="ordersCursor">
+              <button class="btn btn-outline-primary btn-sm" [disabled]="ordersLoading" (click)="loadOrders(true)">
+                <span *ngIf="ordersLoading" class="spinner-border spinner-border-sm me-2"></span>Load more orders
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

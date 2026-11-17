@@ -1,0 +1,250 @@
+<!-- Header Component -->
+<app-header></app-header>
+
+<!-- Page Banner -->
+<section class="page-banner" [style.background-image]="'url(' + pageBanner + ')'">
+    <div class="container">
+        <div class="page-banner-content">
+            <h1>{{ currentCategoryName }}</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center bg-transparent mb-0">
+                    <li class="breadcrumb-item"><a routerLink="/" class="text-white">Home</a></li>
+                    <li class="breadcrumb-item" *ngIf="parent"><a [routerLink]="parent.link" class="text-white">{{ parent.name }}</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">{{ currentCategoryName }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<!-- Full-row search: quickly find similar products across all categories -->
+<section class="category-search">
+    <div class="container">
+        <form class="category-search-bar" role="search" (submit)="$event.preventDefault()">
+            <i class="fas fa-search"></i>
+            <input type="search" name="q" [(ngModel)]="query" (ngModelChange)="runSearch()" autocomplete="off"
+                   aria-label="Search products"
+                   placeholder="Search products by name, category, brand, size or price (e.g. sealer, 5 litre, under 2000)">
+            <button *ngIf="query" type="button" class="clear-search" (click)="clearSearch()" aria-label="Clear search">
+                <i class="fas fa-times"></i>
+            </button>
+        </form>
+    </div>
+</section>
+
+<!-- Search results (replace the category content while a search is typed) -->
+<section *ngIf="!loading && query.trim()" class="products-section search-results">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+            <div class="product-count"><strong>{{ results.length }}</strong> {{ results.length === 1 ? 'product matches' : 'products match' }} &ldquo;{{ query.trim() }}&rdquo;</div>
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="clearSearch()">
+                <i class="fas fa-arrow-left me-1"></i>Back to {{ currentCategoryName }}
+            </button>
+        </div>
+        <div *ngIf="!results.length" class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h4>No matching products</h4>
+            <p class="text-muted">Try a product name, a category such as &ldquo;sealers&rdquo;, a pack size, or a price like &ldquo;under 3000&rdquo;.</p>
+        </div>
+        <div class="row" *ngIf="results.length">
+            <div class="col-xl-3 col-lg-4 col-md-6 mb-4" *ngFor="let product of results">
+                <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Loading State -->
+<section *ngIf="loading" class="products-section">
+    <div class="container text-center py-5">
+        <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+        <p class="mt-3">Loading products...</p>
+    </div>
+</section>
+
+<!-- Parent category (e.g. Stone Solutions): only its sub-categories -->
+<section *ngIf="!loading && !query.trim() && subCategories.length" class="products-section subcategory-section">
+    <div class="container">
+        <p *ngIf="currentDescription" class="subcategory-intro text-center text-muted">{{ currentDescription }}</p>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3" *ngFor="let sub of subCategories">
+                <a [routerLink]="sub.link" class="subcategory-tile">
+                    <div class="subcategory-image"><img [src]="sub.image" [alt]="sub.name" loading="lazy"></div>
+                    <div class="subcategory-body">
+                        <h3>{{ sub.name }}</h3>
+                        <span class="subcategory-count">{{ sub.count }} {{ sub.count === 1 ? 'product' : 'products' }}</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Top-level category with nothing in it yet (e.g. Industrial Solutions) -->
+<section *ngIf="!loading && !query.trim() && comingSoon" class="products-section">
+    <div class="container">
+        <div class="coming-soon text-center">
+            <i class="fas fa-industry fa-3x mb-3"></i>
+            <h3>Products coming soon</h3>
+            <p class="text-muted mb-0">We are adding our {{ currentCategoryName }} range. For enquiries, please <a routerLink="/contact">contact us</a>.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Sub-category: left = categories under the same parent, right = this category's products -->
+<section *ngIf="!loading && !query.trim() && !subCategories.length && !comingSoon" class="products-section">
+    <div class="container">
+        <div class="row">
+            <!-- Left pane -->
+            <div class="col-lg-3">
+                <div class="filter-sidebar">
+                    <div class="filter-header">
+                        <h5 class="filter-title">{{ parent?.name || 'Categories' }}</h5>
+                        <a *ngIf="parent" [routerLink]="parent.link" class="clear-all">View all</a>
+                    </div>
+
+                    <div class="filter-category" *ngFor="let category of categories">
+                        <a class="category-header" [routerLink]="category.link" [class.active]="category.active">
+                            <div class="category-title">{{ category.name }}</div>
+                            <span class="category-count">{{ category.count }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right pane -->
+            <div class="col-lg-9">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                    <div class="product-count">
+                        <strong>{{ currentCategoryName }}</strong> &middot; {{ products.length }} {{ products.length === 1 ? 'product' : 'products' }}
+                    </div>
+                    <div class="d-flex align-items-center" *ngIf="products.length > 1">
+                        <label for="sortOptions" class="me-2 mb-0">Sort by:</label>
+                        <select id="sortOptions" class="form-select form-select-sm" style="width: auto;"
+                                [value]="sort" (change)="onSortChange($any($event.target).value)">
+                            <option value="default">Featured</option>
+                            <option value="name">Name (A–Z)</option>
+                            <option value="priceAsc">Price: Low to High</option>
+                            <option value="priceDesc">Price: High to Low</option>
+                        </select>
+                    </div>
+                </div>
+                <p *ngIf="currentDescription" class="text-muted mb-4">{{ currentDescription }}</p>
+
+                <!-- No Products Message -->
+                <div *ngIf="products.length === 0" class="text-center py-5">
+                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                    <h4>{{ notFound ? 'Category not found' : 'No products found' }}</h4>
+                    <p class="text-muted">{{ notFound ? 'This category does not exist or has been removed.' : 'No products available in this category at the moment.' }}</p>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="row" *ngIf="products.length > 0">
+                    <div class="col-lg-4 col-md-6 mb-4" *ngFor="let product of products">
+                        <ng-container *ngTemplateOutlet="productCard; context: { $implicit: product }"></ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- One product card, used by the category grid and the search results -->
+<ng-template #productCard let-product>
+                        <div class="product-card">
+                            <a [routerLink]="product.link" class="product-image">
+                                <img [src]="product.image" [alt]="product.name">
+                                <div class="product-badge" *ngIf="product.badge"
+                                     [style.background-color]="product.badge === 'Bestseller' ? 'var(--success)' : 'var(--primary)'">
+                                    {{ product.badge }}
+                                </div>
+                            </a>
+                            <div class="product-content">
+                                <div class="product-rating mb-2" *ngIf="product.rating > 0">
+                                    <i *ngFor="let star of getStars(product.rating)"
+                                       [class]="star === 1 ? 'fas fa-star text-warning' : star === 0.5 ? 'fas fa-star-half-alt text-warning' : 'far fa-star text-warning'"></i>
+                                    <span class="ms-1 text-muted">({{ product.rating }})</span>
+                                </div>
+                                <div class="product-category" *ngIf="product.categoryNames">{{ product.categoryNames }}</div>
+                                <h4 class="product-title">
+                                    <a [routerLink]="product.link">{{ product.name }}</a>
+                                </h4>
+                                <p class="product-description">{{ product.description }}</p>
+                                <div class="product-price" *ngIf="fromPrice(product) as price">From ₹{{ price | number:'1.0-2' }}</div>
+                                <div class="product-size">
+                                    <span class="badge bg-light text-dark" *ngFor="let size of product.size">{{ size }}</span>
+                                </div>
+                            </div>
+                            <button class="add-to-cart"
+                                    (click)="addToCart(product)"
+                                    [disabled]="isAddToCartDisabled(product)"
+                                    [class]="getAddToCartButtonClass(product)">
+                                <i [class]="stockLoading[product.id] ? 'fas fa-spinner fa-spin me-2' :
+                                           addedToCartItems.has(product.id) ? 'fas fa-check me-2' :
+                                           !isInStock[product.id] ? 'fas fa-ban me-2' : 'fas fa-shopping-cart me-2'"></i>
+                                {{ getAddToCartButtonText(product) }}
+                            </button>
+                        </div>
+</ng-template>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <div class="section-title">
+            <span class="text-center-boostt"><img src="assets/images/faviconlogo.png" alt=""> FAQ</span>
+            <h2>Frequently Asked Questions</h2>
+        </div>
+        
+        <div class="accordion" id="faqAccordion">
+            <!-- FAQ Item 1 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                        Q1: Which tile adhesive is best for tiles?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        A: There's no single "best" tile adhesive for every situation. Tiles come in diverse types, sizes, and materials, each requiring specific adhesive properties for optimal bonding. Rest assured, Wilber has the best tile adhesives for fixing tiles anywhere. Wilber has an extensive range of tile adhesives that are meant for different kinds of tiles, such as vitrified tiles, ceramic tiles, terracotta, and more. Our range of tile adhesives includes Wilber New Construction Adhesive, Wilber Vitofix Adhesive, Wilber Extrofix Adhesive, and more. Wilber Master Fix Adhesive is considered one of the best adhesives in the market.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 2 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        Q2: How long does tile adhesive take to dry?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        A: The drying time for tile adhesive depends on several factors including the type of adhesive, environmental conditions, and tile material. Generally, most tile adhesives take 24-48 hours to fully cure. However, some fast-setting adhesives can dry in as little as 2-4 hours. It's important to follow the manufacturer's instructions and avoid walking on or grouting tiles before the adhesive has fully cured.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- FAQ Item 3 -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        Q3: Can I use tile adhesive for wall tiles?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        A: Yes, tile adhesive can be used for wall tiles. However, it's important to choose the right type of adhesive for your specific application. For wall tiles, you'll want to use a tile adhesive that's specifically formulated for vertical applications. These adhesives typically have better bonding properties and are less likely to sag or slide during installation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer Component -->
+<app-footer></app-footer>
+
+<!-- Back to Top Button -->
+<div class="back-to-top">
+    <i class="fas fa-chevron-up"></i>
+</div>

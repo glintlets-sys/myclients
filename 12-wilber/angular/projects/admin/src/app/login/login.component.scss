@@ -1,0 +1,33 @@
+.login-page {
+  min-height: 100vh;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border: 0;
+  border-radius: var(--border-radius, 8px);
+}
+
+.brand-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  background: var(--gradient-primary);
+}
+
+.otp-input {
+  font-size: 1.5rem;
+  letter-spacing: 0.4rem;
+  text-align: center;
+}
+
+.form-control { font-size: 16px; } // stops iOS zooming into inputs

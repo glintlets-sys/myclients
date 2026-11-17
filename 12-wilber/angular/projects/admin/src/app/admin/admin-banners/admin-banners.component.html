@@ -1,0 +1,178 @@
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h3 class="panel-title mb-0"><i class="fas fa-bullhorn me-2"></i>Marketing Banners</h3>
+  <div class="d-flex gap-2 flex-wrap">
+    <select class="form-select form-select-sm w-auto" [(ngModel)]="placementFilter" aria-label="Filter by placement">
+      <option value="">All placements</option>
+      <option *ngFor="let p of placements" [value]="p">{{ placementLabel(p) }}</option>
+    </select>
+    <button type="button" class="btn btn-outline-primary btn-sm" (click)="load()" [disabled]="loading">
+      <i class="fas fa-sync" [class.fa-spin]="loading"></i>
+    </button>
+    <button type="button" class="btn btn-primary btn-sm" (click)="add()"><i class="fas fa-plus me-1"></i>Add Banner</button>
+  </div>
+</div>
+
+<div class="alert alert-info small py-2">
+  <i class="fas fa-info-circle me-1"></i>
+  Banners are saved now and shown on the storefront in a later release. Only <strong>active</strong> banners inside their
+  schedule are published; scheduled banners switch on/off within about 15 minutes of their start/end time.
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+<div *ngIf="loading && !banners.length" class="text-muted py-3"><i class="fas fa-spinner fa-spin me-2"></i>Loading banners...</div>
+
+<div *ngIf="!loading && !visibleBanners.length && !error" class="text-center text-muted py-5">
+  <i class="fas fa-images fa-3x mb-3 d-block"></i>
+  No banners yet. Use <em>Add Banner</em> to create one.
+</div>
+
+<div class="banner-grid">
+  <div class="banner-card" *ngFor="let b of visibleBanners" [class.dim]="status(b) !== 'live'">
+    <div class="banner-thumb">
+      <img [src]="b.imageDesktop" [alt]="b.altText || b.title" (error)="$any($event.target).src='assets/images/image_empty.jpg'">
+      <span class="badge status" [ngClass]="statusClass(b)">{{ status(b) }}</span>
+    </div>
+    <div class="banner-body">
+      <div class="d-flex justify-content-between align-items-start gap-2">
+        <div class="min-w-0">
+          <strong class="d-block text-truncate">{{ b.title }}</strong>
+          <small class="text-muted d-block text-truncate" *ngIf="b.subtitle">{{ b.subtitle }}</small>
+        </div>
+        <div class="form-check form-switch mb-0">
+          <input class="form-check-input" type="checkbox" [checked]="b.active" (change)="toggleActive(b)" [attr.aria-label]="'Active: ' + b.title">
+        </div>
+      </div>
+      <div class="meta small">
+        <span><i class="fas fa-map-marker-alt me-1"></i>{{ placementLabel(b.placement) }}</span>
+        <span><i class="fas fa-link me-1"></i>{{ linkLabel(b) }}</span>
+        <span *ngIf="b.startAt || b.endAt"><i class="far fa-clock me-1"></i>
+          {{ b.startAt ? formatWhen(b.startAt) : 'now' }} &rarr; {{ b.endAt ? formatWhen(b.endAt) : 'no end' }}</span>
+        <span><i class="fas fa-sort me-1"></i>Order {{ b.sortOrder }}<span *ngIf="b.imageMobile"> &middot; <i class="fas fa-mobile-alt"></i> mobile image</span></span>
+      </div>
+      <div class="d-flex gap-2 mt-2">
+        <button type="button" class="btn btn-sm btn-outline-primary flex-fill" (click)="edit(b)"><i class="fa fa-edit me-1"></i>Edit</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" (click)="remove(b)" title="Delete"><i class="fa fa-trash"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Editor -->
+<div *ngIf="showEditor" class="modal-overlay" (click)="close()">
+  <div class="modal-content banner-editor" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="panel-title mb-0">{{ form.id ? 'Edit Banner' : 'Add Banner' }}</h3>
+      <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+    </div>
+    <form class="modal-body" (ngSubmit)="save()">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Title *</label>
+          <input class="form-control" name="title" [(ngModel)]="form.title" maxlength="120" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Subtitle</label>
+          <input class="form-control" name="subtitle" [(ngModel)]="form.subtitle" maxlength="240">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Placement *</label>
+          <select class="form-select" name="placement" [(ngModel)]="form.placement">
+            <option *ngFor="let p of placements" [value]="p">{{ placementLabel(p) }}</option>
+          </select>
+        </div>
+        <div class="col-md-6" *ngIf="form.placement === 'category-top'">
+          <label class="form-label">Category page</label>
+          <select class="form-select" name="categoryId" [(ngModel)]="form.categoryId">
+            <option [ngValue]="null">Every category page</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+
+        <div class="col-md-6">
+          <label class="form-label">Desktop image * <small class="text-muted">(wide, e.g. 1920&times;600)</small></label>
+          <div class="image-pick">
+            <img *ngIf="form.imageDesktop" [src]="form.imageDesktop" alt="">
+            <label class="btn btn-sm btn-outline-primary mb-0" [class.disabled]="!!uploading">
+              <i class="fas me-1" [ngClass]="uploading === 'imageDesktop' ? 'fa-spinner fa-spin' : 'fa-upload'"></i>{{ form.imageDesktop ? 'Replace' : 'Upload' }}
+              <input type="file" accept="image/*" class="d-none" (change)="onImage($event, 'imageDesktop')" [disabled]="!!uploading">
+            </label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Mobile image <small class="text-muted">(optional, e.g. 800&times;800)</small></label>
+          <div class="image-pick">
+            <img *ngIf="form.imageMobile" [src]="form.imageMobile" alt="">
+            <label class="btn btn-sm btn-outline-primary mb-0" [class.disabled]="!!uploading">
+              <i class="fas me-1" [ngClass]="uploading === 'imageMobile' ? 'fa-spinner fa-spin' : 'fa-upload'"></i>{{ form.imageMobile ? 'Replace' : 'Upload' }}
+              <input type="file" accept="image/*" class="d-none" (change)="onImage($event, 'imageMobile')" [disabled]="!!uploading">
+            </label>
+            <button type="button" class="btn btn-sm btn-link text-danger" *ngIf="form.imageMobile" (click)="form.imageMobile = ''">Remove</button>
+          </div>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Image description (alt text)</label>
+          <input class="form-control" name="altText" [(ngModel)]="form.altText" maxlength="160" placeholder="Describes the image for screen readers">
+        </div>
+
+        <div class="col-md-4">
+          <label class="form-label">Link to</label>
+          <select class="form-select" name="linkType" [(ngModel)]="form.linkType" (ngModelChange)="form.linkTarget = null">
+            <option value="none">Nothing</option>
+            <option value="product">A product</option>
+            <option value="category">A category</option>
+            <option value="url">A web address</option>
+          </select>
+        </div>
+        <div class="col-md-8" *ngIf="form.linkType === 'product'">
+          <label class="form-label">Product</label>
+          <select class="form-select" name="linkProduct" [(ngModel)]="form.linkTarget">
+            <option [ngValue]="null" disabled>Choose a product</option>
+            <option *ngFor="let p of products" [ngValue]="p.id">{{ p.name }}{{ p.active ? '' : ' (inactive)' }}</option>
+          </select>
+        </div>
+        <div class="col-md-8" *ngIf="form.linkType === 'category'">
+          <label class="form-label">Category</label>
+          <select class="form-select" name="linkCategory" [(ngModel)]="form.linkTarget">
+            <option [ngValue]="null" disabled>Choose a category</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-8" *ngIf="form.linkType === 'url'">
+          <label class="form-label">URL</label>
+          <input class="form-control" name="linkUrl" [(ngModel)]="form.linkTarget" placeholder="https://… or /stone-solutions">
+        </div>
+        <div class="col-md-6" *ngIf="form.linkType !== 'none'">
+          <label class="form-label">Button label</label>
+          <input class="form-control" name="ctaLabel" [(ngModel)]="form.ctaLabel" maxlength="40" placeholder="e.g. Shop now">
+        </div>
+
+        <div class="col-6 col-md-3">
+          <label class="form-label">Sort order</label>
+          <input type="number" class="form-control" name="sortOrder" [(ngModel)]="form.sortOrder" inputmode="numeric">
+        </div>
+        <div class="col-6 col-md-3 d-flex align-items-end">
+          <div class="form-check form-switch mb-2">
+            <input class="form-check-input" type="checkbox" id="bActive" name="active" [(ngModel)]="form.active">
+            <label class="form-check-label" for="bActive">Active</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Show from <small class="text-muted">(optional)</small></label>
+          <input type="datetime-local" class="form-control" name="startLocal" [(ngModel)]="form.startLocal">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Show until <small class="text-muted">(optional)</small></label>
+          <input type="datetime-local" class="form-control" name="endLocal" [(ngModel)]="form.endLocal">
+        </div>
+      </div>
+
+      <div *ngIf="editorError" class="alert alert-danger mt-3 mb-0">{{ editorError }}</div>
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-white" (click)="close()" [disabled]="saving">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="saving || !!uploading">
+          <i class="fas me-1" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>{{ form.id ? 'Update Banner' : 'Save Banner' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

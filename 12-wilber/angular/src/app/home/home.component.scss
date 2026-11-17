@@ -1,0 +1,102 @@
+/* Banner slide = image on top, caption strip below, together filling the slide's fixed height (80vh). */
+.banner-slide {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Whole banner always visible (contain, never cropped); spare space is filled with a blurred copy of it. */
+.banner-media {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: #2f4a4c;
+
+  .banner-bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(28px) brightness(0.75);
+    transform: scale(1.2);
+  }
+
+  .banner-img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+/* Caption strip under each home banner image (instead of text laid over the artwork). */
+.banner-strip {
+  flex: 0 0 auto;
+  background: var(--primary, #065baa);
+  border-top: 4px solid #e30613; /* Wilber red */
+  color: #fff;
+  padding: 18px 0 44px; /* bottom room for the carousel dots */
+
+  .container {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.2px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* Dots: white so they show on the blue strip and on the first (split) slide. */
+:host ::ng-deep .hero-carousel .carousel-indicators [data-bs-target] {
+  background-color: #fff;
+  opacity: 0.5;
+}
+:host ::ng-deep .hero-carousel .carousel-indicators .active {
+  opacity: 1;
+}
+
+@media (max-width: 767.98px) {
+  /* Phones: a fixed 80vh slide leaves a thin banner between big blurred bands, so show the banner at its own
+     size with the strip right under it (these slides are shorter than the first, split, slide). */
+  .banner-item {
+    height: auto;
+    min-height: 0;
+  }
+  .banner-media {
+    .banner-bg { display: none; }
+    .banner-img { height: auto; }
+  }
+
+  .banner-strip {
+    padding: 14px 0 40px;
+    text-align: center;
+
+    .container {
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 { font-size: 1.3rem; }
+    p { font-size: 0.95rem; }
+  }
+}
+
+/* Admin banners can link somewhere: the media block is then an <a> */
+a.banner-media { display: block; color: inherit; }
+.banner-media picture { display: contents; }

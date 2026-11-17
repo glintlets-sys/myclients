@@ -1,0 +1,507 @@
+<app-header></app-header>
+
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-section">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a routerLink="/">Home</a>
+        </li>
+        <li class="breadcrumb-item" *ngIf="product?.parentCategoryName">
+          <a [routerLink]="['/category', product?.parentCategory]">{{ product?.parentCategoryName }}</a>
+        </li>
+        <li class="breadcrumb-item" *ngIf="product?.categoryName">
+          <a [routerLink]="product?.category ? ['/category', product?.category] : ['/stone-solutions']">{{ product?.categoryName }}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page" *ngIf="product?.name">
+          {{ product?.name }}
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<!-- Product Details Section -->
+<section class="product-section" *ngIf="!loading && !error">
+  <div class="container">
+    <div class="row">
+      <!-- Product Image Gallery -->
+      <div class="col-lg-5">
+        <div class="product-image-gallery">
+          <div class="main-image">
+            <img [src]="product?.image" [alt]="product?.name" id="mainProductImage">
+          </div>
+          <div class="thumbnail-container">
+            <div class="thumbnail" *ngFor="let img of product?.images; let first = first" [class.active]="first" [attr.data-src]="img">
+              <img [src]="img" [alt]="product?.name">
+            </div>
+            <!-- Additional thumbnails can be added here if needed -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Product Details -->
+      <div class="col-lg-7">
+        <div class="product-details">
+          <h1 class="product-title">{{ product?.name }}</h1>
+          <div class="product-rating mb-1">
+            <i *ngFor="let star of getStars(product?.rating || 0)" 
+               class="fas fa-star text-warning"></i>
+            <span class="ms-2">({{ product?.rating }} - {{ product?.reviewCount }} reviews)</span>
+          </div>
+          
+          <div class="product-description">
+            <p>{{ product?.description }}</p>
+            <p id="more-description" style="display: none;" [innerHTML]="product?.moreDescription || ''"></p>
+            <a href="#" id="read-more-btn" *ngIf="product?.moreDescription">Read more</a>
+          </div>
+          
+          <div class="product-meta">
+            <p *ngIf="product && product.size && product.size.length > 0">
+              <span>Packaging Units:</span>
+              <select class="form-select form-select-sm" [(ngModel)]="selectedSize" (ngModelChange)="onVariantChange()">
+                <option *ngFor="let size of product.size" [value]="size">{{ size }}</option>
+              </select>
+            </p>
+            <p *ngIf="product && product.colors && product.colors.length > 0">
+              <span>Colors:</span>
+              <select class="form-select form-select-sm" [(ngModel)]="selectedColor" (ngModelChange)="onVariantChange()"> 
+                <option *ngFor="let color of product.colors" [value]="color">{{ color }}</option>
+              </select>
+            </p>
+            <p>
+              <span>Packaging Type:</span>
+              <span>{{ product?.packagingType || 'Polythene Bag' }}</span>
+            </p>
+            <p>
+              <span>Price:</span>
+              <span class="product-price">{{ selectedVariant?.pricePaise | money }}</span>
+              <del *ngIf="showMrp" class="ms-2 text-muted">{{ selectedVariant?.mrpPaise | money }}</del>
+            </p>
+
+            <!-- Quantity slabs ("Buy 5+ at ₹X each"); the server applies them in the cart -->
+            <div class="slab-pricing" *ngIf="slabs.length">
+              <span class="slab-title"><i class="fas fa-layer-group me-1"></i>Bulk pricing</span>
+              <ul class="slab-list">
+                <li [class.active]="!activeSlab">
+                  <span>1&ndash;{{ slabs[0].minQty - 1 }} units</span>
+                  <strong>{{ selectedVariant?.pricePaise | money }} each</strong>
+                </li>
+                <li *ngFor="let s of slabs" [class.active]="activeSlab?.minQty === s.minQty">
+                  <span>Buy {{ s.minQty }}+</span>
+                  <strong>{{ s.unitPricePaise | money }} each</strong>
+                  <small class="text-success">save {{ slabSavingPct(s) }}%</small>
+                </li>
+              </ul>
+              <div class="slab-current small" *ngIf="activeSlab">
+                {{ quantity }} &times; {{ unitPrice | money }} = <strong>{{ unitPrice * quantity | money }}</strong>
+              </div>
+            </div>
+            
+            <!-- Stock Status Display -->
+            <div class="stock-status" *ngIf="selectedVariant">
+              <span>Stock Status:</span>
+              <span [class]="getStockStatusClass()" class="stock-indicator">
+                <i *ngIf="stockLoading" class="fas fa-spinner fa-spin"></i>
+                <i *ngIf="!stockLoading && isInStock" class="fas fa-check-circle"></i>
+                <i *ngIf="!stockLoading && !isInStock" class="fas fa-times-circle"></i>
+                {{ getStockStatusText() }}
+              </span>
+            </div>
+            
+            <!-- Product Availability Notice -->
+            <div class="product-availability-notice" *ngIf="!selectedVariant">
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                <strong>Product Information:</strong> This product is currently being reviewed for availability. 
+                Please contact our support team for more information.
+              </div>
+            </div>
+            
+            <div class="countaty-value" *ngIf="selectedVariant && isInStock">
+              <span>Quantity:</span>
+              <div class="quantity-selector">
+                <button class="qty-btn" (click)="updateQuantity(-1)" [disabled]="quantity <= limits.min">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <input type="number" [(ngModel)]="quantity" [min]="limits.min" [max]="limits.max" readonly>
+                <button class="qty-btn" (click)="updateQuantity(1)" [disabled]="quantity >= limits.max">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div class="qty-limits small text-muted" *ngIf="limits.min > 1 || limits.max < availableStock">
+                <span *ngIf="limits.min > 1">Minimum order: {{ limits.min }}</span>
+                <span *ngIf="limits.min > 1 && limits.max < availableStock"> &middot; </span>
+                <span *ngIf="limits.max < availableStock">Maximum per order: {{ limits.max }}</span>
+              </div>
+              <div class="stock-warning" *ngIf="availableStock > 0 && quantity > availableStock">
+                <small class="text-warning">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  Only {{ availableStock }} available
+                </small>
+              </div>
+            </div>
+            
+            <!-- Out of Stock Notice -->
+            <div class="out-of-stock-notice" *ngIf="selectedVariant && !isInStock">
+              <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Out of Stock:</strong> This product is currently unavailable. 
+                <a href="#" class="alert-link" (click)="notifyMe($event)">{{ notifyRequested ? 'We will notify you' : 'Notify me when available' }}</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="product-actions">
+            <a href="#" class="btn" (click)="buyNow($event)"
+               style="background: var(--gradient-primary); color: white; border: none;"
+               [class.disabled]="!selectedVariant || !isInStock"
+               [style.opacity]="(!selectedVariant || !isInStock) ? '0.6' : '1'"
+               [style.pointer-events]="(!selectedVariant || !isInStock) ? 'none' : 'auto'">
+              Buy Now
+            </a>
+            <button class="btn" 
+                    (click)="addToCart()" 
+                    [disabled]="!selectedVariant || !isInStock || stockLoading"
+                    [class.btn-success]="isAddedToCart"
+                    [class.btn-outline-primary]="!isAddedToCart && selectedVariant && isInStock"
+                    [class.btn-outline-secondary]="!selectedVariant || !isInStock"
+                    [class.btn-loading]="stockLoading"
+                    [style.color]="!isAddedToCart ? 'var(--primary)' : 'white'"
+                    [style.border-color]="!isAddedToCart ? 'var(--primary)' : 'transparent'"
+                    [style.background]="isAddedToCart ? 'var(--success)' : 'transparent'">
+              <i *ngIf="stockLoading" class="fas fa-spinner fa-spin me-2"></i>
+              <i *ngIf="!stockLoading && isAddedToCart" class="fas fa-check me-2"></i>
+              <i *ngIf="!stockLoading && !isAddedToCart && selectedVariant && isInStock" class="fas fa-cart-plus me-2"></i>
+              <i *ngIf="!stockLoading && !isAddedToCart && (!selectedVariant || !isInStock)" class="fas fa-ban me-2"></i>
+              {{ getAddToCartButtonText() }}
+            </button>
+          </div>
+          
+          <!-- Scroll to the video on this page. (A plain href="#videoproplay" resolves against <base href="/"> and opens the home page.) -->
+          <a href="#videoproplay" class="video-button" *ngIf="videoUrl" (click)="scrollToVideo($event)">
+            <i class="fas fa-play"></i>
+            <span>Watch Video</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Action Buttons -->
+    <div class="row mt-1">
+      <div class="col-lg-3 col-md-6 mb-3">
+        <a routerLink="/state-wise-tabs" class="action-button">
+          <i class="fas fa-store"></i>
+          Find A Dealer
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-3">
+        <a href="#" class="action-button">
+          <i class="fas fa-headset"></i>
+          Connect With Wilber Expert
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-3">
+        <button class="action-button" (click)="toggleProductInfo('tds')">
+          <i class="fas fa-file-alt"></i>
+          TDS
+        </button>
+      </div>
+      <div class="col-lg-3 col-md-6 mb-3">
+        <button class="action-button" (click)="toggleProductInfo('drawing')">
+          <i class="fas fa-cube"></i>
+          3D Drawing
+        </button>
+      </div>
+    </div>
+    
+    <!-- Product Info Content -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div id="product-info-tds" class="product-info-content">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-heading mb-0">{{ product?.name }} - TDS</h2>
+                <a [attr.href]="product?.documents?.[0]?.url || '#'" target="_blank" rel="noopener" class="download-btn">
+                  <i class="fas fa-file-download"></i> Download
+                </a>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-striped">
+                  <tbody>
+                    <tr *ngFor="let spec of product?.specs">
+                      <th width="30%">{{ spec.label }}</th>
+                      <td>{{ spec.value }}</td>
+                    </tr>
+                    <ng-container *ngIf="!product?.specs?.length">
+                    <tr>
+                      <th width="30%">Product Type</th>
+                      <td>Cement-based tile adhesive</td>
+                    </tr>
+                    <tr>
+                      <th>Appearance</th>
+                      <td>Grey/White Powder</td>
+                    </tr>
+                    <tr>
+                      <th>Application</th>
+                      <td>Internal</td>
+                    </tr>
+                    <tr>
+                      <th>Water Demand</th>
+                      <td>5.0 - 5.5 liters per 20 kg bag</td>
+                    </tr>
+                    <tr>
+                      <th>Open Time</th>
+                      <td>Approx. 20 minutes</td>
+                    </tr>
+                    <tr>
+                      <th>Pot Life</th>
+                      <td>2-3 hours</td>
+                    </tr>
+                    <tr>
+                      <th>Adjustment Time</th>
+                      <td>15-20 minutes</td>
+                    </tr>
+                    <tr>
+                      <th>Set Time</th>
+                      <td>24 hours</td>
+                    </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div id="product-info-drawing" class="product-info-content">
+          <div class="card">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="section-heading mb-0">{{ product?.name }} 3D Image</h2>
+                <a [attr.href]="product?.image || '#'" target="_blank" rel="noopener" class="download-btn">
+                  <i class="fas fa-file-download"></i> Download
+                </a>
+              </div>
+              <div class="text-center">
+                <img [src]="product?.image" alt="3D Drawing" class="img-fluid" style="max-height: 400px;">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How to Apply Section -->
+<section class="how-to-apply">
+  <div class="container">
+    <h2 class="heading-sectionmain text-center">How to Apply</h2>
+    <p class="text-center text-pp">Follow our step-by-step guide to apply {{ product?.name }} for the best results.</p>
+    
+    <div class="row g-4 mt-4" *ngIf="product?.howToApply?.length">
+      <div class="col-lg-4 col-md-6" *ngFor="let step of product?.howToApply; let i = index">
+        <div class="step-box">
+          <img [src]="'assets/images/icon' + ((i % 5) + 1) + '.png'" [alt]="step" class="step-icon">
+          <h4 class="step-title">Step {{ i + 1 }} - {{ step }}</h4>
+        </div>
+      </div>
+    </div>
+    <div class="row g-4 mt-4" *ngIf="!product?.howToApply?.length">
+      <div class="col-lg-4 col-md-6">
+        <div class="step-box">
+          <img src="assets/images/icon1.png" alt="Modified Adhesive with Polymer" class="step-icon">
+          <h4 class="step-title">Step 1 - Modified Adhesive with Polymer</h4>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="step-box">
+          <img src="assets/images/icon2.png" alt="Crack Bridging" class="step-icon">
+          <h4 class="step-title">Step 2 - Crack Bridging</h4>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="step-box">
+          <img src="assets/images/icon3.png" alt="Suitable for all type of tiles" class="step-icon">
+          <h4 class="step-title">Step 3 - Suitable for all type of tiles</h4>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="step-box">
+          <img src="assets/images/icon4.png" alt="Floor Tiles Adhesive" class="step-icon">
+          <h4 class="step-title">Step 4 - Floor Tiles Adhesive</h4>
+        </div>
+      </div>
+      
+      <div class="col-lg-4 col-md-6">
+        <div class="step-box">
+          <img src="assets/images/icon5.png" alt="Indoor Application" class="step-icon">
+          <h4 class="step-title">Step 5 - Indoor Application</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features and Advantages Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h2 class="section-heading">Features and Advantages</h2>
+      </div>
+      <div class="col-lg-12">
+        <ul class="feature-list">
+          <li *ngFor="let feature of product?.features">{{ feature }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Application Area Section -->
+<section class="features-section" style="background-color: var(--light);">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 mb-4 mb-lg-0">
+        <div class="video-card">
+          <img [src]="product?.applicationImage || 'assets/images/Tile-Adhesive-Application-1.webp'" alt="Application Area" class="img-fluid">
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <h2 class="section-heading">Application Area</h2>
+        <ul class="feature-list">
+          <li *ngFor="let application of product?.applications">{{ application }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Things to Consider Section -->
+<section class="features-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2 class="section-heading">Things to Consider</h2>
+      </div>
+      <div class="col-lg-12">
+        <ul class="feature-list" *ngIf="product?.considerations?.length">
+          <li *ngFor="let item of product?.considerations">{{ item }}</li>
+        </ul>
+        <ul class="feature-list" *ngIf="!product?.considerations?.length">
+          <li>You cannot apply {{ product?.name }} to fiber cement boards, plywood, decorative laminates, metal, plastic, etc.</li>
+          <li>Adhesive cannot be used as a waterproofing solution.</li>
+          <li>You cannot fix metal tiles, engineered stone, or artificial stone tiles with {{ product?.name }}.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- YouTube Video Section -->
+<section class="youtube-video" id="videoproplay" *ngIf="videoUrl">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <iframe width="100%" height="450" [src]="videoUrl" title="Product Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Similar Products Section (Hidden) -->
+<!-- <section class="related-products" *ngIf="similarProducts.length >= 4">
+  <div class="container">
+    <h2 class="related-title">Similar Products</h2>
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let similarProduct of similarProducts" (click)="navigateToSimilarProduct(similarProduct.id)">
+        <div class="product-card-image">
+          <img [src]="getSimilarProductImage(similarProduct)" 
+               [alt]="similarProduct.name"
+               (error)="$event.target.src='assets/images/image_empty.jpg'">
+          <div class="product-badge" *ngIf="similarProduct.brand && similarProduct.brand !== ''" 
+               style="background-color: var(--primary)">
+            {{ similarProduct.brand }}
+          </div>
+        </div>
+        <div class="product-card-content">
+          <h3 class="product-card-title">{{ similarProduct.name }}</h3>
+          <p class="product-card-description">{{ similarProduct.summary || 'Product description not available' }}</p>
+          <div class="product-card-price" *ngIf="similarProduct.price && similarProduct.price.amount">
+            <span class="price-amount">₹{{ similarProduct.price.amount }}</span>
+            <span class="price-currency">{{ similarProduct.price.currency }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section> -->
+
+<!-- Related Products Section -->
+<section class="related-products" *ngIf="relatedProducts.length > 0">
+  <div class="container">
+    <h2 class="related-title">{{ relatedTitle }}</h2>
+    <div class="products-grid related-grid">
+      <div class="product-card" *ngFor="let relatedProduct of relatedProducts" (click)="navigateToProduct(relatedProduct.id)">
+        <div class="product-card-image">
+          <img [src]="relatedProduct.image" [alt]="relatedProduct.name">
+          <div class="product-badge" *ngIf="relatedProduct.badge" 
+               [style.background-color]="relatedProduct.badge === 'Bestseller' ? 'var(--success)' : 'var(--primary)'">
+            {{ relatedProduct.badge }}
+          </div>
+        </div>
+        <div class="product-card-content">
+          <h3 class="product-card-title"><a [routerLink]="['/product', relatedProduct.id]" class="text-reset text-decoration-none" (click)="$event.stopPropagation()">{{ relatedProduct.name }}</a></h3>
+          <p class="product-card-description">{{ relatedProduct.description }}</p>
+          <div class="product-card-rating">
+            <i *ngFor="let star of getStars(relatedProduct.rating)" 
+               [class]="star === 1 ? 'fas fa-star text-warning' : star === 0.5 ? 'fas fa-star-half-alt text-warning' : 'far fa-star text-warning'"></i>
+            <span class="ms-1">({{ relatedProduct.rating }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- No Related Products Message -->
+<section class="related-products" *ngIf="!loading && !error && relatedProducts.length === 0">
+  <div class="container">
+    <div class="text-center py-5">
+      <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+      <h3>No Related Products</h3>
+      <p class="text-muted">No other products found in the {{ product?.categoryName }} category.</p>
+      <a [routerLink]="product?.category ? ['/category', product?.category] : ['/stone-solutions']" class="btn btn-primary">
+        View All {{ product?.categoryName }} Products
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Loading State -->
+<div class="loading-container" *ngIf="loading">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+
+<!-- Error State -->
+<div class="error-container" *ngIf="error">
+  <div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Product Not Found!</h4>
+    <p>The product you're looking for doesn't exist.</p>
+    <hr>
+    <p class="mb-0">
+      <a routerLink="/stone-solutions" class="btn btn-primary">Back to Products</a>
+    </p>
+  </div>
+</div>
+
+<app-footer></app-footer> 

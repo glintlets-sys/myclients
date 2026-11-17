@@ -1,0 +1,132 @@
+<div class="shipping-settings">
+  <div class="card shadow">
+    <div class="card-header">
+      <h4 class="mb-0">
+        <i class="fas fa-shipping-fast me-2"></i>Shipping Settings
+      </h4>
+      <p class="text-muted mb-0">Shipping charges</p>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="saveShippingSettings()" autocomplete="off">
+        <!-- Charges -->
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-rupee-sign me-2"></i>Shipping Charges</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="flatFee" class="form-label">Flat Shipping Fee (₹)</label>
+                <input type="number" id="flatFee" name="flatFee" class="form-control" min="0" step="0.01" [(ngModel)]="flatFeeRupees">
+                <div class="form-text">Charged on every order (0 = free shipping).</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="freeAbove" class="form-label">Free Shipping Above (₹)</label>
+                <input type="number" id="freeAbove" name="freeAbove" class="form-control" min="0" step="0.01" [(ngModel)]="freeAboveRupees">
+                <div class="form-text">Orders at or above this subtotal ship free (0 = disabled).</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Provider Selection (hidden while Shiprocket is not configured for this store) -->
+        <div class="row mb-4" *ngIf="showShiprocket">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="shippingProvider" class="form-label">
+                <i class="fas fa-truck me-1"></i>Shipping Provider
+              </label>
+              <select class="form-select" id="shippingProvider" name="shippingProvider" [(ngModel)]="shipping.provider">
+                <option *ngFor="let p of shippingProviders" [value]="p.id">{{ p.label }}</option>
+              </select>
+              <div class="form-text">
+                With Shiprocket, orders can be sent from the Orders screen ("Send to Shiprocket") and tracked automatically.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shiprocket -->
+        <div *ngIf="showShiprocket && shipping.provider === 'shiprocket'" class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-rocket me-2"></i>Shiprocket Configuration</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="srEmail" class="form-label">
+                  API User Email
+                  <span class="secret-status" [class.set]="isSet('shiprocket.email')" [class.unset]="!isSet('shiprocket.email')">
+                    {{ isSet('shiprocket.email') ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="email" id="srEmail" name="srEmail" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="secrets['shiprocket.email']"
+                       [placeholder]="isSet('shiprocket.email') ? 'Leave blank to keep' : 'Enter API user email'">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="srPassword" class="form-label">
+                  API User Password
+                  <span class="secret-status" [class.set]="isSet('shiprocket.password')" [class.unset]="!isSet('shiprocket.password')">
+                    {{ isSet('shiprocket.password') ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="password" id="srPassword" name="srPassword" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="secrets['shiprocket.password']"
+                       [placeholder]="isSet('shiprocket.password') ? 'Leave blank to keep' : 'Enter API user password'">
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-0">
+            <label for="pickup" class="form-label">Pickup Location</label>
+            <input type="text" id="pickup" name="pickup" class="form-control" [(ngModel)]="shipping.pickupLocation" placeholder="Primary">
+            <div class="form-text">Must match the pickup location nickname in your Shiprocket account.</div>
+          </div>
+        </div>
+
+        <!-- Parcel defaults -->
+        <div class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-box me-2"></i>Default Parcel Size</h5>
+          <div class="form-text mb-3">Used when a product variant has no weight of its own.</div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group mb-3">
+                <label for="dWeight" class="form-label">Weight (kg)</label>
+                <input type="number" id="dWeight" name="dWeight" class="form-control" min="0" step="0.01" [(ngModel)]="shipping.defaultWeightKg">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group mb-3">
+                <label for="dLength" class="form-label">Length (cm)</label>
+                <input type="number" id="dLength" name="dLength" class="form-control" min="0" step="0.1" [(ngModel)]="shipping.defaultLengthCm">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group mb-3">
+                <label for="dBreadth" class="form-label">Breadth (cm)</label>
+                <input type="number" id="dBreadth" name="dBreadth" class="form-control" min="0" step="0.1" [(ngModel)]="shipping.defaultBreadthCm">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group mb-3">
+                <label for="dHeight" class="form-label">Height (cm)</label>
+                <input type="number" id="dHeight" name="dHeight" class="form-control" min="0" step="0.1" [(ngModel)]="shipping.defaultHeightCm">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <i class="fas fa-save me-2" [class.fa-spin]="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Save Settings' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="loadShippingSettings()" [disabled]="isLoading">
+            <i class="fas fa-undo me-2"></i>Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

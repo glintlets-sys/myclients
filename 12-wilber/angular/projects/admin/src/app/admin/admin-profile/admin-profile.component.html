@@ -1,0 +1,56 @@
+<div class="profile-page">
+  <div *ngIf="loading" class="text-muted py-4 text-center"><i class="fas fa-spinner fa-spin me-2"></i>Loading your profile…</div>
+  <div *ngIf="!loading && !profile && error" class="alert alert-danger">{{ error }}</div>
+
+  <form class="profile-card" *ngIf="profile && !loading" (ngSubmit)="save()">
+    <!-- Header: who is signed in -->
+    <header class="profile-head">
+      <div class="avatar" aria-hidden="true">{{ initials }}</div>
+      <div class="who">
+        <h3>{{ name.trim() || 'Your name' }}</h3>
+        <span class="phone"><i class="fas fa-mobile-alt me-1"></i>{{ profile.phone }}</span>
+      </div>
+    </header>
+
+    <div class="profile-body">
+      <h4 class="section-title">Personal details</h4>
+
+      <div class="field">
+        <label for="pfName">Name</label>
+        <div class="input-wrap">
+          <i class="fas fa-user"></i>
+          <input id="pfName" name="name" [(ngModel)]="name" maxlength="80" autocomplete="name" placeholder="Your full name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pfEmail">Email</label>
+        <div class="input-wrap" [class.invalid]="emailInvalid">
+          <i class="fas fa-envelope"></i>
+          <input id="pfEmail" type="email" name="email" [(ngModel)]="email" autocomplete="email" placeholder="name@example.com">
+        </div>
+        <small class="hint" [class.err]="emailInvalid">{{ emailInvalid ? 'Enter a valid email address' : 'Used for order alerts and receipts.' }}</small>
+      </div>
+
+      <div class="field">
+        <label>Mobile number</label>
+        <div class="locked">
+          <i class="fas fa-lock"></i>
+          <span class="value">{{ profile.phone }}</span>
+          <span class="tag">Sign-in number</span>
+        </div>
+        <small class="hint">You sign in with this number (OTP), so it can't be changed here. Ask the store owner to add your new number as staff.</small>
+      </div>
+
+      <div *ngIf="error" class="alert alert-danger py-2 mb-0">{{ error }}</div>
+    </div>
+
+    <footer class="profile-foot">
+      <span class="status" *ngIf="!dirty && !saving"><i class="fas fa-check-circle me-1"></i>All changes saved</span>
+      <button type="button" class="btn-undo" *ngIf="dirty && !saving" (click)="reset()">Undo changes</button>
+      <button type="submit" class="btn-save" [disabled]="saving || !dirty || emailInvalid">
+        <i class="fas me-2" [ngClass]="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>{{ saving ? 'Saving…' : 'Save changes' }}
+      </button>
+    </footer>
+  </form>
+</div>

@@ -1,0 +1,14 @@
+/* Admin application (admin.<tenant>.cloudshops.app). Shares projects/shared via the @shared/* path in the root tsconfig. */
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/admin",
+    "types": []
+  },
+  "files": [
+    "src/main.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
+}

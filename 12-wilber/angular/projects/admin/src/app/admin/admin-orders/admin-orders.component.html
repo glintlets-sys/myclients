@@ -1,0 +1,468 @@
+<!-- Header with controls -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="panel-title">
+    <i class="fas fa-shopping-cart me-2"></i>Orders Management
+  </h3>
+  <div class="d-flex gap-2">
+    <button type="button" class="btn btn-primary" (click)="refreshOrders()" [disabled]="isLoading">
+      <i class="fas fa-sync me-1" [class.fa-spin]="isLoading"></i>Refresh
+    </button>
+    <button type="button" class="btn btn-outline-primary" (click)="exportOrders()">
+      <i class="fas fa-download me-1"></i>Export
+    </button>
+  </div>
+</div>
+
+<!-- Filters and Search -->
+<div class="card mb-4">
+  <div class="card-body">
+    <div class="row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Search Orders</label>
+        <input type="text" class="form-control" [(ngModel)]="searchTerm" (input)="onSearchInput()"
+               placeholder="Order ID, name, phone, email...">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Order Status</label>
+        <select class="form-select" [(ngModel)]="selectedStatus" (change)="applyFilters()">
+          <option value="">All Statuses</option>
+          <option *ngFor="let s of statusOptions" [value]="s">{{ statusLabel(s) }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Payment Status</label>
+        <select class="form-select" [(ngModel)]="selectedPaymentStatus" (change)="applyFilters()">
+          <option value="">All Payments</option>
+          <option *ngFor="let s of paymentStatusOptions" [value]="s">{{ paymentLabel(s) }}</option>
+        </select>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Date From</label>
+        <input type="date" class="form-control" [(ngModel)]="dateFrom" (change)="applyFilters()">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label">Date To</label>
+        <input type="date" class="form-control" [(ngModel)]="dateTo" (change)="applyFilters()">
+      </div>
+      <div class="col-md-1 d-flex align-items-end">
+        <button type="button" class="btn btn-outline-secondary" (click)="clearFilters()" title="Clear filters">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Orders Summary Stats (for the orders loaded below) -->
+<div class="row mb-4">
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ rows.length }}{{ nextCursor ? '+' : '' }}</h5>
+        <p class="card-text">Orders Loaded</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title text-success">{{ countByPayment('PAID', 'COD_COLLECTED') }}</h5>
+        <p class="card-text">Paid Orders</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title text-warning">{{ countByStatus('PLACED', 'CONFIRMED', 'READY_TO_DISPATCH') }}</h5>
+        <p class="card-text">To Fulfil</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center">
+      <div class="card-body">
+        <h5 class="card-title text-info">{{ countByStatus('DISPATCHED', 'DELIVERED') }}</h5>
+        <p class="card-text">Shipped Orders</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">
+  <i class="fas fa-exclamation-triangle me-2"></i>{{ error }}
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="text-center py-4">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+  <p class="mt-2">Loading orders...</p>
+</div>
+
+<!-- Orders Table -->
+<div class="card" *ngIf="!isLoading">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h6 class="mb-0">Orders List</h6>
+    <span class="text-muted small">Newest first</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover mb-0">
+      <thead class="table-light">
+        <tr>
+          <th style="width: 30px;"></th>
+          <th>Order ID</th>
+          <th>Customer</th>
+          <th>Order Date</th>
+          <th>Amount</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Items</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let row of rows">
+          <!-- Main Order Row -->
+          <tr [class.table-active]="row.showDetails">
+            <td>
+              <button class="btn btn-sm btn-outline-secondary" (click)="toggleOrderDetails(row)">
+                <i class="fas" [class.fa-chevron-right]="!row.showDetails" [class.fa-chevron-down]="row.showDetails"></i>
+              </button>
+            </td>
+            <td>
+              <strong>#{{ row.order.id }}</strong>
+            </td>
+            <td>
+              <div>
+                <strong>{{ row.order.customer?.name || row.order.shippingAddress?.name || 'Customer' }}</strong>
+                <br>
+                <small class="text-muted">{{ row.order.customer?.phone }}<span *ngIf="row.order.customer?.email"> · {{ row.order.customer?.email }}</span></small>
+              </div>
+            </td>
+            <td>
+              <div>
+                {{ row.order.createdAt | date:'MMM dd, yyyy' }}
+                <br>
+                <small class="text-muted">{{ row.order.createdAt | date:'hh:mm a' }}</small>
+              </div>
+            </td>
+            <td>
+              <strong>{{ row.order.totalPaise | money }}</strong>
+              <br><small class="text-muted text-uppercase">{{ row.order.paymentMethod }}</small>
+            </td>
+            <td>
+              <span [class]="getPaymentStatusBadgeClass(row.order.paymentStatus)">
+                {{ paymentLabel(row.order.paymentStatus) }}
+              </span>
+            </td>
+            <td>
+              <span [class]="getStatusBadgeClass(row.order.status)">
+                {{ statusLabel(row.order.status) }}
+              </span>
+            </td>
+            <td>
+              <span class="badge bg-secondary">{{ getItemsCount(row.order) }}</span>
+            </td>
+            <td class="text-end">
+              <div class="btn-group" role="group">
+                <button class="btn btn-sm btn-outline-success" *ngIf="canShip(row.order)" [disabled]="row.busy"
+                        (click)="sendToShippingProvider(row)" title="Send to Shiprocket">
+                  <i class="fas fa-shipping-fast"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-primary" (click)="printInvoice(row.order)" title="Print Invoice">
+                  <i class="fas fa-file-invoice"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Expandable Details Row -->
+          <tr *ngIf="row.showDetails" class="details-row">
+            <td colspan="9" class="p-0">
+              <div class="details-container">
+                <div *ngIf="row.loadingDetail" class="text-center small text-muted mb-2">
+                  <span class="spinner-border spinner-border-sm me-1"></span>Refreshing order…
+                </div>
+                <div class="row g-4">
+                  <!-- Order Items -->
+                  <div class="col-md-6">
+                    <div class="details-section">
+                      <h6 class="section-title">
+                        <i class="fas fa-box me-2"></i>Order Items
+                      </h6>
+                      <div class="items-list">
+                        <div *ngFor="let item of row.order.lines; let idx = index" class="item-card">
+                          <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                              <h6 class="item-name">{{ idx + 1 }}. {{ item.name }}<span *ngIf="item.variantName"> – {{ item.variantName }}</span></h6>
+                              <div class="item-details">
+                                <span class="badge bg-light text-dark me-2">Qty: {{ item.qty }}</span>
+                                <span class="price">Unit Price: {{ item.unitPricePaise | money }}</span>
+                                <small class="text-muted ms-2" *ngIf="item.sku">SKU {{ item.sku }}</small>
+                                <small class="text-muted ms-2">GST {{ item.taxRatePercent }}%</small>
+                              </div>
+                            </div>
+                            <div class="item-total">
+                              {{ item.lineTotalPaise | money }}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Totals -->
+                      <table class="table table-sm mt-3 mb-0">
+                        <tbody>
+                          <tr><td>Subtotal</td><td class="text-end">{{ row.order.subtotalPaise | money }}</td></tr>
+                          <tr *ngIf="row.order.discountPaise">
+                            <td>Discount <small class="text-muted" *ngIf="row.order.couponCode">({{ row.order.couponCode }})</small></td>
+                            <td class="text-end">-{{ row.order.discountPaise | money }}</td>
+                          </tr>
+                          <tr><td>Shipping</td><td class="text-end">{{ row.order.shippingPaise | money }}</td></tr>
+                          <tr *ngIf="row.order.codFeePaise"><td>COD fee</td><td class="text-end">{{ row.order.codFeePaise | money }}</td></tr>
+                          <tr *ngIf="row.order.cgstPaise"><td>CGST</td><td class="text-end">{{ row.order.cgstPaise | money }}</td></tr>
+                          <tr *ngIf="row.order.sgstPaise"><td>SGST</td><td class="text-end">{{ row.order.sgstPaise | money }}</td></tr>
+                          <tr *ngIf="row.order.igstPaise"><td>IGST</td><td class="text-end">{{ row.order.igstPaise | money }}</td></tr>
+                          <tr>
+                            <td><strong>Total</strong> <small class="text-muted" *ngIf="row.order.pricesIncludeTax">(GST included: {{ row.order.taxPaise | money }})</small></td>
+                            <td class="text-end"><strong>{{ row.order.totalPaise | money }}</strong></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- Delivery Information -->
+                  <div class="col-md-6">
+                    <div class="details-section">
+                      <h6 class="section-title">
+                        <i class="fas fa-map-marker-alt me-2"></i>Delivery Information
+                      </h6>
+                      <div class="address-card">
+                        <div class="customer-info">
+                          <strong>{{ row.order.shippingAddress?.name || row.order.customer?.name }}</strong>
+                          <div class="contact-info">
+                            <div *ngIf="row.order.customer?.email">
+                              <i class="fas fa-envelope me-1"></i>{{ row.order.customer?.email }}
+                            </div>
+                            <div *ngIf="row.order.shippingAddress?.phone || row.order.customer?.phone">
+                              <i class="fas fa-phone me-1"></i>{{ row.order.shippingAddress?.phone || row.order.customer?.phone }}
+                            </div>
+                          </div>
+                        </div>
+                        <div class="address-details">
+                          <address>{{ getFormattedAddress(row.order) }}</address>
+                        </div>
+                        <div *ngIf="row.order.notes" class="small text-muted"><strong>Notes:</strong> {{ row.order.notes }}</div>
+                      </div>
+
+                      <!-- Channel / invoice / payment details -->
+                      <div class="small border rounded p-2 mb-2 bg-light">
+                        <div *ngIf="row.order.channel && row.order.channel !== 'WEB'">
+                          <span class="badge bg-info text-dark me-1">{{ row.order.channel === 'ADMIN' ? 'Placed by staff' : 'From quotation' }}</span>
+                          <a *ngIf="row.order.quoteId" [routerLink]="[]" [queryParams]="{ section: 'quotes', quote: row.order.quoteId }">{{ row.order.quoteNumber || 'Open quotation' }}</a>
+                        </div>
+                        <div>
+                          <i class="fas fa-file-invoice me-1"></i>
+                          <ng-container *ngIf="row.order.invoiceNumber">Invoice <strong>{{ row.order.invoiceNumber }}</strong> · {{ row.order.invoiceDate | date:'d MMM y' }}</ng-container>
+                          <ng-container *ngIf="!row.order.invoiceNumber">Not invoiced yet (issued on confirmation)</ng-container>
+                          <button class="btn btn-sm btn-link py-0" (click)="printInvoice(row.order)">View / print</button>
+                          <button class="btn btn-sm btn-link py-0" *ngIf="row.order.invoiceNumber" (click)="printInvoice(row.order, true)">Download</button>
+                        </div>
+                        <div *ngIf="row.order.paymentMethod === 'cod' && row.order.status === 'DELIVERED'">
+                          <i class="fas fa-hand-holding-usd me-1"></i>COD collected {{ (row.order.codCollectedPaise || 0) | money }} of {{ row.order.totalPaise | money }}
+                          <a [routerLink]="[]" [queryParams]="{ section: 'collections' }" class="ms-1">COD collections</a>
+                        </div>
+                        <div *ngIf="row.order.payment?.reference || row.order.payment?.mode">
+                          <i class="fas fa-receipt me-1"></i>Paid offline · {{ row.order.payment?.mode }} {{ row.order.payment?.reference }}
+                        </div>
+                      </div>
+
+                      <!-- Status actions -->
+                      <h6 class="section-title mt-3">
+                        <i class="fas fa-edit me-2"></i>Update Order
+                      </h6>
+                      <div *ngIf="allowedStatuses(row.order).length === 0" class="text-muted small mb-2">
+                        No further status changes are possible for this order.
+                      </div>
+                      <div *ngIf="allowedStatuses(row.order).length > 0">
+                        <div class="row g-2">
+                          <div class="col-sm-6">
+                            <select class="form-select form-select-sm" [(ngModel)]="row.newStatus">
+                              <option value="">Change status to…</option>
+                              <option *ngFor="let s of allowedStatuses(row.order)" [value]="s">{{ statusLabel(s) }}</option>
+                            </select>
+                          </div>
+                          <div class="col-sm-6">
+                            <input class="form-control form-control-sm" [(ngModel)]="row.note" placeholder="Note (optional)">
+                          </div>
+                          <ng-container *ngIf="row.newStatus === 'DISPATCHED'">
+                            <div class="col-sm-4">
+                              <input class="form-control form-control-sm" [(ngModel)]="row.courier" placeholder="Courier">
+                            </div>
+                            <div class="col-sm-4">
+                              <input class="form-control form-control-sm" [(ngModel)]="row.awb" placeholder="AWB / tracking no.">
+                            </div>
+                            <div class="col-sm-4">
+                              <input class="form-control form-control-sm" [(ngModel)]="row.trackingUrl" placeholder="Tracking URL">
+                            </div>
+                          </ng-container>
+                        </div>
+                        <button class="btn btn-sm btn-primary mt-2" [disabled]="!row.newStatus || row.busy" (click)="updateStatus(row)">
+                          <i class="fas fa-check me-1"></i>Update Status
+                        </button>
+                      </div>
+                      <div class="d-flex gap-2 mt-2">
+                        <button class="btn btn-sm btn-outline-success" *ngIf="canShip(row.order)" [disabled]="row.busy" (click)="sendToShippingProvider(row)">
+                          <i class="fas fa-shipping-fast me-1"></i>Send to Shiprocket
+                        </button>
+                        <button class="btn btn-sm btn-outline-warning" *ngIf="row.order.paymentStatus === 'REFUND_PENDING'" [disabled]="row.busy" (click)="markRefunded(row)">
+                          <i class="fas fa-undo me-1"></i>Mark Refunded
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Shipment Details -->
+                  <div class="col-12" *ngIf="row.order.shipment">
+                    <div class="details-section">
+                      <h6 class="section-title">
+                        <i class="fas fa-truck me-2"></i>Shipment Tracking
+                      </h6>
+                      <div class="shipment-info">
+                        <div class="row">
+                          <div class="col-md-3">
+                            <strong>Shipment ID:</strong><br>
+                            <span class="text-muted">{{ row.order.shipment.shipmentId || 'Not assigned' }}</span>
+                          </div>
+                          <div class="col-md-3">
+                            <strong>Courier Service:</strong><br>
+                            <span class="text-muted">{{ row.order.shipment.courier || 'N/A' }}</span>
+                          </div>
+                          <div class="col-md-3">
+                            <strong>Tracking Number:</strong><br>
+                            <span class="text-muted">{{ row.order.shipment.awb || 'N/A' }}</span>
+                          </div>
+                          <div class="col-md-3">
+                            <strong>Shipped / Delivered:</strong><br>
+                            <span class="text-muted">{{ (row.order.shipment.shippedAt | date:'MMM dd, hh:mm a') || '—' }} / {{ (row.order.shipment.deliveredAt | date:'MMM dd, hh:mm a') || '—' }}</span>
+                          </div>
+                        </div>
+                        <div class="mt-2" *ngIf="row.order.shipment.trackingUrl">
+                          <a [href]="row.order.shipment.trackingUrl" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-external-link-alt me-1"></i>Track Shipment
+                          </a>
+                        </div>
+
+                        <!-- Shiprocket live tracking -->
+                        <div class="mt-4" *ngIf="showShiprocket && row.tracking">
+                          <h6 class="section-title">
+                            <i class="fas fa-satellite-dish me-2"></i>Shiprocket Tracking Details
+                          </h6>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="tracking-info">
+                                <div class="mb-2">
+                                  <strong>AWB Code:</strong>
+                                  <span class="text-muted ms-2">{{ row.tracking.shipment_track?.[0]?.awb_code || 'N/A' }}</span>
+                                </div>
+                                <div class="mb-2">
+                                  <strong>Current Status:</strong>
+                                  <span class="text-muted ms-2">{{ row.tracking.shipment_track?.[0]?.current_status || 'N/A' }}</span>
+                                </div>
+                                <div class="mb-2">
+                                  <strong>Destination:</strong>
+                                  <span class="text-muted ms-2">{{ row.tracking.shipment_track?.[0]?.destination || 'N/A' }}</span>
+                                </div>
+                                <div class="mb-2">
+                                  <strong>Expected Delivery:</strong>
+                                  <span class="text-muted ms-2">{{ row.tracking.shipment_track?.[0]?.edd || 'N/A' }}</span>
+                                </div>
+                                <div class="mb-2" *ngIf="row.tracking.track_url">
+                                  <a [href]="row.tracking.track_url" target="_blank" rel="noopener" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-external-link-alt me-1"></i>Track on Shiprocket
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <h6>Shipment Activities</h6>
+                              <div class="tracking-activities">
+                                <div *ngFor="let activity of row.tracking.shipment_track_activities" class="activity-item">
+                                  <div class="activity-date">{{ activity.date }}</div>
+                                  <div class="activity-content">
+                                    <div class="activity-message">{{ activity.activity }}</div>
+                                    <div class="activity-location text-muted">{{ activity.location }}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div *ngIf="showShiprocket && row.order.shipment.shipmentId && !row.tracking" class="text-center mt-3">
+                          <button class="btn btn-sm btn-outline-info" (click)="loadTracking(row)" [disabled]="row.loadingTracking">
+                            <i class="fas fa-sync me-1" [class.fa-spin]="row.loadingTracking"></i>Load Shiprocket Tracking
+                          </button>
+                          <div *ngIf="row.trackingError" class="text-danger small mt-2">{{ row.trackingError }}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- History -->
+                  <div class="col-12" *ngIf="row.order.history?.length">
+                    <div class="details-section">
+                      <h6 class="section-title">
+                        <i class="fas fa-history me-2"></i>Order History
+                      </h6>
+                      <div class="table-responsive">
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th>Date & Time</th>
+                              <th>Status</th>
+                              <th>Note</th>
+                              <th>By</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let h of row.order.history">
+                              <td>{{ h.at | date:'MMM dd, yyyy hh:mm a' }}</td>
+                              <td>{{ statusLabel(h.status) }}</td>
+                              <td>{{ h.note }}</td>
+                              <td><small class="text-muted">{{ h.by }}</small></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="text-center py-3" *ngIf="nextCursor">
+    <button class="btn btn-outline-primary" (click)="loadMore()" [disabled]="isLoadingMore">
+      <span *ngIf="isLoadingMore" class="spinner-border spinner-border-sm me-1"></span>
+      Load more
+    </button>
+  </div>
+
+  <!-- No Orders State -->
+  <div *ngIf="rows.length === 0 && !isLoading" class="text-center py-5">
+    <i class="fas fa-shopping-cart fa-3x mb-3 text-muted"></i>
+    <h5>No Orders Found</h5>
+    <p class="text-muted">No orders match the current filters.</p>
+    <button class="btn btn-primary" (click)="clearFilters()">
+      <i class="fas fa-times me-1"></i>Clear Filters
+    </button>
+  </div>
+</div>

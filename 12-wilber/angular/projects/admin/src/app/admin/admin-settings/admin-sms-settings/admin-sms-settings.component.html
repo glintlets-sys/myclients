@@ -1,0 +1,85 @@
+<div class="sms-settings">
+  <div class="card shadow">
+    <div class="card-header">
+      <h4 class="mb-0">
+        <i class="fas fa-sms me-2"></i>SMS Provider Settings
+      </h4>
+      <p class="text-muted mb-0">OTP and order notification SMS. The auth key is stored encrypted and never shown again.</p>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="saveSmsSettings()" autocomplete="off">
+        <!-- SMS Provider Selection -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="smsProvider" class="form-label">
+                <i class="fas fa-mobile-alt me-1"></i>SMS Provider
+              </label>
+              <select class="form-select" id="smsProvider" name="smsProvider" [(ngModel)]="sms.provider">
+                <option *ngFor="let p of smsProviders" [value]="p.id">{{ p.label }}</option>
+              </select>
+              <div class="form-text" *ngIf="sms.provider === 'console'">
+                No SMS is sent; messages are written to the server log. Use only for development.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MSG91 -->
+        <div *ngIf="sms.provider === 'msg91'" class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-comment-dots me-2"></i>MSG91 Configuration</h5>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="authKey" class="form-label">
+                  Auth Key
+                  <span class="secret-status" [class.set]="authKeySet" [class.unset]="!authKeySet">
+                    {{ authKeySet ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="password" id="authKey" name="authKey" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="authKey" [placeholder]="authKeySet ? 'Leave blank to keep the current key' : 'Enter MSG91 auth key'">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="senderId" class="form-label">Sender ID</label>
+                <input type="text" id="senderId" name="senderId" class="form-control" maxlength="6" [(ngModel)]="sms.senderId"
+                       placeholder="e.g. MYSHOP">
+                <div class="form-text">6-character DLT-approved header.</div>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="mt-2 mb-2 fw-semibold">Flow Template IDs</h6>
+          <div class="form-text mb-2">Leave an event blank to skip that SMS.</div>
+          <table class="table table-sm template-table mb-0">
+            <tbody>
+              <tr *ngFor="let e of events">
+                <td style="width: 35%">
+                  <div class="fw-semibold">{{ e.label }}</div>
+                  <small class="text-muted">{{ e.hint }}</small>
+                </td>
+                <td>
+                  <input type="text" class="form-control form-control-sm" [name]="'tpl_' + e.id"
+                         [(ngModel)]="sms.templates[e.id]" placeholder="MSG91 flow / template id">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <i class="fas fa-save me-2" [class.fa-spin]="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Save Settings' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="loadSmsSettings()" [disabled]="isLoading">
+            <i class="fas fa-undo me-2"></i>Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

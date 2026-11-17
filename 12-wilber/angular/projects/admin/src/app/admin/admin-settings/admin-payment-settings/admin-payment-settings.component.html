@@ -1,0 +1,234 @@
+<div class="payment-settings">
+  <div class="card shadow">
+    <div class="card-header">
+      <h4 class="mb-0">
+        <i class="fas fa-credit-card me-2"></i>Payment Gateway Settings
+      </h4>
+      <p class="text-muted mb-0">Configure payment gateways and cash on delivery. Keys are stored encrypted and never shown again.</p>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="savePaymentSettings()" autocomplete="off">
+        <!-- Payment Provider Selection -->
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label for="paymentProvider" class="form-label">
+                <i class="fas fa-credit-card me-1"></i>Payment Method
+              </label>
+              <select class="form-select" id="paymentProvider" name="paymentProvider" [(ngModel)]="selectedPaymentProvider">
+                <option *ngFor="let p of providers" [ngValue]="p.id">{{ p.label }}{{ isEnabled(p.id) ? ' (enabled)' : '' }}</option>
+              </select>
+              <div class="form-text">Select the payment method you want to configure</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PhonePe -->
+        <div *ngIf="selectedPaymentProvider === 'phonepe'" class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-mobile-alt me-2"></i>PhonePe Configuration</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="ppEnabled" name="ppEnabled" [(ngModel)]="payments.phonepe.enabled">
+                <label class="form-check-label" for="ppEnabled">Enable PhonePe</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="ppMode" class="form-label">Mode</label>
+              <select class="form-select" id="ppMode" name="ppMode" [(ngModel)]="payments.phonepe.mode">
+                <option value="sandbox">Sandbox (test)</option>
+                <option value="live">Live</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="ppMerchantId" class="form-label">Merchant ID</label>
+                <input type="text" id="ppMerchantId" name="ppMerchantId" class="form-control" [(ngModel)]="payments.phonepe.merchantId"
+                       placeholder="Enter Merchant ID">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="ppSaltIndex" class="form-label">Salt Index</label>
+                <input type="number" id="ppSaltIndex" name="ppSaltIndex" class="form-control" min="1" [(ngModel)]="payments.phonepe.saltIndex">
+              </div>
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="ppSalt" class="form-label">
+              Salt Key
+              <span class="secret-status" [class.set]="isSet('phonepe.saltKey')" [class.unset]="!isSet('phonepe.saltKey')">
+                {{ isSet('phonepe.saltKey') ? 'configured ✓' : 'not set' }}
+              </span>
+            </label>
+            <input type="password" id="ppSalt" name="ppSalt" class="form-control" autocomplete="new-password"
+                   [(ngModel)]="secrets['phonepe.saltKey']"
+                   [placeholder]="isSet('phonepe.saltKey') ? 'Leave blank to keep the current key' : 'Enter Salt Key'">
+          </div>
+          <div class="form-text">Callback URL: <code>{{ webhookBase }}/phonepe/{{ tenant }}</code></div>
+        </div>
+
+        <!-- Razorpay -->
+        <div *ngIf="selectedPaymentProvider === 'razorpay'" class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-bolt me-2"></i>Razorpay Configuration</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="rpEnabled" name="rpEnabled" [(ngModel)]="payments.razorpay.enabled">
+                <label class="form-check-label" for="rpEnabled">Enable Razorpay</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="rpMode" class="form-label">Mode</label>
+              <select class="form-select" id="rpMode" name="rpMode" [(ngModel)]="payments.razorpay.mode">
+                <option value="sandbox">Test</option>
+                <option value="live">Live</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="rpKeyId" class="form-label">Key ID</label>
+            <input type="text" id="rpKeyId" name="rpKeyId" class="form-control" [(ngModel)]="payments.razorpay.keyId" placeholder="rzp_...">
+            <div class="form-text">Public key id (safe to expose to the browser).</div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="rpSecret" class="form-label">
+                  Key Secret
+                  <span class="secret-status" [class.set]="isSet('razorpay.keySecret')" [class.unset]="!isSet('razorpay.keySecret')">
+                    {{ isSet('razorpay.keySecret') ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="password" id="rpSecret" name="rpSecret" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="secrets['razorpay.keySecret']"
+                       [placeholder]="isSet('razorpay.keySecret') ? 'Leave blank to keep' : 'Enter Key Secret'">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="rpWebhook" class="form-label">
+                  Webhook Secret
+                  <span class="secret-status" [class.set]="isSet('razorpay.webhookSecret')" [class.unset]="!isSet('razorpay.webhookSecret')">
+                    {{ isSet('razorpay.webhookSecret') ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="password" id="rpWebhook" name="rpWebhook" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="secrets['razorpay.webhookSecret']"
+                       [placeholder]="isSet('razorpay.webhookSecret') ? 'Leave blank to keep' : 'Enter Webhook Secret'">
+              </div>
+            </div>
+          </div>
+          <div class="form-text">Webhook URL (events payment.captured, order.paid): <code>{{ webhookBase }}/razorpay/{{ tenant }}</code></div>
+        </div>
+
+        <!-- CCAvenue -->
+        <div *ngIf="selectedPaymentProvider === 'ccavenue'" class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-university me-2"></i>CCAvenue Configuration</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="ccEnabled" name="ccEnabled" [(ngModel)]="payments.ccavenue.enabled">
+                <label class="form-check-label" for="ccEnabled">Enable CCAvenue</label>
+              </div>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="ccMode" class="form-label">Mode</label>
+              <select class="form-select" id="ccMode" name="ccMode" [(ngModel)]="payments.ccavenue.mode">
+                <option value="sandbox">Sandbox (test)</option>
+                <option value="live">Live</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group mb-3">
+            <label for="ccMerchantId" class="form-label">Merchant ID</label>
+            <input type="text" id="ccMerchantId" name="ccMerchantId" class="form-control" [(ngModel)]="payments.ccavenue.merchantId"
+                   placeholder="Enter Merchant ID">
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="ccAccess" class="form-label">
+                  Access Code
+                  <span class="secret-status" [class.set]="isSet('ccavenue.accessCode')" [class.unset]="!isSet('ccavenue.accessCode')">
+                    {{ isSet('ccavenue.accessCode') ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="password" id="ccAccess" name="ccAccess" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="secrets['ccavenue.accessCode']"
+                       [placeholder]="isSet('ccavenue.accessCode') ? 'Leave blank to keep' : 'Enter Access Code'">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="ccWorking" class="form-label">
+                  Working Key
+                  <span class="secret-status" [class.set]="isSet('ccavenue.workingKey')" [class.unset]="!isSet('ccavenue.workingKey')">
+                    {{ isSet('ccavenue.workingKey') ? 'configured ✓' : 'not set' }}
+                  </span>
+                </label>
+                <input type="password" id="ccWorking" name="ccWorking" class="form-control" autocomplete="new-password"
+                       [(ngModel)]="secrets['ccavenue.workingKey']"
+                       [placeholder]="isSet('ccavenue.workingKey') ? 'Leave blank to keep' : 'Enter Working Key'">
+              </div>
+            </div>
+          </div>
+          <div class="form-text">The redirect/cancel URL is set automatically on every payment request.</div>
+        </div>
+
+        <!-- Cash on Delivery -->
+        <div *ngIf="selectedPaymentProvider === 'cod'" class="settings-block">
+          <h5 class="mb-3"><i class="fas fa-money-bill-wave me-2"></i>Cash on Delivery</h5>
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="codEnabled" name="codEnabled" [(ngModel)]="payments.cod.enabled">
+            <label class="form-check-label" for="codEnabled">Enable Cash on Delivery</label>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="codMax" class="form-label">Maximum Order Value (₹)</label>
+                <input type="number" id="codMax" name="codMax" class="form-control" min="0" step="0.01" [(ngModel)]="cod.maxOrderRupees">
+                <div class="form-text">0 = no limit</div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="codFee" class="form-label">COD Fee (₹)</label>
+                <input type="number" id="codFee" name="codFee" class="form-control" min="0" step="0.01" [(ngModel)]="cod.feeRupees">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="codAllowed" class="form-label">Allowed Pincodes</label>
+                <textarea id="codAllowed" name="codAllowed" rows="3" class="form-control" [(ngModel)]="cod.allowedPincodes"
+                          placeholder="Comma or newline separated; empty = all pincodes"></textarea>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group mb-3">
+                <label for="codBlocked" class="form-label">Blocked Pincodes</label>
+                <textarea id="codBlocked" name="codBlocked" rows="3" class="form-control" [(ngModel)]="cod.blockedPincodes"
+                          placeholder="Comma or newline separated"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <i class="fas fa-save me-2" [class.fa-spin]="isLoading"></i>
+            {{ isLoading ? 'Saving...' : 'Save Settings' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="loadPaymentSettings()" [disabled]="isLoading">
+            <i class="fas fa-undo me-2"></i>Reset
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
