@@ -272,17 +272,23 @@
             </div>
 
             <!-- Marketing Section -->
-            <div class="sidebar-section" *ngIf="canAccessSection('banners')">
+            <div class="sidebar-section" *ngIf="canAccessSection('banners') || canAccessSection('testimonials')">
               <div class="sidebar-header" (click)="toggleSection('marketing')">
                 <i class="fas fa-bullhorn me-2"></i>
                 Marketing
                 <i class="fas" [class.fa-chevron-down]="sections['marketing'] !== false" [class.fa-chevron-right]="sections['marketing'] === false"></i>
               </div>
               <ul class="sidebar-menu" *ngIf="sections['marketing'] !== false">
-                <li>
+                <li *ngIf="canAccessSection('banners')">
                   <button class="sidebar-item" [class.active]="activeView === 'banners'" (click)="showBanners()">
                     <i class="fas fa-images me-2"></i>
                     Banners
+                  </button>
+                </li>
+                <li *ngIf="canAccessSection('testimonials')">
+                  <button class="sidebar-item" [class.active]="activeView === 'testimonials'" (click)="showTestimonials()">
+                    <i class="fas fa-comment-dots me-2"></i>
+                    Testimonials
                   </button>
                 </li>
               </ul>
@@ -462,6 +468,11 @@
         <!-- Marketing: Banners -->
         <div *ngIf="activeView === 'banners'" class="content-section">
           @defer (on immediate) { <app-admin-banners></app-admin-banners> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
+        </div>
+
+        <!-- Marketing: Testimonials -->
+        <div *ngIf="activeView === 'testimonials'" class="content-section">
+          @defer (on immediate) { <app-admin-testimonials></app-admin-testimonials> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
         </div>
 
         <!-- Access Control -->

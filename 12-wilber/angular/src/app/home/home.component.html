@@ -303,95 +303,22 @@
         <div class="swiper review-slider">
             <!-- Additional required wrapper -->
             <div class="swiper-wrapper">
-                <!-- Slides -->
-                <div class="swiper-slide">
+                <!-- Slides: admin-managed testimonials (admin -> Testimonials), else the built-in list -->
+                <div class="swiper-slide" *ngFor="let t of testimonials">
                     <div class="testimonial-card">
                         <div class="testimonial-user">
-                            <div class="testimonial-avatar">
-                                <img src="assets/images/testimonialProfile1_1.png" alt="Guy Hawkins">
+                            <div class="testimonial-avatar" *ngIf="t.imageUrl">
+                                <img [src]="t.imageUrl" [alt]="t.name">
                             </div>
                             <div class="testimonial-user-info">
-                                <h5>Guy Hawkins</h5>
-                                <p>UI/UX Designer</p>
+                                <h5>{{ t.name }}</h5>
+                                <p *ngIf="t.location">{{ t.location }}</p>
                             </div>
                         </div>
                         <div class="testimonial-content">
-                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which</p>
+                            <p>{{ t.text }}</p>
                             <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="testimonial-card">
-                        <div class="testimonial-user">
-                            <div class="testimonial-avatar">
-                                <img src="assets/images/testimonialProfile1_1.png" alt="Jain Santh">
-                            </div>
-                            <div class="testimonial-user-info">
-                                <h5>Jain Santh</h5>
-                                <p>UI/UX Designer</p>
-                            </div>
-                        </div>
-                        <div class="testimonial-content">
-                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which</p>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="testimonial-card">
-                        <div class="testimonial-user">
-                            <div class="testimonial-avatar">
-                                <img src="assets/images/testimonialProfile1_1.png" alt="Guy Hawkins">
-                            </div>
-                            <div class="testimonial-user-info">
-                                <h5>Guy Hawkins</h5>
-                                <p>UI/UX Designer</p>
-                            </div>
-                        </div>
-                        <div class="testimonial-content">
-                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which</p>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="swiper-slide">
-                    <div class="testimonial-card">
-                        <div class="testimonial-user">
-                            <div class="testimonial-avatar">
-                                <img src="assets/images/testimonialProfile1_1.png" alt="Jain Santh">
-                            </div>
-                            <div class="testimonial-user-info">
-                                <h5>Jain Santh</h5>
-                                <p>UI/UX Designer</p>
-                            </div>
-                        </div>
-                        <div class="testimonial-content">
-                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which</p>
-                            <div class="rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star" *ngFor="let s of stars(t.rating)"></i>
                             </div>
                         </div>
                     </div>

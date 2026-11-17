@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, shareReplay, switchMap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ApiService } from '@shared/core/api.service';
-import { Blog, CatalogPointer, Category, Product, ProductCard, PublicConfig, PublishedBanner } from '@shared/core/models';
+import { Blog, CatalogPointer, Category, Product, ProductCard, PublicConfig, PublishedBanner, Testimonial } from '@shared/core/models';
 import { localizeImages } from './local-product-images';
 
 /**
@@ -21,6 +21,7 @@ export class CatalogStoreService {
   private products$?: Observable<ProductCard[]>;
   private blogs$?: Observable<Blog[]>;
   private banners$?: Observable<PublishedBanner[]>;
+  private testimonials$?: Observable<Testimonial[]>;
   private readonly productCache = new Map<string, Observable<Product>>();
 
   /** Latest publish pointer; null means "use the API". */
@@ -104,6 +105,16 @@ export class CatalogStoreService {
 
   blog(slug: string): Observable<Blog> {
     return this.fromCdn<Blog>(`blog/${encodeURIComponent(slug)}.json`, () => this.api.blog(slug));
+  }
+
+  /**
+   * Published customer testimonials ("Our Happy Customers"), in admin sort order.
+   * Empty when nothing is published or testimonials.json cannot be read, so the home page keeps its built-in list.
+   */
+  testimonials(): Observable<Testimonial[]> {
+    this.testimonials$ ??= this.fromCdn<{ testimonials: Testimonial[] }>('testimonials.json', () => of({ testimonials: [] }))
+      .pipe(map(r => r.testimonials ?? []), catchError(() => of([])), shareReplay(1));
+    return this.testimonials$;
   }
 
   private fromCdn<T>(file: string, fallback: () => Observable<T>): Observable<T> {

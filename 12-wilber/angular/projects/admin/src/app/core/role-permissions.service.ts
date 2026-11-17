@@ -32,6 +32,7 @@ const SECTION_PERMISSION: Record<string, string> = {
   settings: 'settings',
   'admin-users': 'manage_users',
   banners: 'content_management',
+  testimonials: 'content_management',
   'access-control': 'access_control',
   confirmations: 'orders',
   'staff-order': 'orders',
@@ -97,7 +98,7 @@ export class RolePermissionsService {
 
   getAccessibleSections(_userRole?: string): string[] {
     const all = ['dashboard', 'products', 'categories', 'orders', 'confirmations', 'staff-order', 'quotes', 'invoices', 'collections',
-      'seo', 'stock-consignment', 'customers', 'blogs', 'recommendations', 'banners', 'reports', 'audit', 'settings', 'admin-users',
+      'seo', 'stock-consignment', 'customers', 'blogs', 'recommendations', 'banners', 'testimonials', 'reports', 'audit', 'settings', 'admin-users',
       'access-control', 'profile'];
     return all.filter(s => this.canAccessSection('', s));
   }

@@ -10,7 +10,7 @@ import { CatalogStoreService } from '../core/catalog-store.service';
 import { SeoService } from '../core/seo.service';
 import { ApiService } from '@shared/core/api.service';
 import { apiErrorMessage } from '@shared/core/api.interceptor';
-import { PublishedBanner, Category, ProductCard, Blog } from '@shared/core/models';
+import { PublishedBanner, Category, ProductCard, Blog, Testimonial } from '@shared/core/models';
 
 /** One banner slide of the home hero carousel. */
 interface HeroSlide {
@@ -32,6 +32,16 @@ const BUILT_IN_HERO: HeroSlide[] = [
     alt: 'Adesiva Mastic by Wilber - joint and filling adhesive for marble and natural stone, solid and liquid' },
   { image: 'assets/images/banner3.png', title: 'High-Strength Adhesion', subtitle: 'For perfect tiling results every time',
     alt: 'Adesiva Marble Epoxy 999 by Wilber - crystal-clear, non-yellowing epoxy for marble and granite' },
+];
+
+/** Shown until testimonials are published from admin (the entries that were hard-coded here before). */
+const BUILT_IN_TESTIMONIALS: Testimonial[] = [
+  { id: 'b1', name: 'Guy Hawkins', location: 'UI/UX Designer', rating: 5, imageUrl: 'assets/images/testimonialProfile1_1.png',
+    text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which' },
+  { id: 'b2', name: 'Jain Santh', location: 'UI/UX Designer', rating: 5, imageUrl: 'assets/images/testimonialProfile1_1.png',
+    text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which' },
+  { id: 'b3', name: 'Guy Hawkins', location: 'UI/UX Designer', rating: 5, imageUrl: 'assets/images/testimonialProfile1_1.png',
+    text: 'There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by lorem injected humour, or randomised words which' },
 ];
 
 function toSlide(b: PublishedBanner): HeroSlide {
@@ -80,6 +90,16 @@ export class HomeComponent implements OnInit {
 
   /** Latest published blogs for the "Our Blog" section (each card links to the post). */
   recentBlogs: Blog[] = [];
+
+  /** "Our Happy Customers" — admin-managed testimonials (admin → Testimonials), else the built-in list. */
+  testimonials: Testimonial[] = BUILT_IN_TESTIMONIALS;
+  private reviewSlider: any;
+
+  /** Star icons to render for a testimonial's rating (default 5). */
+  stars(rating?: number): number[] {
+    const n = Math.max(1, Math.min(5, rating ?? 5));
+    return Array.from({ length: n });
+  }
 
   message = { name: '', phone: '', email: '', subject: '', text: '' };
   sending = false;
@@ -140,44 +160,49 @@ export class HomeComponent implements OnInit {
     // About photo + bottom CTA-strip photo: admin-managed via Marketing → Banners, else the built-in image.
     this.catalog.banners('home-feature').subscribe(bs => { if (bs[0]?.imageDesktop) this.aboutImg = bs[0].imageDesktop; });
     this.catalog.banners('home-strip').subscribe(bs => { if (bs[0]?.imageDesktop) this.ctaImg = bs[0].imageDesktop; });
+    // "Our Happy Customers" — published reviews replace the built-in list; rebuild the slider once they render.
+    this.catalog.testimonials().subscribe(ts => {
+      if (ts.length) { this.testimonials = ts; this.refreshReviewSlider(); }
+    });
     this.initializeSliders();
     this.initializeCarousel();
     this.initializeBackToTop();
   }
 
+  private readonly reviewSliderOptions = {
+    slidesPerView: 1,
+    spaceBetween: 20,
+    grabCursor: true,
+    autoplay: {
+      delay: 2500,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+    breakpoints: {
+      640: { slidesPerView: 1, spaceBetween: 20 },
+      768: { slidesPerView: 1, spaceBetween: 20 },
+      1024: { slidesPerView: 2, spaceBetween: 20 },
+    }
+  };
+
+  /** Destroy and rebuild the review slider after the published testimonials have rendered. */
+  private refreshReviewSlider() {
+    setTimeout(() => {
+      try { this.reviewSlider?.destroy(true, true); } catch { /* not yet initialised */ }
+      this.reviewSlider = new Swiper('.review-slider', this.reviewSliderOptions);
+    });
+  }
+
   private initializeSliders() {
     // Initialize review slider
-    const reviewSlider = new Swiper('.review-slider', {
-      slidesPerView: 1,
-      spaceBetween: 20,
-      grabCursor: true,
-      autoplay: {
-        delay: 2500,
-        disableOnInteraction: false,
-      },
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true,
-      },
-      navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-      },
-      breakpoints: {
-        640: {
-          slidesPerView: 1,
-          spaceBetween: 20,
-        },
-        768: {
-          slidesPerView: 1,
-          spaceBetween: 20,
-        },
-        1024: {
-          slidesPerView: 2,
-          spaceBetween: 20,
-        },
-      }
-    });
+    this.reviewSlider = new Swiper('.review-slider', this.reviewSliderOptions);
 
     // Initialize blog slider
     const blogSlider = new Swiper('.blog-slider', {

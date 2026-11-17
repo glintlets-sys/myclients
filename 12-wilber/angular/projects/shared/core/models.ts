@@ -226,6 +226,18 @@ export interface PublishedBanner {
   sortOrder?: number;
 }
 
+/** A customer testimonial ("Our Happy Customers"), published to testimonials.json and managed in admin. */
+export interface Testimonial {
+  id: string;
+  name: string;
+  location?: string;
+  rating?: number;
+  imageUrl?: string;
+  text: string;
+  sortOrder?: number;
+  active?: boolean;
+}
+
 export interface SeoIssue {
   severity: 'error' | 'warning' | 'info';
   code: string;

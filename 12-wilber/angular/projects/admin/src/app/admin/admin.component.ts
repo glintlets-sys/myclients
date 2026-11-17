@@ -14,6 +14,7 @@ import { AdminBlogsComponent } from './admin-blogs/admin-blogs.component';
 import { AdminRecommendationsComponent } from './admin-recommendations/admin-recommendations.component';
 import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminBannersComponent } from './admin-banners/admin-banners.component';
+import { AdminTestimonialsComponent } from './admin-testimonials/admin-testimonials.component';
 import { AdminAccessControlComponent } from './admin-access-control/admin-access-control.component';
 import { AdminProfileComponent } from './admin-profile/admin-profile.component';
 import { AdminCatalogApi } from '../core/admin-catalog-api';
@@ -58,6 +59,7 @@ const SECTION_ALIASES: Record<string, string> = {
     AdminRecommendationsComponent,
     AdminUsersComponent,
     AdminBannersComponent,
+    AdminTestimonialsComponent,
     AdminAccessControlComponent,
     AdminProfileComponent,
     AdminConfirmationsComponent,
@@ -254,6 +256,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   showAdminUsers() { this.show('admin-users'); }
   showStockConsignment() { this.show('stock-consignment'); }
   showBanners() { this.show('banners'); }
+  showTestimonials() { this.show('testimonials'); }
   showAccessControl() { this.show('access-control'); }
   showProfile() { this.show('profile'); }
   showOps(view: string) { this.show(view); }
@@ -289,6 +292,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       { label: 'Blogs', group: 'Content', groupKey: 'content', icon: 'fa-blog', view: 'blogs', words: 'blog articles posts content', show: this.canAccessFeature('manage_blogs') },
       { label: 'Product Recommendations', group: 'Content', groupKey: 'content', icon: 'fa-thumbs-up', view: 'recommendations', words: 'related products bought together similar', show: this.canAccessFeature('manage_recommendations') },
       { label: 'Banners', group: 'Marketing', groupKey: 'marketing', icon: 'fa-images', view: 'banners', words: 'marketing hero slider home banner images category banner', show: a('banners') },
+      { label: 'Testimonials', group: 'Marketing', groupKey: 'marketing', icon: 'fa-comment-dots', view: 'testimonials', words: 'testimonials reviews happy customers ratings feedback our happy customers', show: a('testimonials') },
       { label: 'General Settings', group: 'Settings', groupKey: 'settings', icon: 'fa-tools', view: 'settings', tab: 'platform', words: 'store settings store details name logo address gst gstin whatsapp phone', show: a('settings') },
       { label: 'Payment Settings', group: 'Settings', groupKey: 'settings', icon: 'fa-credit-card', view: 'settings', tab: 'payment', words: 'payment cod cash on delivery razorpay online upi', show: a('settings') },
       { label: 'Shipping Settings', group: 'Settings', groupKey: 'settings', icon: 'fa-shipping-fast', view: 'settings', tab: 'shipping', words: 'shipping delivery charges free delivery fee', show: a('settings') },

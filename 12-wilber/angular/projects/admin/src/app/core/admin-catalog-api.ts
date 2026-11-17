@@ -25,6 +25,20 @@ export interface Banner {
   updatedAt?: string;
 }
 
+/** Customer testimonial ("Our Happy Customers") as stored by the API. */
+export interface Testimonial {
+  id?: string;
+  name: string;
+  location?: string;
+  rating: number;
+  imageUrl?: string;
+  text: string;
+  sortOrder: number;
+  active: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface AccessRoleRow {
   role: string;
   defaults: string[];
@@ -61,6 +75,11 @@ export class AdminCatalogApi {
   createBanner(b: Banner) { return this.api.post<Banner>('/v1/admin/banners', b); }
   updateBanner(id: string, b: Banner) { return this.api.put<Banner>(`/v1/admin/banners/${encodeURIComponent(id)}`, b); }
   deleteBanner(id: string) { return this.api.delete(`/v1/admin/banners/${encodeURIComponent(id)}`); }
+
+  testimonials() { return this.api.get<{ testimonials: Testimonial[] }>('/v1/admin/testimonials'); }
+  createTestimonial(t: Testimonial) { return this.api.post<Testimonial>('/v1/admin/testimonials', t); }
+  updateTestimonial(id: string, t: Testimonial) { return this.api.put<Testimonial>(`/v1/admin/testimonials/${encodeURIComponent(id)}`, t); }
+  deleteTestimonial(id: string) { return this.api.delete(`/v1/admin/testimonials/${encodeURIComponent(id)}`); }
 
   accessControl() { return this.api.get<AccessMatrix>('/v1/admin/access-control'); }
   saveAccessControl(rolePermissions: Record<string, string[]>) {
