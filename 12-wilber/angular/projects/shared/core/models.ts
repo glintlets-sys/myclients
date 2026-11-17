@@ -117,6 +117,10 @@ export interface Category {
   seoTitle?: string;
   seoDescription?: string;
   updatedAt?: string;
+  /** Marketing category: shown on the landing (and hidden from the normal catalog listing). */
+  marketing?: boolean;
+  /** How it shows on the landing: 'image' (image tile → products) or 'products' (product strip). */
+  marketingDisplay?: 'image' | 'products';
 }
 
 export interface Blog {

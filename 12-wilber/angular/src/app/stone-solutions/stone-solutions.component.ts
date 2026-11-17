@@ -34,7 +34,8 @@ export class StoneSolutionsComponent implements OnInit, AfterViewInit {
     this.catalog.categories().subscribe({
       next: categories => {
         this.seo.catalogListing(categories);
-        const active = categories.filter(c => c.active !== false).sort((x, y) => (x.sortOrder ?? 0) - (y.sortOrder ?? 0));
+        // Marketing categories are surfaced on the landing, not in the normal catalog listing.
+        const active = categories.filter(c => c.active !== false && !c.marketing).sort((x, y) => (x.sortOrder ?? 0) - (y.sortOrder ?? 0));
         const tile = (c: Category): Tile => ({
           title: c.name,
           image: categoryImage(c),

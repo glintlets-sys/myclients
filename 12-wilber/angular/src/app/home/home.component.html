@@ -185,6 +185,43 @@
 </section>
 
 <!-- Services Section -->
+<!-- Marketing categories (admin → category → Marketing toggle): shown here in the chosen display mode -->
+<section class="marketing-section py-5" *ngIf="marketingCats.length">
+  <div class="container">
+    <div *ngFor="let m of marketingCats" class="marketing-block mb-5">
+      <!-- Image-tile mode: a banner image that leads to the category's products -->
+      <a *ngIf="m.cat.marketingDisplay !== 'products'" [routerLink]="['/category', m.cat.slug]"
+         class="marketing-tile d-block position-relative text-decoration-none rounded overflow-hidden">
+        <img [src]="m.cat.image || m.cat.bannerImage || 'assets/images/IndustrialSolutions.jpg'" [alt]="m.cat.name"
+             class="w-100" style="max-height:340px;object-fit:cover">
+        <div class="marketing-tile-cap">
+          <h3 class="mb-1">{{ m.cat.name }}</h3>
+          <span class="btn btn-light btn-sm">Explore <i class="fas fa-arrow-right ms-1"></i></span>
+        </div>
+      </a>
+      <!-- Product-strip mode: a curated row of this category's products -->
+      <div *ngIf="m.cat.marketingDisplay === 'products'">
+        <div class="section-title text-center mb-4"><h2>{{ m.cat.name }}</h2></div>
+        <div class="row g-3" *ngIf="m.products.length; else noMktProducts">
+          <div class="col-6 col-md-3" *ngFor="let p of m.products">
+            <a [routerLink]="['/product', p.slug]" class="product-card d-block text-decoration-none h-100">
+              <div class="product-image"><img [src]="p.thumbnail || 'assets/images/image_empty.jpg'" [alt]="p.name"></div>
+              <div class="product-content p-2">
+                <h3 class="product-title h6 mb-1">{{ p.name }}</h3>
+                <div class="text-primary fw-semibold" *ngIf="p.minPricePaise">₹{{ (p.minPricePaise / 100) | number:'1.0-0' }}</div>
+              </div>
+            </a>
+          </div>
+          <div class="col-12 text-center mt-3"><a [routerLink]="['/category', m.cat.slug]" class="btn btn-outline-primary">View all</a></div>
+        </div>
+        <ng-template #noMktProducts>
+          <div class="text-center"><a [routerLink]="['/category', m.cat.slug]" class="btn btn-outline-primary">View {{ m.cat.name }}</a></div>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="services-section">
     <div class="container">
         <div class="section-title text-center">

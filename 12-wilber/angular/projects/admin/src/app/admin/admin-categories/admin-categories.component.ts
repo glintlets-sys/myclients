@@ -248,6 +248,8 @@ export class AdminCategoriesComponent implements OnInit {
       active: category.active !== false,
       seoTitle: category.seoTitle?.trim() || undefined,
       seoDescription: category.seoDescription?.trim() || undefined,
+      marketing: !!category.marketing,
+      marketingDisplay: category.marketing ? (category.marketingDisplay || 'image') : undefined,
     };
     const call = category.id ? this.api.admin.updateCategory(category.id, body) : this.api.admin.createCategory(body);
     this.isSaving = true;

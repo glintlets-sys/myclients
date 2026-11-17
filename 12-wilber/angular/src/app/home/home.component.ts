@@ -10,7 +10,7 @@ import { CatalogStoreService } from '../core/catalog-store.service';
 import { SeoService } from '../core/seo.service';
 import { ApiService } from '@shared/core/api.service';
 import { apiErrorMessage } from '@shared/core/api.interceptor';
-import { PublishedBanner } from '@shared/core/models';
+import { PublishedBanner, Category, ProductCard } from '@shared/core/models';
 
 /** One banner slide of the home hero carousel. */
 interface HeroSlide {
@@ -75,6 +75,9 @@ export class HomeComponent implements OnInit {
   aboutImg = 'assets/images/aboutusimage.webp';
   ctaImg = 'assets/images/resource/cta-1.jpg';
 
+  /** Marketing categories surfaced on the landing (admin → category → Marketing toggle), in sort order. */
+  marketingCats: { cat: Category; products: ProductCard[] }[] = [];
+
   message = { name: '', phone: '', email: '', subject: '', text: '' };
   sending = false;
 
@@ -120,6 +123,11 @@ export class HomeComponent implements OnInit {
         const stn = categories.find(c => c.slug === 'stone-solutions');
         if (ind?.image) this.industrialImg = ind.image;
         if (stn?.image) this.stoneImg = stn.image;
+        // Marketing categories: shown on the landing in admin sort order, each in its chosen mode.
+        this.marketingCats = categories
+          .filter(c => c.marketing && c.active !== false)
+          .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+          .map(cat => ({ cat, products: products.filter(p => (p.categoryIds ?? []).includes(cat.id)).slice(0, 4) }));
       },
       error: () => this.seo.home([], [])
     });
