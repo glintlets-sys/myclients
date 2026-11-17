@@ -96,8 +96,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   activeView = 'dashboard';
   /** Stock Consignments is a distributor-style flow; kept in code but hidden from the menu. */
   readonly showConsignments = false;
-  /** Hidden from the menu for Wilber (Krishna, 13 Nov 2026) — screens and ?section= deep links still work. Flip to true to show. */
-  readonly showQuotes = false;
+  /** Re-enabled for Wilber (Krishna, 17 Nov 2026). Set to false to hide the Quotes menu/section again. */
+  readonly showQuotes = true;
   readonly showCollections = false;
   readonly showAudit = false;
   /** Set by Categories → "Add product"; Manage Products opens its editor with this category ticked. */
