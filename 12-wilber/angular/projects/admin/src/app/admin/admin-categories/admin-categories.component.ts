@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminApi } from '../../core/admin-api';
 import { Category, Product } from '@shared/core/models';
 import { forkJoin } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { apiErrorMessage } from '@shared/core/api.interceptor';
 import { ToasterService } from '@shared/ui/toaster.service';
 import { ToastType } from '@shared/ui/toaster';
@@ -86,10 +87,15 @@ export class AdminCategoriesComponent implements OnInit {
     if (!cat || this.selectedToAdd.size === 0 || this.isAddingProducts) return;
     this.isAddingProducts = true;
     const ids = [...this.selectedToAdd];
-    const updates = ids.map(pid => {
-      const p = this.allProducts.find(x => x.id === pid)!;
-      return this.api.admin.updateProduct(pid, { categoryIds: [...new Set([...(p.categoryIds ?? []), cat.id])] });
-    });
+    // PUT /products/{id} replaces the whole product, so load the full product first and send it back with the
+    // category added — a partial body ({ categoryIds }) wipes name/variants and fails with "no product name".
+    const updates = ids.map(pid =>
+      this.api.admin.product(pid).pipe(
+        switchMap(full => this.api.admin.updateProduct(pid, {
+          ...full,
+          categoryIds: [...new Set([...(full.categoryIds ?? []), cat.id])],
+        }))
+      ));
     forkJoin(updates).subscribe({
       next: () => {
         for (const pid of ids) {   // reflect locally so both panes update without a reload
@@ -114,7 +120,13 @@ export class AdminCategoriesComponent implements OnInit {
     if (!cat || this.isAddingProducts) return;
     this.isAddingProducts = true;
     const categoryIds = (p.categoryIds ?? []).filter(id => id !== cat.id);
-    this.api.admin.updateProduct(p.id, { categoryIds }).subscribe({
+    // Full-replace PUT: load the product and send it back with the category dropped, not a partial body.
+    this.api.admin.product(p.id).pipe(
+      switchMap(full => this.api.admin.updateProduct(p.id, {
+        ...full,
+        categoryIds: (full.categoryIds ?? []).filter(id => id !== cat.id),
+      }))
+    ).subscribe({
       next: () => {
         const prod = this.allProducts.find(x => x.id === p.id);
         if (prod) prod.categoryIds = categoryIds;
@@ -189,11 +201,6 @@ export class AdminCategoriesComponent implements OnInit {
   /** The category's own image; otherwise a neutral blank placeholder (no slug-guessed URL). */
   imageOf(c: Category): string {
     return c.image || c.bannerImage || 'assets/images/image_empty.jpg';
-  }
-
-  /** Whether this category has its own image set, so staff can spot ones still missing a photo. */
-  imageSource(c: Category): 'own' | 'none' {
-    return (c.image || c.bannerImage) ? 'own' : 'none';
   }
 
   filterData(): void {

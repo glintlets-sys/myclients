@@ -457,7 +457,8 @@
       <ng-template #noImages><p class="text-muted mb-0">No images.</p></ng-template>
       <dl class="ro-grid mt-3">
         <div class="ro ro-wide"><dt>Application image</dt><dd>{{ detailProduct.applicationImage || '—' }}</dd></div>
-        <div class="ro ro-wide"><dt>Video URL</dt><dd>{{ detailProduct.videoUrl || '—' }}</dd></div>
+        <div class="ro ro-wide"><dt>YouTube Video</dt><dd>{{ detailProduct.videoUrl || '—' }}</dd></div>
+        <div class="ro ro-wide"><dt>Uploaded Video</dt><dd>{{ detailProduct.videoFileUrl || '—' }}</dd></div>
       </dl>
     </div>
 
@@ -728,8 +729,26 @@
             </div>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Video URL</label>
+            <label class="form-label">YouTube Video URL</label>
             <input class="form-control" name="videoUrl" [(ngModel)]="form.videoUrl" placeholder="https://www.youtube.com/embed/...">
+            <a *ngIf="form.videoUrl" [href]="form.videoUrl" target="_blank" rel="noopener" class="small d-inline-block mt-1">
+              <i class="fas fa-external-link-alt me-1"></i>Show video link
+            </a>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Uploaded Video <small class="text-muted">(optional — shown instead of the YouTube video)</small></label>
+            <div class="input-group">
+              <input class="form-control" name="videoFileUrl" [(ngModel)]="form.videoFileUrl" placeholder="Upload an MP4 or paste a URL">
+              <label class="btn btn-outline-secondary mb-0" [class.disabled]="uploadingVideo" title="Upload video">
+                <i class="fas" [ngClass]="uploadingVideo ? 'fa-spinner fa-spin' : 'fa-upload'"></i>
+                <input type="file" accept="video/mp4,video/*" class="d-none" (change)="onProductVideoSelected($event)" [disabled]="uploadingVideo">
+              </label>
+              <button *ngIf="form.videoFileUrl" type="button" class="btn btn-outline-danger" (click)="removeProductVideo()" title="Remove uploaded video">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <video *ngIf="form.videoFileUrl" [src]="form.videoFileUrl" controls preload="metadata" class="mt-2 w-100" style="max-height:180px;background:#000"></video>
+            <div class="form-text" *ngIf="form.videoFileUrl && form.videoUrl">The uploaded video is shown on the product page; the YouTube link is kept but hidden.</div>
           </div>
         </div>
 

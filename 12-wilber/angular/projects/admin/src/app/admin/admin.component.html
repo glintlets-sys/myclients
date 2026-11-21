@@ -239,6 +239,12 @@
                     Manage Customers
                   </button>
                 </li>
+                <li>
+                  <button class="sidebar-item" [class.active]="activeView === 'newsletter'" (click)="showNewsletter()">
+                    <i class="fas fa-envelope-open-text me-2"></i>
+                    Newsletter Subscribers
+                  </button>
+                </li>
               </ul>
             </div>
 
@@ -437,6 +443,11 @@
             <h1 class="h2">Customer Management</h1>
           </div>
           <app-admin-customers></app-admin-customers>
+        </div>
+
+        <!-- Newsletter Subscribers View -->
+        <div *ngIf="activeView === 'newsletter'" class="content-section">
+          @defer (on immediate) { <app-admin-newsletter></app-admin-newsletter> } @loading { <div class="loading"><div class="spinner-border"></div></div> }
         </div>
 
         <!-- Settings View -->

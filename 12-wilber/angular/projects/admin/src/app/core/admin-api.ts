@@ -49,6 +49,10 @@ export class AdminApi extends ApiService {
     customers: (params: Params) => this.get<PageResult<User>>('/v1/admin/customers', params),
     customer: (id: string) => this.get<any>(`/v1/admin/customers/${id}`),
     enquiries: (cursor?: string) => this.get<PageResult<any>>('/v1/admin/enquiries', { cursor }),
+    newsletter: () => this.get<{ subscribers: NewsletterSubscriber[] }>('/v1/admin/newsletter'),
+    setNewsletterStatus: (email: string, status: 'SUBSCRIBED' | 'UNSUBSCRIBED') =>
+      this.patch<NewsletterSubscriber>(`/v1/admin/newsletter/${encodeURIComponent(email)}/status`, { status }),
+    deleteNewsletter: (email: string) => this.delete(`/v1/admin/newsletter/${encodeURIComponent(email)}`),
     staff: () => this.get<{ users: User[] }>('/v1/admin/users'),
     setStaff: (body: { phone: string; role: string; name?: string; email?: string; permissions?: string[] }) =>
       this.put<User>('/v1/admin/users', body),
@@ -92,6 +96,16 @@ export class AdminApi extends ApiService {
     }
     return target.publicUrl;
   }
+}
+
+/** A newsletter subscriber collected from the storefront footer sign-up. */
+export interface NewsletterSubscriber {
+  email: string;
+  status: 'SUBSCRIBED' | 'UNSUBSCRIBED';
+  source?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  unsubscribedAt?: string;
 }
 
 const MEDIA_TYPES: Record<string, string> = {

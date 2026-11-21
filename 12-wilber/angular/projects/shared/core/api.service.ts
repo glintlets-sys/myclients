@@ -54,6 +54,8 @@ export class ApiService {
     return this.post('/v1/enquiries', body);
   }
   notifyMe(body: { variantId: string; phone?: string; email?: string }) { return this.post('/v1/notify-me', body); }
+  subscribeNewsletter(email: string, source = 'footer') { return this.post<{ subscribed: boolean }>('/v1/newsletter/subscribe', { email, source }); }
+  unsubscribeNewsletter(email: string, token: string) { return this.post<{ unsubscribed: boolean }>('/v1/newsletter/unsubscribe', { email, token }); }
   quoteGuestCart(items: CartLine[], extra: { couponCode?: string; state?: string; pincode?: string } = {}) {
     return this.post<Quote>('/v1/cart/quote', { items, ...extra });
   }

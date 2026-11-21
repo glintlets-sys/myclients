@@ -180,7 +180,7 @@
           </div>
           
           <!-- Scroll to the video on this page. (A plain href="#videoproplay" resolves against <base href="/"> and opens the home page.) -->
-          <a href="#videoproplay" class="video-button" *ngIf="videoUrl" (click)="scrollToVideo($event)">
+          <a href="#videoproplay" class="video-button" *ngIf="hasVideo" (click)="scrollToVideo($event)">
             <i class="fas fa-play"></i>
             <span>Watch Video</span>
           </a>
@@ -405,12 +405,15 @@
   </div>
 </section>
 
-<!-- YouTube Video Section -->
-<section class="youtube-video" id="videoproplay" *ngIf="videoUrl">
+<!-- Product Video Section (uploaded video takes precedence over the YouTube link) -->
+<section class="youtube-video" id="videoproplay" *ngIf="hasVideo">
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <iframe width="100%" height="450" [src]="videoUrl" title="Product Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <video *ngIf="videoFileUrl; else youtubeVideo" width="100%" height="450" controls preload="metadata" [src]="videoFileUrl" title="Product Demo Video"></video>
+        <ng-template #youtubeVideo>
+          <iframe width="100%" height="450" [src]="videoUrl" title="Product Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </ng-template>
       </div>
     </div>
   </div>
@@ -471,8 +474,35 @@
   </div>
 </section>
 
-<!-- No Related Products Message -->
-<section class="related-products" *ngIf="!loading && !error && relatedProducts.length === 0">
+<!-- Recommended Products Section (admin "bought together" picks, shown separately from Related) -->
+<section class="related-products" *ngIf="recommendedProducts.length > 0">
+  <div class="container">
+    <h2 class="related-title">Recommended Products</h2>
+    <div class="products-grid related-grid">
+      <div class="product-card" *ngFor="let recommendedProduct of recommendedProducts" (click)="navigateToProduct(recommendedProduct.id)">
+        <div class="product-card-image">
+          <img [src]="recommendedProduct.image" [alt]="recommendedProduct.name">
+          <div class="product-badge" *ngIf="recommendedProduct.badge"
+               [style.background-color]="recommendedProduct.badge === 'Bestseller' ? 'var(--success)' : 'var(--primary)'">
+            {{ recommendedProduct.badge }}
+          </div>
+        </div>
+        <div class="product-card-content">
+          <h3 class="product-card-title"><a [routerLink]="['/product', recommendedProduct.id]" class="text-reset text-decoration-none" (click)="$event.stopPropagation()">{{ recommendedProduct.name }}</a></h3>
+          <p class="product-card-description">{{ recommendedProduct.description }}</p>
+          <div class="product-card-rating">
+            <i *ngFor="let star of getStars(recommendedProduct.rating)"
+               [class]="star === 1 ? 'fas fa-star text-warning' : star === 0.5 ? 'fas fa-star-half-alt text-warning' : 'far fa-star text-warning'"></i>
+            <span class="ms-1">({{ recommendedProduct.rating }})</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- No Related Products Message (only when neither block has anything to show) -->
+<section class="related-products" *ngIf="!loading && !error && relatedProducts.length === 0 && recommendedProducts.length === 0">
   <div class="container">
     <div class="text-center py-5">
       <i class="fas fa-box-open fa-3x text-muted mb-3"></i>

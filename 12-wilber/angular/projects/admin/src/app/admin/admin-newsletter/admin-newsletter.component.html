@@ -1,0 +1,81 @@
+<!-- Header -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+  <h3 class="panel-title mb-0"><span class="align-text-top">Newsletter Subscribers</span></h3>
+  <span class="pull-right">
+    <button type="button" class="btn btn-primary me-2" (click)="load()" [disabled]="loading">
+      <i class="fas fa-sync me-1" [class.fa-spin]="loading"></i>Refresh
+    </button>
+    <button type="button" class="btn btn-outline-primary" (click)="exportCsv()" [disabled]="loading || filtered.length === 0">
+      <i class="fas fa-download me-1"></i>Export CSV
+    </button>
+  </span>
+</div>
+
+<!-- Summary -->
+<div class="row mb-3 g-2">
+  <div class="col-auto"><span class="badge bg-success text-white p-2">Subscribed: {{ subscribedCount }}</span></div>
+  <div class="col-auto"><span class="badge bg-secondary text-white p-2">Unsubscribed: {{ unsubscribedCount }}</span></div>
+  <div class="col-auto"><span class="badge bg-info text-white p-2">Total: {{ subscribers.length }}</span></div>
+</div>
+
+<!-- Loading / error -->
+<div *ngIf="loading" class="alert alert-primary"><i class="fas fa-spinner fa-spin me-2"></i>Loading subscribers...</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<!-- Filters -->
+<div class="row mb-3 g-2" *ngIf="!loading">
+  <div class="col-md-5">
+    <input type="text" class="form-control" placeholder="Search by email" [(ngModel)]="searchTerm">
+  </div>
+  <div class="col-md-3">
+    <select class="form-control" [(ngModel)]="statusFilter">
+      <option value="all">All statuses</option>
+      <option value="subscribed">Subscribed only</option>
+      <option value="unsubscribed">Unsubscribed only</option>
+    </select>
+  </div>
+</div>
+
+<!-- Table -->
+<table class="table table-bordered" *ngIf="!loading">
+  <thead class="table-light">
+    <tr>
+      <th>Email</th>
+      <th>Status</th>
+      <th>Subscribed On</th>
+      <th>Source</th>
+      <th class="text-center">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of filtered">
+      <td>{{ s.email }}</td>
+      <td>
+        <span class="badge" [ngClass]="isSubscribed(s) ? 'bg-success text-white' : 'bg-secondary text-white'">
+          {{ isSubscribed(s) ? 'Subscribed' : 'Unsubscribed' }}
+        </span>
+      </td>
+      <td><small class="text-muted">{{ (s.createdAt || '') | slice:0:10 }}</small></td>
+      <td><small class="text-muted">{{ s.source || '—' }}</small></td>
+      <td class="text-center text-nowrap">
+        <button type="button" class="btn btn-sm me-2"
+                [ngClass]="isSubscribed(s) ? 'btn-outline-secondary' : 'btn-outline-success'"
+                [disabled]="busyEmail === s.email" (click)="toggle(s)"
+                [title]="isSubscribed(s) ? 'Mark as unsubscribed' : 'Re-subscribe this address'">
+          <i class="fas" [ngClass]="busyEmail === s.email ? 'fa-spinner fa-spin' : (isSubscribed(s) ? 'fa-user-slash' : 'fa-user-check')"></i>
+          {{ isSubscribed(s) ? 'Unsubscribe' : 'Re-subscribe' }}
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="busyEmail === s.email" (click)="remove(s)" title="Remove from list">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Empty state -->
+<div *ngIf="!loading && filtered.length === 0" class="text-center py-5">
+  <i class="fas fa-envelope-open-text fa-3x text-muted mb-3"></i>
+  <h3 class="no-record-found">No subscribers{{ subscribers.length ? ' match the filters' : ' yet' }}.</h3>
+  <p class="text-muted" *ngIf="!subscribers.length">When visitors subscribe from the website footer, they will appear here.</p>
+</div>

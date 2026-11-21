@@ -50,6 +50,7 @@ interface ProductForm {
   taxRatePercent: number | null;
   packagingType: string;
   videoUrl: string;
+  videoFileUrl: string;
   applicationImage: string;
   images: string[];
   specs: string;
@@ -141,6 +142,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   editorLoading = false;
   saving = false;
   uploadingImages = false;
+  uploadingVideo = false;
   editorError = '';
   form: ProductForm = this.emptyForm();
   /** Full product as loaded, so fields the editor does not show are preserved on save. */
@@ -546,6 +548,27 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Upload a self-hosted product video to S3; its URL is saved on the product and shown instead of the YouTube video. */
+  async onProductVideoSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    this.uploadingVideo = true;
+    this.editorError = '';
+    try {
+      this.form.videoFileUrl = await this.api.upload(file);
+    } catch (err) {
+      this.editorError = apiErrorMessage(err, 'Video upload failed');
+    } finally {
+      this.uploadingVideo = false;
+      input.value = '';
+    }
+  }
+
+  removeProductVideo(): void {
+    this.form.videoFileUrl = '';
+  }
+
   removeImage(index: number): void {
     this.form.images.splice(index, 1);
   }
@@ -633,7 +656,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
   private emptyForm(): ProductForm {
     return {
       name: '', slug: '', code: '', brand: '', categoryIds: [], shortDescription: '', description: '', badge: '', tags: '',
-      hsn: '', taxRatePercent: null, packagingType: '', videoUrl: '', applicationImage: '', images: [], specs: '', features: '',
+      hsn: '', taxRatePercent: null, packagingType: '', videoUrl: '', videoFileUrl: '', applicationImage: '', images: [], specs: '', features: '',
       applications: '', considerations: '', howToApply: '', seoTitle: '', seoDescription: '', active: true, featured: false,
       sortOrder: 0, stockManaged: true, hideWhenOutOfStock: false, minOrderQty: null, maxOrderQty: null,
       variants: [{ ...newVariant(), name: 'Standard' }]
@@ -656,6 +679,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
       taxRatePercent: p.taxRatePercent ?? null,
       packagingType: p.packagingType ?? '',
       videoUrl: p.videoUrl ?? '',
+      videoFileUrl: p.videoFileUrl ?? '',
       applicationImage: p.applicationImage ?? '',
       images: [...(p.images ?? [])],
       specs: (p.specs ?? []).map(s => `${s.label}: ${s.value}`).join('\n'),
@@ -730,6 +754,7 @@ export class AdminProductsComponent implements OnInit, OnDestroy {
       taxRatePercent: f.taxRatePercent === null || (f.taxRatePercent as unknown) === '' ? null : Number(f.taxRatePercent),
       packagingType: opt(f.packagingType),
       videoUrl: opt(f.videoUrl),
+      videoFileUrl: opt(f.videoFileUrl),
       applicationImage: opt(f.applicationImage),
       images: f.images,
       thumbnail: thumbnailStillValid ? base.thumbnail : f.images[0],

@@ -44,10 +44,13 @@
                 <div class="footer-widget">
                     <h5>Newsletter</h5>
                     <p>Subscribe to our newsletter to receive updates on new products and promotions.</p>
-                    <div class="footer-newsletter">
-                        <input type="email" placeholder="Your Email Address">
-                        <button class="btn btn-primary">Subscribe</button>
-                    </div>
+                    <form class="footer-newsletter" (ngSubmit)="subscribeNewsletter()">
+                        <input type="email" name="newsletterEmail" placeholder="Your Email Address"
+                               [(ngModel)]="newsletterEmail" [disabled]="subscribing" autocomplete="email">
+                        <button type="submit" class="btn btn-primary" [disabled]="subscribing">
+                            <i *ngIf="subscribing" class="fas fa-spinner fa-spin me-1"></i>{{ subscribing ? 'Subscribing…' : 'Subscribe' }}
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>

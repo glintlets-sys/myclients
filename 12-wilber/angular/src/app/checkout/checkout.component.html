@@ -100,8 +100,119 @@
         </div>
       </div>
 
-      <!-- Order Summary Section -->
+      <!-- Right column: delivery address above the order summary -->
       <div class="col-lg-4">
+        <!-- Delivery Address -->
+        <div class="card shadow-sm mb-4" *ngIf="cartItems.length > 0">
+          <div class="card-header" style="background: var(--gradient-primary); color: white;">
+            <h6 class="mb-0">
+              <i class="fas fa-map-marker-alt me-2"></i>
+              Delivery Address
+            </h6>
+          </div>
+          <div class="card-body">
+            <div *ngIf="addresses.length === 0 && !showAddressForm" class="text-center py-4">
+              <p class="text-muted mb-3">No addresses found</p>
+              <p class="text-muted mb-3">Please add a delivery address to continue</p>
+              <button class="btn btn-primary" (click)="openAddressForm()">
+                <i class="fas fa-plus me-2"></i>Add Address
+              </button>
+            </div>
+
+            <form *ngIf="showAddressForm" class="mb-4" (ngSubmit)="saveAddress()">
+              <h6 class="mb-3">{{ editingAddressId ? 'Edit Address' : 'New Address' }}</h6>
+              <div *ngIf="addressError" class="alert alert-danger py-2">{{ addressError }}</div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.name" name="name" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Mobile Number</label>
+                  <input type="tel" class="form-control" [(ngModel)]="addressForm.phone" name="phone" maxlength="10" inputmode="numeric" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Address Line 1</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.line1" name="line1" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Address Line 2</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.line2" name="line2">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Landmark</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.landmark" name="landmark">
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Email (Optional)</label>
+                  <input type="email" class="form-control" [(ngModel)]="addressForm.email" name="email">
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">City</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.city" name="city" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">State</label>
+                  <select class="form-select" [(ngModel)]="addressForm.state" name="state" required>
+                    <option value="">Select State</option>
+                    <option *ngFor="let s of states" [value]="s">{{ s }}</option>
+                  </select>
+                </div>
+                <div class="col-md-4 mb-3">
+                  <label class="form-label">Pincode</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.pincode" name="pincode" maxlength="6" inputmode="numeric" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">GSTIN (Optional — for a business tax invoice)</label>
+                  <input type="text" class="form-control" [(ngModel)]="addressForm.gstin" name="gstin" maxlength="15" style="text-transform:uppercase">
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary" [disabled]="savingAddress">
+                  <span *ngIf="savingAddress" class="spinner-border spinner-border-sm me-2"></span>Save Address
+                </button>
+                <button type="button" class="btn btn-outline-secondary" (click)="cancelAddressForm()" *ngIf="addresses.length > 0">Cancel</button>
+              </div>
+            </form>
+
+            <div *ngIf="addresses.length > 0 && !showAddressForm">
+              <div class="mb-3">
+                <label class="form-label">Select Delivery Address:</label>
+                <div class="address-options">
+                  <div *ngFor="let address of addresses" class="address-option mb-2">
+                    <div class="form-check">
+                      <input class="form-check-input"
+                             type="radio"
+                             [id]="'address-' + address.id"
+                             [name]="'selectedAddress'"
+                             [checked]="selectedAddressId === address.id"
+                             (change)="selectAddress(address)">
+                      <label class="form-check-label" [for]="'address-' + address.id">
+                        <div class="address-details">
+                          <div class="fw-bold">{{ address.name }}</div>
+                          <div>{{ address.line1 }} {{ address.line2 }}<span *ngIf="address.landmark">, {{ address.landmark }}</span></div>
+                          <div class="text-muted">{{ address.phone }}</div>
+                          <div class="text-muted">{{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.pincode }}</div>
+                          <div class="text-muted">{{ address.email }}</div>
+                          <span *ngIf="address.isDefault" class="badge bg-primary ms-2">Default</span>
+                          <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="openAddressForm(address); $event.preventDefault()">Edit</button>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="text-center">
+                <button class="btn btn-outline-primary" (click)="openAddressForm()">
+                  <i class="fas fa-plus me-2"></i>Add New Address
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
         <div class="card shadow-sm sticky-top" style="top: 20px;">
           <div class="card-header bg-light">
             <h5 class="mb-0">Order Summary</h5>
@@ -245,120 +356,6 @@
 
             <div *ngIf="!loading && cartItems.length === 0" class="text-center py-4">
               <p class="text-muted">No items in cart</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Address Selection Section -->
-    <div class="row mt-4" *ngIf="cartItems.length > 0">
-      <div class="col-12">
-        <div class="card shadow-sm">
-          <div class="card-header" style="background: var(--gradient-primary); color: white;">
-            <h6 class="mb-0">
-              <i class="fas fa-map-marker-alt me-2"></i>
-              Delivery Address
-            </h6>
-          </div>
-          <div class="card-body">
-            <div *ngIf="addresses.length === 0 && !showAddressForm" class="text-center py-4">
-              <p class="text-muted mb-3">No addresses found</p>
-              <p class="text-muted mb-3">Please add a delivery address to continue</p>
-              <button class="btn btn-primary" (click)="openAddressForm()">
-                <i class="fas fa-plus me-2"></i>Add Address
-              </button>
-            </div>
-
-            <form *ngIf="showAddressForm" class="mb-4" (ngSubmit)="saveAddress()">
-              <h6 class="mb-3">{{ editingAddressId ? 'Edit Address' : 'New Address' }}</h6>
-              <div *ngIf="addressError" class="alert alert-danger py-2">{{ addressError }}</div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Full Name</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.name" name="name" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Mobile Number</label>
-                  <input type="tel" class="form-control" [(ngModel)]="addressForm.phone" name="phone" maxlength="10" inputmode="numeric" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Address Line 1</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.line1" name="line1" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Address Line 2</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.line2" name="line2">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Landmark</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.landmark" name="landmark">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">Email (Optional)</label>
-                  <input type="email" class="form-control" [(ngModel)]="addressForm.email" name="email">
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">City</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.city" name="city" required>
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">State</label>
-                  <select class="form-select" [(ngModel)]="addressForm.state" name="state" required>
-                    <option value="">Select State</option>
-                    <option *ngFor="let s of states" [value]="s">{{ s }}</option>
-                  </select>
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label class="form-label">Pincode</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.pincode" name="pincode" maxlength="6" inputmode="numeric" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label class="form-label">GSTIN (Optional — for a business tax invoice)</label>
-                  <input type="text" class="form-control" [(ngModel)]="addressForm.gstin" name="gstin" maxlength="15" style="text-transform:uppercase">
-                </div>
-              </div>
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary" [disabled]="savingAddress">
-                  <span *ngIf="savingAddress" class="spinner-border spinner-border-sm me-2"></span>Save Address
-                </button>
-                <button type="button" class="btn btn-outline-secondary" (click)="cancelAddressForm()" *ngIf="addresses.length > 0">Cancel</button>
-              </div>
-            </form>
-
-            <div *ngIf="addresses.length > 0 && !showAddressForm">
-              <div class="mb-3">
-                <label class="form-label">Select Delivery Address:</label>
-                <div class="address-options">
-                  <div *ngFor="let address of addresses" class="address-option mb-2">
-                    <div class="form-check">
-                      <input class="form-check-input"
-                             type="radio"
-                             [id]="'address-' + address.id"
-                             [name]="'selectedAddress'"
-                             [checked]="selectedAddressId === address.id"
-                             (change)="selectAddress(address)">
-                      <label class="form-check-label" [for]="'address-' + address.id">
-                        <div class="address-details">
-                          <div class="fw-bold">{{ address.name }}</div>
-                          <div>{{ address.line1 }} {{ address.line2 }}<span *ngIf="address.landmark">, {{ address.landmark }}</span></div>
-                          <div class="text-muted">{{ address.phone }}</div>
-                          <div class="text-muted">{{ address.city }}, {{ address.state }}, {{ address.country }}, {{ address.pincode }}</div>
-                          <div class="text-muted">{{ address.email }}</div>
-                          <span *ngIf="address.isDefault" class="badge bg-primary ms-2">Default</span>
-                          <button type="button" class="btn btn-link btn-sm p-0 ms-2" (click)="openAddressForm(address); $event.preventDefault()">Edit</button>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="text-center">
-                <button class="btn btn-outline-primary" (click)="openAddressForm()">
-                  <i class="fas fa-plus me-2"></i>Add New Address
-                </button>
-              </div>
             </div>
           </div>
         </div>

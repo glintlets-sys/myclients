@@ -11,8 +11,8 @@
                 </div>
             </div>
             <div class="col-md-6 text-end">
-                <a href="mailto:support&#64;wilber.co.in" class="me-3"><i class="far fa-envelope me-2"></i>support&#64;wilber.co.in</a>
-                <span><i class="far fa-clock me-2"></i>Mon - Sat 9.00 - 18.00</span>
+                <a [href]="'mailto:' + supportEmail" class="me-3"><i class="far fa-envelope me-2"></i>{{ supportEmail }}</a>
+                <span *ngIf="businessHours"><i class="far fa-clock me-2"></i>{{ businessHours }}</span>
             </div>
         </div>
     </div>

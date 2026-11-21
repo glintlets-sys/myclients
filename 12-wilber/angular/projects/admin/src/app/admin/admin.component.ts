@@ -15,6 +15,7 @@ import { AdminRecommendationsComponent } from './admin-recommendations/admin-rec
 import { AdminUsersComponent } from './admin-users/admin-users.component';
 import { AdminBannersComponent } from './admin-banners/admin-banners.component';
 import { AdminTestimonialsComponent } from './admin-testimonials/admin-testimonials.component';
+import { AdminNewsletterComponent } from './admin-newsletter/admin-newsletter.component';
 import { AdminAccessControlComponent } from './admin-access-control/admin-access-control.component';
 import { AdminProfileComponent } from './admin-profile/admin-profile.component';
 import { AdminCatalogApi } from '../core/admin-catalog-api';
@@ -60,6 +61,7 @@ const SECTION_ALIASES: Record<string, string> = {
     AdminUsersComponent,
     AdminBannersComponent,
     AdminTestimonialsComponent,
+    AdminNewsletterComponent,
     AdminAccessControlComponent,
     AdminProfileComponent,
     AdminConfirmationsComponent,
@@ -250,6 +252,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   showCategories() { this.show('categories'); }
   showOrders() { this.show('orders'); }
   showCustomers() { this.show('customers'); }
+  showNewsletter() { this.show('newsletter'); }
   showSettings() { this.settingsTab = null; this.show('settings'); }
   showBlogs() { this.show('blogs'); }
   showRecommendations() { this.show('recommendations'); }
@@ -289,6 +292,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       { label: 'Audit Log', group: 'Reports', groupKey: 'reports', icon: 'fa-history', view: 'audit', words: 'audit history log who changed', show: this.showAudit && a('audit') },
       { label: 'Stock Consignments', group: 'Stock', groupKey: 'stock', icon: 'fa-truck', view: 'stock-consignment', words: 'consignment stock inward', show: this.showConsignments && a('stock-consignment') },
       { label: 'Manage Customers', group: 'Customers', groupKey: 'customers', icon: 'fa-user-friends', view: 'customers', words: 'customers buyers clients block contacts', show: a('customers') },
+      { label: 'Newsletter Subscribers', group: 'Customers', groupKey: 'customers', icon: 'fa-envelope-open-text', view: 'newsletter', words: 'newsletter subscribers emails mailing list subscribe unsubscribe', show: a('customers') },
       { label: 'Blogs', group: 'Content', groupKey: 'content', icon: 'fa-blog', view: 'blogs', words: 'blog articles posts content', show: this.canAccessFeature('manage_blogs') },
       { label: 'Product Recommendations', group: 'Content', groupKey: 'content', icon: 'fa-thumbs-up', view: 'recommendations', words: 'related products bought together similar', show: this.canAccessFeature('manage_recommendations') },
       { label: 'Banners', group: 'Marketing', groupKey: 'marketing', icon: 'fa-images', view: 'banners', words: 'marketing hero slider home banner images category banner', show: a('banners') },

@@ -80,7 +80,10 @@ export class ProductComponent implements OnInit {
   private readonly seo = inject(SeoService);
 
   product: ProductView | null = null;
+  /** "Related Products" — admin-picked related, topped up with other products from the same category. */
   relatedProducts: RelatedView[] = [];
+  /** "Recommended Products" — the admin's hand-picked "bought together" set, shown as its own block. */
+  recommendedProducts: RelatedView[] = [];
 
   /**
    * Heading for the related block. Products picked in admin (Product Recommendations) come first and can be from other
@@ -100,7 +103,15 @@ export class ProductComponent implements OnInit {
   stockLoading = false;
   notifyRequested = false;
   readonly availableStock = MAX_QTY;
+  /** YouTube embed (sanitized) for the iframe. */
   videoUrl: SafeResourceUrl | null = null;
+  /** Self-hosted video URL; when present it is shown instead of the YouTube video. */
+  videoFileUrl: string | null = null;
+
+  /** True when the product has any video to show (uploaded file or YouTube link). */
+  get hasVideo(): boolean {
+    return !!this.videoFileUrl || !!this.videoUrl;
+  }
 
   /** "Watch Video": smooth-scroll to the video section on this page (no navigation). */
   scrollToVideo(event: Event) {
@@ -188,6 +199,8 @@ export class ProductComponent implements OnInit {
     this.videoUrl = p.videoUrl && YOUTUBE_EMBED.test(p.videoUrl)
       ? this.sanitizer.bypassSecurityTrustResourceUrl(p.videoUrl)
       : null;
+    // A self-hosted (uploaded) video takes the YouTube video's place when present.
+    this.videoFileUrl = p.videoFileUrl?.trim() || null;
     const initial = variants.find(v => v.inStock !== false) ?? variants[0];
     this.selectedSize = initial ? (initial.attributes?.['size'] || initial.name) : '';
     this.selectedColor = initial?.attributes?.['color'] ?? '';
@@ -195,6 +208,12 @@ export class ProductComponent implements OnInit {
     this.isAddedToCart = false;
     this.notifyRequested = false;
     this.relatedProducts = (p.related ?? []).map(toRelated);
+    // "Recommended" is the admin's bought-together picks; drop any that already appear in Related so a product
+    // never shows up in both blocks, and never recommend the product itself.
+    const relatedIds = new Set(this.relatedProducts.map(r => r.id));
+    this.recommendedProducts = (p.boughtTogetherProducts ?? [])
+      .map(toRelated)
+      .filter(r => r.id !== p.slug && !relatedIds.has(r.id));
   }
 
   private activeVariants(p: Product): Variant[] {

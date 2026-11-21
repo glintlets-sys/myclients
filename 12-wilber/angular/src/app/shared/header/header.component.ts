@@ -36,12 +36,24 @@ export class HeaderComponent implements OnInit {
   isUserDropdownOpen = false;
   readonly totalItems = this.cart.count;
 
+  /** Top-bar contact details from admin → General Settings (fall back to the built-in Wilber values). */
+  supportEmail = 'support@wilber.co.in';
+  businessHours = 'Mon - Sat 9.00 - 18.00';
+
   get currentUser() { return this.session.user(); }
   get isAdmin(): boolean { return this.session.isStaff(); }
   /** The tenant admin is its own app on its own domain (separate sign-in). */
   readonly adminUrl = environment.adminUrl;
 
   ngOnInit() {
+    // Top-bar email and shop timings come from the published store config (admin → General Settings).
+    this.catalog.config().pipe(take(1)).subscribe(cfg => {
+      if (cfg?.store?.supportEmail) this.supportEmail = cfg.store.supportEmail;
+      // businessHours is optional; '' from admin means "hide it".
+      if (cfg?.store?.businessHours !== undefined && cfg?.store?.businessHours !== null) {
+        this.businessHours = cfg.store.businessHours;
+      }
+    });
     this.initializeHeaderEffects();
     this.initializeDropdownHandlers();
     // Mobile: close the hamburger menu after any page change.

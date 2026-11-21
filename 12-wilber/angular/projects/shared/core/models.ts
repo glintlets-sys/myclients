@@ -82,6 +82,8 @@ export interface Product {
   thumbnail?: string;
   applicationImage?: string;
   videoUrl?: string;
+  /** Self-hosted video (S3/CDN). When set, the storefront shows it instead of the YouTube video. */
+  videoFileUrl?: string;
   documents?: { label: string; url: string }[];
   tags: string[];
   active: boolean;
@@ -146,7 +148,7 @@ export interface PublicConfig {
   tenantId: string;
   store: {
     name?: string; supportEmail?: string; supportPhone?: string; whatsapp?: string;
-    address?: string; logoUrl?: string; currency?: string; gstin?: string;
+    address?: string; businessHours?: string; logoUrl?: string; currency?: string; gstin?: string;
   };
   tax: { pricesIncludeTax: boolean; defaultRatePercent: number };
   shipping: { flatFeePaise: number; freeAbovePaise: number };
